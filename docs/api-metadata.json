@@ -1,0 +1,366 @@
+{
+  "generatedAt": "2025-08-02T23:40:48.494Z",
+  "apiInfo": {
+    "title": "API Fournisseur CG - Orchestrateur Logistique",
+    "version": "3.0.0",
+    "description": "API REST centrale servant de wrapper pour l'écosystème Fournisseur Congo. Orchestrateur entre applications clientes (web Vue.js, mobile) et services backend (Appwrite, MailerSend, SMTP, Spark Pay)."
+  },
+  "statistics": {
+    "totalEndpoints": 46,
+    "totalTags": 9,
+    "totalSecuritySchemes": 3,
+    "totalServers": 3
+  },
+  "endpoints": [
+    {
+      "path": "/v2",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/auth/register",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/auth/login",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/auth/get-token",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/auth/logout",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/auth/profile",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/auth/refresh-token",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/appwrite/health",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/appwrite/databases",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/appwrite/databases/{databaseId}/collections",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/appwrite/databases/{databaseId}/collections/{collectionId}/documents",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/appwrite/databases/{databaseId}/collections/{collectionId}/documents/{documentId}",
+      "methods": [
+        "get",
+        "patch",
+        "delete"
+      ]
+    },
+    {
+      "path": "/v2/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/string",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/integer",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/boolean",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/datetime",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/collections/initialize",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/collections/actions",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/collections/status",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/collections/configuration",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/health",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/test",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/initiate",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/status/{paymentId}",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/verify",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/verify-by-id",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/webhook",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/transactions",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/domains",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/domains/{domainId}/validate",
+      "methods": [
+        "patch"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/domains/stats",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/spaark-pay/api-key/{type}",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/sms/health",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/sms/test",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/sms/send",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/sms/status/{messageId}",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/sms/history",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/sms/stats",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/sms/send/test",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/sms/send/otp",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/sms/send/notification",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/sms/balance",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/sms/calculate-cost",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/sms/api-info",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v2/sms/webhook",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v2/sms/webhook/config",
+      "methods": [
+        "post"
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Authentification utilisateurs et gestion des tokens JWT"
+    },
+    {
+      "name": "Database Management",
+      "description": "Wrapper pour les opérations Appwrite (collections, documents, utilisateurs)"
+    },
+    {
+      "name": "Collection Management",
+      "description": "Gestion des collections et initialisation des structures de données"
+    },
+    {
+      "name": "Payment Processing",
+      "description": "Intégration Spaark Pay - Paiements mobiles (MTN Money, Airtel Money)"
+    },
+    {
+      "name": "SMS Notifications",
+      "description": "Envoi de SMS et notifications via API SMS"
+    },
+    {
+      "name": "Email Services",
+      "description": "MailerSend (marketing) et SMTP (notifications système)"
+    },
+    {
+      "name": "User Management",
+      "description": "Gestion des utilisateurs (visiteurs, clients, professionnels, admins)"
+    },
+    {
+      "name": "Webhooks",
+      "description": "Endpoints pour webhooks entrants (Spark Pay, partenaires transport)"
+    },
+    {
+      "name": "Analytics",
+      "description": "Métriques, rapports et données analytiques de la plateforme"
+    }
+  ],
+  "securitySchemes": [
+    {
+      "name": "bearerAuth",
+      "type": "http",
+      "description": "JWT token obtenu depuis /v3/auth/login"
+    },
+    {
+      "name": "apiKeyAuth",
+      "type": "apiKey",
+      "description": "Clé API pour l'authentification service-à-service"
+    },
+    {
+      "name": "basicAuth",
+      "type": "http",
+      "description": "Authentification basique pour les endpoints admin"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://api.fournisseur.cg",
+      "description": "Production - API officielle"
+    },
+    {
+      "url": "https://staging.api.fournisseur.cg",
+      "description": "Staging - Tests et validation"
+    },
+    {
+      "url": "https://localhost:3333",
+      "description": "Développement local"
+    }
+  ]
+}

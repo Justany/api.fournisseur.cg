@@ -1,0 +1,245 @@
+# Configuration Scalar Galaxy pour API Fournisseur CG
+# Basé sur la configuration Swagger existante
+
+# Informations de base de l'API
+info:
+  title: API Fournisseur CG - Orchestrateur Logistique
+  version: 3.0.0
+  description: |
+    API REST centrale servant de wrapper et orchestrateur pour la plateforme logistique Fournisseur Congo.
+    Intègre Appwrite (backend), MailerSend (emails), SMTP (notifications) et Spark Pay (paiements mobiles).
+  contact:
+    name: Équipe Technique Fournisseur CG
+    email: dev@fournisseur.cg
+    url: https://fournisseur.cg
+  license:
+    name: Propriétaire - Fournisseur CG
+    url: https://fournisseur.cg/license
+  termsOfService: https://fournisseur.cg/terms
+
+# Configuration des serveurs
+servers:
+  - url: https://api.fournisseur.cg
+    description: Production - API officielle
+  - url: https://staging.api.fournisseur.cg
+    description: Staging - Tests et validation
+  - url: https://localhost:3333
+    description: Développement local
+
+# Schémas de sécurité
+securitySchemes:
+  bearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
+    description: JWT token obtenu depuis /v3/auth/login
+  apiKeyAuth:
+    type: apiKey
+    in: header
+    name: X-API-Key
+    description: Clé API pour l'authentification service-à-service
+  basicAuth:
+    type: http
+    scheme: basic
+    description: Authentification basique pour les endpoints admin
+
+# Sécurité globale
+security:
+  - bearerAuth: []
+  - apiKeyAuth: []
+  - basicAuth: []
+
+# Configuration des tags/groupes d'endpoints
+tags:
+  - name: Authentication
+    description: Authentification utilisateurs et gestion des tokens JWT
+  - name: Database Management
+    description: Wrapper pour les opérations Appwrite (collections, documents, utilisateurs)
+  - name: Collection Management
+    description: Gestion des collections et initialisation des structures de données
+  - name: Payment Processing
+    description: Intégration Spaark Pay - Paiements mobiles (MTN Money, Airtel Money)
+  - name: SMS Notifications
+    description: Envoi de SMS et notifications via API SMS
+  - name: Email Services
+    description: MailerSend (marketing) et SMTP (notifications système)
+  - name: User Management
+    description: Gestion des utilisateurs (visiteurs, clients, professionnels, admins)
+  - name: Webhooks
+    description: Endpoints pour webhooks entrants (Spark Pay, partenaires transport)
+  - name: Analytics
+    description: Métriques, rapports et données analytiques de la plateforme
+
+# Paramètres communs
+components:
+  parameters:
+    sortBy:
+      in: query
+      name: sortBy
+      schema:
+        type: string
+        example: createdAt
+      description: Field to sort by
+    sortType:
+      in: query
+      name: sortType
+      schema:
+        type: string
+        enum: [ASC, DESC]
+        example: DESC
+      description: Sort direction
+    page:
+      in: query
+      name: page
+      schema:
+        type: integer
+        minimum: 1
+        example: 1
+      description: Page number
+    limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        example: 20
+      description: Items per page
+
+# Headers de réponse communs
+  responses:
+    PaginatedResponse:
+      description: Réponse paginée avec métadonnées
+      headers:
+        X-Total-Pages:
+          description: Total amount of pages
+          schema:
+            type: integer
+            example: 5
+        X-Total:
+          description: Total amount of results
+          schema:
+            type: integer
+            example: 100
+        X-Per-Page:
+          description: Results per page
+          schema:
+            type: integer
+            example: 20
+        X-Current-Page:
+          description: Current page number
+          schema:
+            type: integer
+            example: 1
+        X-Request-ID:
+          description: Unique request identifier for tracking
+          schema:
+            type: string
+            example: req_123456789
+        X-API-Version:
+          description: API version being used
+          schema:
+            type: string
+            example: v3
+
+# Configuration Scalar Galaxy spécifique
+x-scalar:
+  # Configuration de l'interface utilisateur
+  ui:
+    # Thème et personnalisation
+    theme:
+      primaryColor: "#2563eb"
+      secondaryColor: "#64748b"
+      backgroundColor: "#ffffff"
+      textColor: "#1f2937"
+
+    # Configuration de la navigation
+    navigation:
+      showServers: true
+      showSecurity: true
+      showExamples: true
+      showResponses: true
+
+    # Configuration des exemples
+    examples:
+      showRequestExamples: true
+      showResponseExamples: true
+      defaultLanguage: "curl"
+
+    # Configuration de la documentation
+    documentation:
+      showDescription: true
+      showContact: true
+      showLicense: true
+      showTermsOfService: true
+
+  # Configuration des fonctionnalités avancées
+  features:
+    # Authentification interactive
+    auth:
+      enabled: true
+      persistAuthorization: true
+      showSecuritySchemes: true
+
+    # Tests d'API
+    testing:
+      enabled: true
+      allowCustomHeaders: true
+      allowCustomBody: true
+
+    # Documentation interactive
+    docs:
+      enabled: true
+      showCodeSamples: true
+      showSchemaExamples: true
+
+    # Analytics et monitoring
+    analytics:
+      enabled: true
+      trackUsage: true
+      trackErrors: true
+
+  # Configuration des webhooks
+  webhooks:
+    enabled: true
+    allowCustomWebhooks: true
+    defaultTimeout: 30000
+
+  # Configuration des exemples de code
+  codeSamples:
+    languages:
+      - curl
+      - javascript
+      - python
+      - php
+      - java
+      - csharp
+    defaultLanguage: curl
+    showLineNumbers: true
+    showCopyButton: true
+
+  # Configuration des réponses
+  responses:
+    showSchema: true
+    showExamples: true
+    showHeaders: true
+    showStatusCodes: true
+
+  # Configuration de la recherche
+  search:
+    enabled: true
+    searchInDescriptions: true
+    searchInExamples: true
+    searchInSchemas: true
+
+  # Configuration des métadonnées
+  metadata:
+    showVersion: true
+    showLastModified: true
+    showGeneratedBy: true
+    generatedBy: "API Fournisseur CG - Scalar Galaxy"
+
+# Configuration des chemins (sera généré automatiquement)
+paths:
+  # Les chemins seront ajoutés automatiquement par Scalar Galaxy
+  # basés sur vos contrôleurs et routes AdonisJS
