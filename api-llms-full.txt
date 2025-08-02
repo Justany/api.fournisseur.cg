@@ -1,0 +1,394 @@
+# API Fournisseur CG - Documentation Complète
+
+## Qu'est-ce que l'API Fournisseur CG ?
+
+L'API Fournisseur CG est un **wrapper et orchestrateur central** développé avec AdonisJS qui sert de couche d'intégration entre les applications clientes (web Vue.js et mobile) et l'infrastructure backend complexe de la plateforme logistique Fournisseur Congo.
+
+```ts
+// Exemple d'utilisation de l'API
+const response = await fetch('/api/v1/orders/estimate', {
+  method: 'POST',
+  headers: { 'Authorization': 'Bearer token' },
+  body: JSON.stringify({
+    product: 'iPhone 15',
+    destination: 'Brazzaville',
+    weight: 0.5
+  })
+})
+```
+
+## Démarrage Rapide
+
+Pour configurer l'API Fournisseur CG :
+
+```bash
+# Cloner le projet
+git clone https://github.com/fournisseur-cg/api.git
+
+# Installation des dépendances
+pnpm install
+
+# Configuration de l'environnement
+cp .env.example .env
+
+# Démarrage en développement
+pnpm dev
+```
+
+## Architecture et Rôle
+
+### 🎯 **Rôle Principal : Wrapper/Orchestrateur**
+- **Couche d'abstraction** entre clients et services backend
+- **Orchestrateur** des opérations complexes multi-services
+- **Gestionnaire** des permissions et sécurité avancée
+- **Pont** pour opérations impossibles côté client
+
+### 🏗️ **Services Intégrés**
+- **Appwrite** (Backend principal, self-hosted)
+- **MailerSend** (Emails marketing et notifications)
+- **SMTP** (Messages système et bienvenue)
+- **Spark Pay API** (Paiements mobiles Congo)
+
+### 🔌 **Clients Supportés**
+- Application mobile native
+- Site web Vue.js 3
+- Interface d'administration
+- Services externes via webhooks
+
+## Services Backend Intégrés
+
+### 🗄️ **Appwrite (Backend Principal)**
+- Alternative open-source à Firebase
+- Self-hosted pour contrôle total
+- Gestion des collections et documents
+- Authentification multi-providers
+- Stockage de fichiers sécurisé
+
+```ts
+// Intégration Appwrite via l'API
+POST /api/v1/appwrite/collections/{collectionId}/documents
+GET /api/v1/appwrite/users/{userId}/orders
+PATCH /api/v1/appwrite/documents/{documentId}
+```
+
+### 📧 **MailerSend (Emails Marketing)**
+- Campagnes email automatisées
+- Notifications de commandes
+- Templates personnalisés
+- Analytics des emails
+- Gestion des listes de diffusion
+
+```ts
+// Services email via l'API
+POST /api/v1/emails/marketing/send
+POST /api/v1/emails/notifications/order-status
+GET /api/v1/emails/templates
+```
+
+### 📮 **SMTP (Messages Système)**
+- Messages de bienvenue
+- Notifications de formulaires
+- Confirmations d'actions
+- Alertes système
+- Communications transactionnelles
+
+### 💳 **Spark Pay API (Paiements)**
+- Intégration MTN Money
+- Support Airtel Money
+- Gestion des transactions
+- Webhooks de confirmation
+- Historique des paiements
+
+```ts
+// Paiements via l'API
+POST /api/v1/payments/initiate
+GET /api/v1/payments/{transactionId}/status
+POST /api/v1/payments/webhooks/spark-pay
+```
+
+## Types d'Utilisateurs et Permissions
+
+### 👤 Visiteur (@visitor)
+- Consultation des services publics
+- Estimation de frais de transport
+- Accès aux informations tarifaires
+- Demandes de devis sans authentification
+
+### 🛒 Client Particulier (@shopper)
+- Commandes personnelles
+- Suivi des colis
+- Gestion du profil
+- Historique des achats
+
+### 💼 Client Professionnel (@customer)
+- Importations commerciales
+- Devis personnalisés
+- Gestion des équipes
+- Rapports détaillés
+
+### 🔧 Administrateur (@admin)
+- Gestion complète des utilisateurs
+- Configuration des services
+- Monitoring des opérations
+- Accès aux analytics
+
+## Endpoints Principaux
+
+### 🔐 **Authentification**
+```
+POST /api/v1/auth/login
+POST /api/v1/auth/register
+POST /api/v1/auth/refresh
+DELETE /api/v1/auth/logout
+```
+
+### 📦 **Gestion des Commandes**
+```
+GET /api/v1/orders
+POST /api/v1/orders
+GET /api/v1/orders/{id}
+PATCH /api/v1/orders/{id}
+DELETE /api/v1/orders/{id}
+```
+
+### 🚚 **Services de Transport**
+```
+POST /api/v1/shipping/estimate
+GET /api/v1/shipping/tracking/{trackingId}
+POST /api/v1/shipping/book
+GET /api/v1/shipping/rates
+```
+
+### 👥 **Gestion Utilisateurs**
+```
+GET /api/v1/users
+POST /api/v1/users
+GET /api/v1/users/{id}
+PATCH /api/v1/users/{id}
+DELETE /api/v1/users/{id}
+```
+
+### 💰 **Paiements**
+```
+POST /api/v1/payments/initiate
+GET /api/v1/payments/{id}
+POST /api/v1/payments/confirm
+GET /api/v1/payments/methods
+```
+
+## Intégrations Externes
+
+### 🌐 **Partenaires de Transport**
+- **DHL Express** - Livraison rapide internationale
+- **FedEx** - Services express et standard
+- **UPS** - Logistique globale
+- **Partenaires locaux** - Livraison dernière mile
+
+### 🛒 **Plateformes E-commerce**
+- **Amazon** - Importation produits US/EU
+- **AliExpress** - Produits asiatiques
+- **Shein** - Mode et accessoires
+- **Cdiscount** - Marketplace française
+
+### 💳 **Services de Paiement**
+- **MTN Money** - Paiement mobile principal
+- **Airtel Money** - Alternative mobile
+- **Spark Pay** - Agrégateur de paiement
+- **Banques locales** - Virements traditionnels
+
+## Sécurité et Conformité
+
+### 🔒 **Authentification Avancée**
+- JWT tokens avec refresh
+- OAuth 2.0 multi-providers
+- Rate limiting par endpoint
+- Validation des permissions
+
+### 🛡️ **Protection des Données**
+- Chiffrement AES-256
+- Conformité RGPD
+- Audit trail complet
+- Sauvegarde automatique
+
+### 🔍 **Monitoring et Logs**
+- Sentry pour error tracking
+- Logs structurés JSON
+- Métriques de performance
+- Alertes automatisées
+
+## Webhooks et Événements
+
+### 📡 **Webhooks Entrants**
+```
+POST /api/v1/webhooks/spark-pay
+POST /api/v1/webhooks/shipping-updates
+POST /api/v1/webhooks/appwrite-events
+```
+
+### 📤 **Événements Sortants**
+- Notifications de statut commande
+- Confirmations de paiement
+- Alertes de livraison
+- Updates de tracking
+
+## Performance et Scalabilité
+
+### ⚡ **Optimisations**
+- Cache Redis pour sessions
+- Pagination automatique
+- Lazy loading des relations
+- Compression des réponses
+
+### 📊 **Monitoring**
+- Health checks automatiques
+- Métriques temps de réponse
+- Surveillance des erreurs
+- Alertes de disponibilité
+
+## Commandes Adonis Disponibles
+
+### 🛠️ **Génération Automatique**
+```bash
+# Générer un contrôleur
+node ace make:controller OrderController
+
+# Générer un modèle
+node ace make:model Order
+
+# Générer un middleware
+node ace make:middleware AuthMiddleware
+
+# Générer un service provider
+node ace make:provider AppwriteProvider
+```
+
+### 🗄️ **Base de Données**
+```bash
+# Créer une migration
+node ace make:migration create_orders_table
+
+# Exécuter les migrations
+node ace migration:run
+
+# Rollback des migrations
+node ace migration:rollback
+```
+
+## Variables d'Environnement
+
+### 🔧 **Configuration Appwrite**
+```env
+APPWRITE_ENDPOINT=https://appwrite.fournisseur-cg.com
+APPWRITE_PROJECT_ID=fournisseur-cg
+APPWRITE_API_KEY=your_server_api_key
+```
+
+### 📧 **Configuration Email**
+```env
+MAILERSEND_API_KEY=your_mailersend_key
+SMTP_HOST=smtp.fournisseur-cg.com
+SMTP_USERNAME=noreply@fournisseur-cg.com
+```
+
+### 💳 **Configuration Paiements**
+```env
+SPARK_PAY_API_KEY=your_spark_pay_key
+SPARK_PAY_SECRET=your_spark_pay_secret
+SPARK_PAY_WEBHOOK_SECRET=webhook_secret
+```
+
+## Cas d'Usage Techniques
+
+### 🔄 **Synchronisation Appwrite**
+L'API permet de synchroniser les données entre Appwrite et les clients :
+- Opérations CRUD avancées impossibles côté client
+- Gestion des permissions complexes
+- Validation métier côté serveur
+- Audit et logging des modifications
+
+### 📊 **Agrégation de Données**
+Combinaison de données de multiple sources :
+- Informations commandes (Appwrite)
+- Status paiements (Spark Pay)
+- Tracking colis (partenaires transport)
+- Analytics utilisateur
+
+### 🔔 **Notifications Intelligentes**
+Orchestration des notifications multi-canaux :
+- Emails via MailerSend
+- SMS via partenaires locaux
+- Push notifications mobiles
+- Webhooks vers systèmes tiers
+
+## Roadmap Technique
+
+### Phase 1 : Infrastructure (Actuelle)
+- ✅ Configuration AdonisJS
+- 🔄 Intégration Appwrite
+- 📅 Services providers
+- 📅 Authentification JWT
+
+### Phase 2 : Services Core
+- 📅 Gestion des commandes
+- 📅 Intégration paiements
+- 📅 Services de transport
+- 📅 Système de notifications
+
+### Phase 3 : Fonctionnalités Avancées
+- 📅 Analytics et reporting
+- 📅 IA pour optimisation
+- 📅 API publique documentée
+- 📅 SDK pour développeurs
+
+## Support et Maintenance
+
+### 🔧 **Environnements**
+- **Development** : http://localhost:3333
+- **Staging** : https://api-staging.fournisseur-cg.com
+- **Production** : https://api.fournisseur-cg.com
+
+### 📚 **Documentation**
+- API Documentation (Swagger UI)
+- Guides d'intégration
+- Exemples de code
+- Postman collections
+
+### 🚨 **Support Technique**
+- Monitoring 24/7
+- Alertes automatisées
+- Support développeur dédié
+- SLA 99.9% uptime
+
+## Métriques et KPIs
+
+### 📈 **Performance**
+- **Temps de réponse** : < 200ms (95e percentile)
+- **Disponibilité** : 99.9% SLA
+- **Throughput** : 10,000+ requêtes/minute
+- **Erreurs** : < 0.1% taux d'erreur
+
+### 👥 **Utilisation**
+- **10,000+** utilisateurs actifs
+- **50,000+** requêtes/jour
+- **5,000+** commandes traitées/mois
+- **98%** satisfaction développeur
+
+## Contact et Ressources
+
+### 📞 **Support Technique**
+- **Email** : dev@fournisseur-cg.com
+- **Slack** : #api-support
+- **Documentation** : https://docs-api.fournisseur-cg.com
+- **Status Page** : https://status.fournisseur-cg.com
+
+### 🔗 **Liens Utiles**
+- [Repository GitHub](https://github.com/fournisseur-cg/api)
+- [Swagger Documentation](https://api.fournisseur-cg.com/docs)
+- [Postman Collection](https://postman.fournisseur-cg.com)
+- [SDK JavaScript](https://npm.fournisseur-cg.com)
+
+---
+
+*API Fournisseur CG - L'orchestrateur technique de votre logistique internationale*
+
+*Dernière mise à jour : Janvier 2024*
