@@ -7,7 +7,7 @@ const swaggerConfig = {
   version: '3.0.0',
   description:
     "API REST centrale servant de wrapper et orchestrateur pour la plateforme logistique Fournisseur Congo. Intègre Appwrite (backend), MailerSend (emails), SMTP (notifications) et Spark Pay (paiements mobiles). Permet aux applications web Vue.js et mobiles d'accéder aux services complexes de transport international, gestion des commandes, et paiements mobiles (MTN Money, Airtel Money) depuis la République du Congo.",
-  tagIndex: 2,
+  tagIndex: 4,
   productionEnv: 'production',
   info: {
     title: 'API Fournisseur CG - Orchestrateur Logistique',
@@ -16,14 +16,14 @@ const swaggerConfig = {
       "API REST centrale servant de wrapper pour l'écosystème Fournisseur Congo. Orchestrateur entre applications clientes (web Vue.js, mobile) et services backend (Appwrite, MailerSend, SMTP, Spark Pay). Gère l'authentification, les commandes internationales, les paiements mobiles congolais, le suivi logistique et les notifications multi-canaux.",
     contact: {
       name: 'Équipe Technique Fournisseur CG',
-      email: 'dev@fournisseur-cg.com',
-      url: 'https://fournisseur-cg.com',
+      email: 'dev@fournisseur.cg',
+      url: 'https://fournisseur.cg',
     },
     license: {
       name: 'Propriétaire - Fournisseur CG',
-      url: 'https://fournisseur-cg.com/license',
+      url: 'https://fournisseur.cg/license',
     },
-    termsOfService: 'https://fournisseur-cg.com/terms',
+    termsOfService: 'https://fournisseur.cg/terms',
   },
   snakeCase: true,
   debug: true,
@@ -35,17 +35,17 @@ const swaggerConfig = {
       description: 'Authentification utilisateurs et gestion des tokens JWT',
     },
     {
-      name: 'Appwrite Integration',
+      name: 'Appwrite',
       description: 'Wrapper pour les opérations Appwrite (collections, documents, utilisateurs)',
     },
     {
       name: 'Orders Management',
       description: 'Gestion des commandes internationales et suivi logistique',
     },
-               {
-             name: 'Payments',
-             description: 'Intégration Spaark Pay - Paiements mobiles (MTN Money, Airtel Money)',
-           },
+    {
+      name: 'Payments',
+      description: 'Intégration Spaark Pay - Paiements mobiles (MTN Money, Airtel Money)',
+    },
     {
       name: 'Shipping Services',
       description: 'Services de transport (DHL, FedEx, UPS) et estimation des coûts',
@@ -79,6 +79,21 @@ const swaggerConfig = {
           in: 'query',
           name: 'sortType',
           schema: { type: 'string', example: 'ASC' },
+        },
+      ],
+      servers: [
+        {
+          url: 'https://api.fournisseur.cg',
+          description: 'Production',
+        },
+        {
+          url: 'https://localhost:{port}',
+          description: 'Development sandboxes',
+          variables: {
+            port: {
+              default: '3333',
+            },
+          },
         },
       ],
     },

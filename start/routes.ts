@@ -75,18 +75,18 @@ router
     })
 
     // =====================================
-    // 1. AUTHENTICATION
+    // 1. AUTHENTIFICATION
     // =====================================
     router
       .group(() => {
         const AuthController = () => import('#controllers/auth_controller')
 
-        // Public authentication routes
+        // Routes publiques d'authentification
         router.post('/register', [AuthController, 'register'])
         router.post('/login', [AuthController, 'login'])
-        router.post('/get-token', [AuthController, 'getToken']) // Temporary route to get token
+        router.post('/get-token', [AuthController, 'getToken']) // Route temporaire pour obtenir le token
 
-        // Protected authentication routes
+        // Routes protégées d'authentification
         router
           .group(() => {
             router.post('/logout', [AuthController, 'logout'])
@@ -103,7 +103,7 @@ router
       .prefix('/auth')
 
     // =====================================
-    // 2. DATABASE MANAGEMENT
+    // 2. APPRITE (Backend Principal)
     // =====================================
     router
       .group(() => {
@@ -112,14 +112,14 @@ router
         // Health check Appwrite
         router.get('/health', [AppwritesController, 'health'])
 
-        // Database management
+        // Gestion des bases de données
         router.get('/databases', [AppwritesController, 'listDatabases'])
 
-        // Collection management
+        // Gestion des collections
         router.get('/databases/:databaseId/collections', [AppwritesController, 'listCollections'])
         router.post('/databases/:databaseId/collections', [AppwritesController, 'createCollection'])
 
-        // Document management
+        // Gestion des documents
         router.get('/databases/:databaseId/collections/:collectionId/documents', [
           AppwritesController,
           'listDocuments',
@@ -141,7 +141,7 @@ router
           'deleteDocument',
         ])
 
-        // Attribute management
+        // Gestion des attributs
         router.post('/databases/:databaseId/collections/:collectionId/attributes/string', [
           AppwritesController,
           'createStringAttribute',
@@ -162,44 +162,44 @@ router
       .prefix('/appwrite')
 
     // =====================================
-    // 3. COLLECTION MANAGEMENT
+    // 3. COLLECTIONS (Gestion des Collections)
     // =====================================
     router
       .group(() => {
         const CollectionManagersController = () =>
           import('#controllers/collection_managers_controller')
 
-        // Complete collection initialization
+        // Initialisation complète des collections
         router.post('/initialize', [CollectionManagersController, 'initializeAllCollections'])
 
-        // Execute specific actions
+        // Exécution d'actions spécifiques
         router.post('/actions', [CollectionManagersController, 'executeCollectionActions'])
 
-        // Collection status
+        // Status des collections
         router.get('/status', [CollectionManagersController, 'getCollectionStatus'])
 
-        // Collection configuration
+        // Configuration des collections
         router.get('/configuration', [CollectionManagersController, 'getCollectionConfiguration'])
       })
       .prefix('/collections')
 
     // =====================================
-    // 4. PAYMENT PROCESSING
+    // 4. SPAARK PAY (Paiements Mobiles)
     // =====================================
     router
       .group(() => {
         const SpaarkPaysController = () => import('#controllers/spaark_pays_controller')
 
-        // Health check Spaark Pay (no authentication)
+        // Health check Spaark Pay (sans authentification)
         router.get('/health', [SpaarkPaysController, 'health'])
 
-        // Simple test (no authentication)
+        // Test simple (sans authentification)
         router.get('/test', [SpaarkPaysController, 'test'])
 
-        // Protected routes with authentication
+        // Routes protégées avec authentification
         router
           .group(() => {
-            // Payments
+            // Paiements
             router.post('/initiate', [SpaarkPaysController, 'initiatePayment'])
             router.get('/status/:paymentId', [SpaarkPaysController, 'getPaymentStatus'])
             router.post('/verify', [SpaarkPaysController, 'verifyPayment'])
@@ -207,13 +207,13 @@ router
             router.post('/webhook', [SpaarkPaysController, 'processWebhook'])
             router.get('/transactions', [SpaarkPaysController, 'getTransactionHistory'])
 
-            // Domains
+            // Domaines
             router.get('/domains', [SpaarkPaysController, 'getDomains'])
             router.post('/domains', [SpaarkPaysController, 'addDomain'])
             router.patch('/domains/:domainId/validate', [SpaarkPaysController, 'validateDomain'])
             router.get('/domains/stats', [SpaarkPaysController, 'getDomainStats'])
 
-            // Users
+            // Utilisateurs
             router.post('/api-key/:type', [SpaarkPaysController, 'generateApiKey'])
           })
           .middleware([
@@ -225,7 +225,7 @@ router
       })
       .prefix('/spaark-pay')
       .middleware(async (ctx, next) => {
-        // Security headers for all Spaark Pay routes
+        // Headers de sécurité pour toutes les routes Spaark Pay
         ctx.response.header('X-Content-Type-Options', 'nosniff')
         ctx.response.header('X-Frame-Options', 'DENY')
         ctx.response.header('X-XSS-Protection', '1; mode=block')
@@ -236,28 +236,28 @@ router
       })
 
     // =====================================
-    // 5. SMS NOTIFICATIONS
+    // 5. SMS (Notifications SMS)
     // =====================================
     router
       .group(() => {
         const SmsController = () => import('#controllers/sms_controller')
 
-        // Health check SMS (no authentication)
+        // Health check SMS (sans authentification)
         router.get('/health', [SmsController, 'health'])
 
-        // Simple test (no authentication)
+        // Test simple (sans authentification)
         router.get('/test', [SmsController, 'test'])
 
-        // Protected routes with authentication
+        // Routes protégées avec authentification
         router
           .group(() => {
-            // SMS sending and management
+            // Envoi et gestion des SMS
             router.post('/send', [SmsController, 'sendSms'])
             router.get('/status/:messageId', [SmsController, 'getSmsStatus'])
             router.get('/history', [SmsController, 'getSmsHistory'])
             router.get('/stats', [SmsController, 'getSmsStats'])
 
-            // New SMS features
+            // Nouvelles fonctionnalités SMS
             router.post('/send/test', [SmsController, 'sendTestSms'])
             router.post('/send/otp', [SmsController, 'sendOtpSms'])
             router.post('/send/notification', [SmsController, 'sendNotificationSms'])
@@ -278,7 +278,7 @@ router
       })
       .prefix('/sms')
       .middleware(async (ctx, next) => {
-        // Security headers for all SMS routes
+        // Headers de sécurité pour toutes les routes SMS
         ctx.response.header('X-Content-Type-Options', 'nosniff')
         ctx.response.header('X-Frame-Options', 'DENY')
         ctx.response.header('X-XSS-Protection', '1; mode=block')

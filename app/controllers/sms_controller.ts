@@ -9,8 +9,8 @@ export default class SmsController {
 
   /**
    * @health
-   * @summary Health check de la connexion SMS
-   * @description Vérifier l'état de la connexion avec l'API SMS
+   * @summary SMS connection health check
+   * @description Check SMS API connection status
    * @tag SMS
    * @responseBody 200 - {"status": "healthy", "message": "Connexion à SMS API établie"}
    * @responseBody 500 - {"status": "unhealthy", "message": "Erreur de connexion"}
@@ -29,8 +29,8 @@ export default class SmsController {
 
   /**
    * @test
-   * @summary Test simple de l'intégration SMS
-   * @description Test basique pour vérifier que l'intégration fonctionne
+   * @summary Test SMS integration
+   * @description Basic test to verify integration works
    * @tag SMS
    * @responseBody 200 - {"status": "ok", "message": "Intégration SMS fonctionnelle", "config": {...}}
    */
@@ -61,8 +61,8 @@ export default class SmsController {
 
   /**
    * @sendSms
-   * @summary Envoyer un SMS
-   * @description Envoie un SMS à un numéro de téléphone
+   * @summary Send SMS
+   * @description Send SMS to phone number
    * @tag SMS
    * @requestBody {"to": "053518256", "message": "Votre code de vérification est 123456", "from": "Fournisseur", "reference": "VERIFY_001"}
    * @responseBody 200 - {"messageId": "msg_123", "status": "sent", "to": "053518256", "cost": 25}
@@ -123,8 +123,8 @@ export default class SmsController {
 
   /**
    * @getSmsStatus
-   * @summary Obtenir le statut d'un SMS
-   * @description Récupère le statut d'un SMS par son ID
+   * @summary Get SMS status
+   * @description Get SMS status by message ID
    * @tag SMS
    * @paramPath messageId - ID du message SMS
    * @responseBody 200 - {"messageId": "msg_123", "status": "delivered", "to": "053518256", "deliveredAt": "2025-08-02T15:30:00Z"}
@@ -160,8 +160,8 @@ export default class SmsController {
 
   /**
    * @getSmsHistory
-   * @summary Récupérer l'historique des SMS
-   * @description Récupère l'historique des SMS envoyés
+   * @summary Get SMS history
+   * @description Get SMS sending history
    * @tag SMS
    * @queryParam page - Numéro de page (défaut: 1)
    * @queryParam limit - Nombre d'éléments par page (défaut: 50)
@@ -198,8 +198,8 @@ export default class SmsController {
 
   /**
    * @getSmsStats
-   * @summary Récupérer les statistiques des SMS
-   * @description Récupère les statistiques des SMS envoyés
+   * @summary Get SMS statistics
+   * @description Get SMS sending statistics
    * @tag SMS
    * @queryParam startDate - Date de début (format: YYYY-MM-DD)
    * @queryParam endDate - Date de fin (format: YYYY-MM-DD)
@@ -244,8 +244,8 @@ export default class SmsController {
 
   /**
    * @processWebhook
-   * @summary Traiter un webhook SMS
-   * @description Traite les notifications de statut SMS reçues
+   * @summary Process SMS webhook
+   * @description Process SMS status notifications
    * @tag SMS
    * @requestBody {"messageId": "msg_123", "status": "delivered", "to": "053518256", "timestamp": "2025-08-02T15:30:00Z"}
    * @responseBody 200 - {"received": true, "processed": true}
@@ -294,8 +294,8 @@ export default class SmsController {
 
   /**
    * @configureWebhook
-   * @summary Configurer un webhook SMS
-   * @description Configure un webhook pour recevoir les notifications de statut
+   * @summary Configure SMS webhook
+   * @description Configure webhook for status notifications
    * @tag SMS
    * @requestBody {"url": "https://api.fournisseur.cg/webhook/sms", "events": ["delivered", "failed"], "secret": "webhook_secret"}
    * @responseBody 201 - {"id": "webhook_123", "url": "https://api.fournisseur.cg/webhook/sms", "isActive": true}
@@ -351,8 +351,8 @@ export default class SmsController {
 
   /**
    * @sendTestSms
-   * @summary Envoyer un SMS de test
-   * @description Envoie un SMS de test pour vérifier la connexion
+   * @summary Send test SMS
+   * @description Send test SMS to verify connection
    * @tag SMS
    * @requestBody {"to": "053518256"}
    * @responseBody 200 - {"messageId": "msg_123", "status": "sent", "to": "053518256"}
@@ -397,8 +397,8 @@ export default class SmsController {
 
   /**
    * @sendOtpSms
-   * @summary Envoyer un SMS avec code OTP
-   * @description Envoie un SMS contenant un code de vérification OTP
+   * @summary Send OTP SMS
+   * @description Send SMS with verification code
    * @tag SMS
    * @requestBody {"to": "053518256", "code": "123456", "expiresIn": 5}
    * @responseBody 200 - {"messageId": "msg_123", "status": "sent", "to": "053518256"}
@@ -451,8 +451,8 @@ export default class SmsController {
 
   /**
    * @sendNotificationSms
-   * @summary Envoyer un SMS de notification
-   * @description Envoie un SMS de notification avec titre et message
+   * @summary Send notification SMS
+   * @description Send notification SMS with title and message
    * @tag SMS
    * @requestBody {"to": "053518256", "title": "Commande", "message": "Votre commande a été confirmée"}
    * @responseBody 200 - {"messageId": "msg_123", "status": "sent", "to": "053518256"}
@@ -512,8 +512,8 @@ export default class SmsController {
 
   /**
    * @checkBalance
-   * @summary Vérifier le solde du compte SMS
-   * @description Récupère le solde actuel du compte SMS
+   * @summary Check SMS balance
+   * @description Get current SMS account balance
    * @tag SMS
    * @responseBody 200 - {"balance": 1000, "currency": "XAF"}
    * @responseBody 500 - {"error": "Erreur lors de la vérification", "details": "string"}
@@ -538,8 +538,8 @@ export default class SmsController {
 
   /**
    * @calculateSmsCost
-   * @summary Calculer le coût d'un SMS
-   * @description Calcule le coût d'un SMS basé sur sa longueur
+   * @summary Calculate SMS cost
+   * @description Calculate SMS cost based on message length
    * @tag SMS
    * @requestBody {"message": "Votre code de vérification est 123456"}
    * @responseBody 200 - {"cost": 25, "length": 45, "smsCount": 1}
@@ -581,8 +581,8 @@ export default class SmsController {
 
   /**
    * @getApiInfo
-   * @summary Obtenir les informations de l'API SMS
-   * @description Récupère les informations sur l'API SMS (version, fonctionnalités, limites)
+   * @summary Get SMS API info
+   * @description Get SMS API information (version, features, limits)
    * @tag SMS
    * @responseBody 200 - {"version": "1.0.0", "features": ["sms", "webhook"], "limits": {...}}
    * @responseBody 500 - {"error": "Erreur lors de la récupération", "details": "string"}

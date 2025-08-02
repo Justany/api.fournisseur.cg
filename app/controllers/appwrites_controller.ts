@@ -8,8 +8,8 @@ export default class AppwritesController {
 
   /**
    * @health
-   * @summary Health check de la connexion Appwrite
-   * @description Vérifier l'état de la connexion avec le serveur Appwrite
+   * @summary Appwrite connection health check
+   * @description Check Appwrite server connection status
    * @tag Appwrite
    * @responseBody 200 - {"status": "healthy", "databases": 2, "timestamp": "2024-01-01T00:00:00.000Z"}
    * @responseBody 500 - {"error": "Erreur lors du health check Appwrite", "details": "Connection failed"}
@@ -28,8 +28,8 @@ export default class AppwritesController {
 
   /**
    * @listDatabases
-   * @summary Lister toutes les bases de données Appwrite
-   * @description Récupérer la liste de toutes les bases de données disponibles
+   * @summary List all Appwrite databases
+   * @description Get all available databases
    * @tag Appwrite
    * @responseBody 200 - {"success": true, "data": {"total": 2, "databases": []}}
    * @responseBody 500 - {"error": "Erreur lors de la récupération des bases de données", "details": "string"}
@@ -51,8 +51,8 @@ export default class AppwritesController {
 
   /**
    * @listCollections
-   * @summary Lister les collections d'une base de données
-   * @description Récupérer toutes les collections d'une base de données spécifique
+   * @summary List database collections
+   * @description Get all collections from a specific database
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @responseBody 200 - {"success": true, "data": {"total": 5, "collections": []}}
@@ -77,8 +77,8 @@ export default class AppwritesController {
 
   /**
    * @createCollection
-   * @summary Créer une nouvelle collection
-   * @description Créer une nouvelle collection dans une base de données Appwrite
+   * @summary Create new collection
+   * @description Create a new collection in Appwrite database
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @requestBody {"collectionId": "orders", "name": "Commandes", "permissions": [], "documentSecurity": false}
@@ -117,8 +117,8 @@ export default class AppwritesController {
 
   /**
    * @listDocuments
-   * @summary Lister les documents d'une collection
-   * @description Récupérer tous les documents d'une collection avec filtres optionnels
+   * @summary List collection documents
+   * @description Get all documents from a collection with optional filters
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
@@ -147,8 +147,8 @@ export default class AppwritesController {
 
   /**
    * @createDocument
-   * @summary Créer un nouveau document
-   * @description Créer un nouveau document dans une collection Appwrite
+   * @summary Create new document
+   * @description Create a new document in Appwrite collection
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
@@ -183,8 +183,8 @@ export default class AppwritesController {
 
   /**
    * @getDocument
-   * @summary Obtenir un document spécifique
-   * @description Récupérer un document par son ID avec requêtes optionnelles
+   * @summary Get specific document
+   * @description Get document by ID with optional queries
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
@@ -219,8 +219,8 @@ export default class AppwritesController {
 
   /**
    * @updateDocument
-   * @summary Mettre à jour un document
-   * @description Mettre à jour les données d'un document existant
+   * @summary Update document
+   * @description Update existing document data
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
@@ -256,8 +256,8 @@ export default class AppwritesController {
 
   /**
    * @deleteDocument
-   * @summary Supprimer un document
-   * @description Supprimer définitivement un document d'une collection
+   * @summary Delete document
+   * @description Permanently delete document from collection
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
@@ -285,8 +285,8 @@ export default class AppwritesController {
 
   /**
    * @createStringAttribute
-   * @summary Créer un attribut string
-   * @description Créer un nouvel attribut de type string pour une collection
+   * @summary Create string attribute
+   * @description Create new string attribute for collection
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
@@ -327,8 +327,8 @@ export default class AppwritesController {
 
   /**
    * @createIntegerAttribute
-   * @summary Créer un attribut integer
-   * @description Créer un nouvel attribut de type entier pour une collection
+   * @summary Create integer attribute
+   * @description Create new integer attribute for collection
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
@@ -371,8 +371,8 @@ export default class AppwritesController {
 
   /**
    * @createBooleanAttribute
-   * @summary Créer un attribut boolean
-   * @description Créer un nouvel attribut de type booléen pour une collection
+   * @summary Create boolean attribute
+   * @description Create new boolean attribute for collection
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
@@ -407,8 +407,8 @@ export default class AppwritesController {
 
   /**
    * @createDatetimeAttribute
-   * @summary Créer un attribut datetime
-   * @description Créer un nouvel attribut de type date/heure pour une collection
+   * @summary Create datetime attribute
+   * @description Create new datetime attribute for collection
    * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required

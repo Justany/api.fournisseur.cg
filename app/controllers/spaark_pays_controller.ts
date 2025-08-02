@@ -16,8 +16,8 @@ export default class SpaarkPaysController {
 
   /**
    * @health
-   * @summary Health check de la connexion Spaark Pay
-   * @description Vérifier l'état de la connexion avec l'API Spaark Pay
+   * @summary Spaark Pay connection health check
+   * @description Check Spaark Pay API connection status
    * @tag Payments
    * @responseBody 200 - {"status": "healthy", "message": "Connexion à Spaark Pay API établie"}
    * @responseBody 500 - {"status": "unhealthy", "message": "Erreur de connexion"}
@@ -36,8 +36,8 @@ export default class SpaarkPaysController {
 
   /**
    * @initiatePayment
-   * @summary Initier un paiement mobile money
-   * @description Initie une transaction de paiement mobile money (Airtel Money, MTN Mobile Money)
+   * @summary Initiate mobile money payment
+   * @description Initiate mobile money transaction (Airtel Money, MTN Mobile Money)
    * @tag Payments
    * @requestBody {"phone": "053518256", "amount": 150, "mode": "airtel", "reference": "ORDER_123"}
    * @responseBody 200 - {"status": 200, "message": "Paiement initié avec succès", "paymentId": 28, "token": "28257ddbaf7a11ef86feac1f6be4442c", "composition": "*128*128*1159*PIN#", "transID": "JKUCJDFLIKDGDGD-328"}
@@ -89,8 +89,8 @@ export default class SpaarkPaysController {
 
   /**
    * @getPaymentStatus
-   * @summary Obtenir le statut d'un paiement
-   * @description Récupère le statut d'un paiement avec vérification automatique si nécessaire
+   * @summary Get payment status
+   * @description Get payment status with automatic verification if needed
    * @tag Payments
    * @paramPath paymentId - ID du paiement
    * @responseBody 200 - {"status": "completed", "amount": 150, "phone": "053518256", "mode": "airtel", "reference": "PAY_REF_123", "externalStatus": "SUCCESSFUL", "autoVerified": false}
@@ -126,8 +126,8 @@ export default class SpaarkPaysController {
 
   /**
    * @verifyPayment
-   * @summary Vérifier un paiement par token
-   * @description Effectue une vérification externe forcée d'un paiement par son token
+   * @summary Verify payment by token
+   * @description Force external verification of payment by token
    * @tag Payments
    * @requestBody {"token": "414754bb67b811f08f9bac1f6be4442c", "mode": "airtel"}
    * @responseBody 200 - {"paymentId": 123, "status": "completed", "externalStatus": "SUCCESSFUL", "verifiedExternally": true}
@@ -170,8 +170,8 @@ export default class SpaarkPaysController {
 
   /**
    * @verifyPaymentById
-   * @summary Vérifier un paiement par ID
-   * @description Effectue une vérification externe forcée d'un paiement par son ID
+   * @summary Verify payment by ID
+   * @description Force external verification of payment by ID
    * @tag Payments
    * @requestBody {"paymentId": 123}
    * @responseBody 200 - {"paymentId": 123, "status": "completed", "externalStatus": "SUCCESSFUL", "verifiedExternally": true}
@@ -207,8 +207,8 @@ export default class SpaarkPaysController {
 
   /**
    * @processWebhook
-   * @summary Traiter un webhook de paiement
-   * @description Traite les notifications de paiement reçues de Spaark Pay
+   * @summary Process payment webhook
+   * @description Process payment notifications from Spaark Pay
    * @tag Payments
    * @requestBody {"reference": "PAY_REF_123", "status": "COMPLETED", "transactionId": "TXN_123456"}
    * @responseBody 200 - {"received": true}
@@ -250,8 +250,8 @@ export default class SpaarkPaysController {
 
   /**
    * @getTransactionHistory
-   * @summary Récupérer l'historique des transactions
-   * @description Récupère l'historique complet des transactions de l'utilisateur
+   * @summary Get transaction history
+   * @description Get complete user transaction history
    * @tag Payments
    * @responseBody 200 - {"transactions": [{"id": 1, "amount": 150, "phone": "053518256", "mode": "airtel", "status": "COMPLETED"}]}
    * @responseBody 500 - {"error": "Erreur lors de la récupération", "details": "string"}
@@ -279,8 +279,8 @@ export default class SpaarkPaysController {
 
   /**
    * @getDomains
-   * @summary Récupérer la liste des domaines
-   * @description Récupère la liste des domaines whitelistés
+   * @summary Get domains list
+   * @description Get whitelisted domains list
    * @tag Domains
    * @responseBody 200 - {"domains": [{"id": 1, "domain": "example.com", "status": "APPROVED"}]}
    * @responseBody 500 - {"error": "Erreur lors de la récupération", "details": "string"}
@@ -308,8 +308,8 @@ export default class SpaarkPaysController {
 
   /**
    * @addDomain
-   * @summary Ajouter un nouveau domaine
-   * @description Ajoute un nouveau domaine en attente de validation
+   * @summary Add new domain
+   * @description Add new domain pending validation
    * @tag Domains
    * @requestBody {"domain": "example.com"}
    * @responseBody 201 - {"domain": {"id": 1, "domain": "example.com", "status": "PENDING"}}
@@ -346,8 +346,8 @@ export default class SpaarkPaysController {
 
   /**
    * @validateDomain
-   * @summary Valider ou rejeter un domaine
-   * @description Valide ou rejette un domaine (ADMIN uniquement)
+   * @summary Validate or reject domain
+   * @description Validate or reject domain (ADMIN only)
    * @tag Domains
    * @paramPath domainId - ID du domaine
    * @requestBody {"status": "APPROVED", "reason": "Domaine valide"}
@@ -406,8 +406,8 @@ export default class SpaarkPaysController {
 
   /**
    * @getDomainStats
-   * @summary Récupérer les statistiques des domaines
-   * @description Récupère les statistiques des domaines whitelistés
+   * @summary Get domain statistics
+   * @description Get whitelisted domains statistics
    * @tag Domains
    * @responseBody 200 - {"total": 10, "active": 8, "pending": 1, "rejected": 1}
    * @responseBody 500 - {"error": "Erreur lors de la récupération", "details": "string"}
@@ -432,8 +432,8 @@ export default class SpaarkPaysController {
 
   /**
    * @generateApiKey
-   * @summary Générer une nouvelle clé API
-   * @description Génère une nouvelle clé API (test ou production)
+   * @summary Generate new API key
+   * @description Generate new API key (test or production)
    * @tag Users
    * @paramPath type - Type de clé (test ou live)
    * @responseBody 200 - {"testApiKey": "tk_test_..."} ou {"liveApiKey": "tk_live_..."}
@@ -469,8 +469,8 @@ export default class SpaarkPaysController {
 
   /**
    * @test
-   * @summary Test simple de l'intégration
-   * @description Test basique pour vérifier que l'intégration fonctionne
+   * @summary Test integration
+   * @description Basic test to verify integration works
    * @tag Payments
    * @responseBody 200 - {"status": "ok", "message": "Intégration Spaark Pay fonctionnelle", "config": {...}}
    */
