@@ -1,0 +1,8 @@
+// Configuration Spaark Pay
+  this.config = {
+      baseUrl: process.env.SPAARK_PAY_BASE_URL || 'https://spaark-payapi.vercel.app/api',
+      testApiKey: process.env.SPAARK_PAY_TEST_API_KEY || 'tk_test_E7rQ4wTKuOtMBylBC-vfjIxJJGRwSCGk',
+      liveApiKey: process.env.SPAARK_PAY_LIVE_API_KEY || 'tk_live_7Grd6sQR8H7wBJK-_vCJyxIMdYMDQ3Pt',
+      token: process.env.SPAARK_PAY_TOKEN || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzUzMjY5MzM2LCJleHAiOjE3Njg4MjEzMzZ9.rTTRB-2Ge_e1ELkukHfVPW-xUJ9k9Te_wqcQRs07rzw',
+      environment: (process.env.NODE_ENV as 'development' | 'production') || 'development'
+  }

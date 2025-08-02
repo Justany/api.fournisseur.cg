@@ -95,6 +95,16 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
+  | Variables pour Spaark Pay API
+  |----------------------------------------------------------
+  */
+  SPAARK_PAY_BASE_URL: Env.schema.string.optional(),
+  SPAARK_PAY_TEST_API_KEY: Env.schema.string.optional(),
+  SPAARK_PAY_LIVE_API_KEY: Env.schema.string.optional(),
+  SPAARK_PAY_TOKEN: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
   | Variables pour le monitoring et les logs
   |----------------------------------------------------------
   */

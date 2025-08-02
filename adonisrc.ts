@@ -48,7 +48,8 @@ export default defineConfig({
     () => import('@adonisjs/lucid/database_provider'),
     () => import('@adonisjs/auth/auth_provider'),
     () => import('#providers/appwrite_provider'),
-    () => import('#providers/collection_manager_provider')
+    () => import('#providers/collection_manager_provider'),
+    () => import('#providers/spaark_pay_provider'),
   ],
 
   /*

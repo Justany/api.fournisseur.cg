@@ -1,0 +1,1087 @@
+openapi: 3.0.0
+info:
+  title: Spaark PayAPI
+  description: |
+    # API de Gestion des Paiements
+  version: 2.1.0
+  contact:
+    email: hello@pay.spaark.cg
+
+servers:
+  - url: http://localhost:4000/api
+    description: Serveur de développement
+  - url: https://spaark-payapi.vercel.app/api
+    description: Serveur de production
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: "Clé API (préfixe tk_test_ pour test, tk_live_ pour production)"
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        phone:
+          type: string
+        testApiKey:
+          type: string
+          description: "Clé API de test (préfixe tk_test_)"
+        liveApiKey:
+          type: string
+          description: "Clé API de production (préfixe tk_live_)"
+        role:
+          type: string
+          enum: [USER, ADMIN]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: "ID unique du paiement dans votre base de données"
+          example: 123
+        amount:
+          type: number
+          description: "Montant de la transaction"
+          example: 150.0
+        phone:
+          type: string
+          description: "Numéro de téléphone (04/05 pour Airtel, 06 pour MTN Mobile Money)"
+          example: "053518256"
+        status:
+          type: string
+          enum: [pending, completed, failed]
+          description: "Statut interne du paiement"
+          example: "completed"
+        reference:
+          type: string
+          description: "Référence interne du paiement"
+          example: "PAY_REF_123"
+        externalReference:
+          type: string
+          description: "Token de référence externe (reçu de upay.t-innov.cg)"
+          example: "414754bb67b811f08f9bac1f6be4442c"
+        externalStatus:
+          type: string
+          enum: [SUCCESSFUL, FAILED, PENDING]
+          description: "Statut exact retourné par l'API upay.t-innov.cg"
+          example: "SUCCESSFUL"
+        transactionId:
+          type: string
+          description: "ID de transaction externe (si disponible)"
+          example: "TXN_123456789"
+        financial:
+          type: string
+          description: "ID financier de la transaction (si disponible)"
+          example: "FIN_987654321"
+        mode:
+          type: string
+          enum: [airtel, momo]
+          description: "Mode de paiement utilisé"
+          example: "airtel"
+        createdAt:
+          type: string
+          format: date-time
+          description: "Date de création du paiement"
+        completedAt:
+          type: string
+          format: date-time
+          description: "Date de finalisation du paiement (si complété)"
+        verifiedExternally:
+          type: boolean
+          description: "Indique si une vérification externe a été effectuée"
+          example: true
+        autoVerified:
+          type: boolean
+          description: "Indique si la vérification était automatique"
+          example: false
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        message:
+          type: string
+
+    DomainStats:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Nombre total de domaines
+        active:
+          type: integer
+          description: Nombre de domaines actifs
+        pending:
+          type: integer
+          description: Nombre de domaines en attente
+        rejected:
+          type: integer
+          description: Nombre de domaines rejetés
+
+    TransactionHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        amount:
+          type: number
+        phone:
+          type: string
+        mode:
+          type: string
+          enum: [airtel, momo]
+        status:
+          type: string
+          enum: [PENDING, COMPLETED, FAILED]
+        reference:
+          type: string
+        token:
+          type: string
+        transactionId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        details:
+          type: object
+          description: Données complètes de la réponse
+
+    WhitelistedDomain:
+      type: object
+      properties:
+        id:
+          type: integer
+        domain:
+          type: string
+        isActive:
+          type: boolean
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED]
+        validatedAt:
+          type: string
+          format: date-time
+        validatedBy:
+          type: integer
+        rejectionReason:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        userId:
+          type: integer
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Inscription d'un nouvel utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+                - phone
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                name:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        "201":
+          description: Utilisateur créé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+                      token:
+                        type: string
+        "400":
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Connexion utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        "200":
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+                      token:
+                        type: string
+        "401":
+          description: Authentification échouée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Obtenir le profil de l'utilisateur connecté
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Profil récupéré avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+    put:
+      tags:
+        - Users
+      summary: Mettre à jour le profil utilisateur
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                phone:
+                  type: string
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        "200":
+          description: Profil mis à jour avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/User"
+
+  /users/api-key/{type}:
+    post:
+      tags:
+        - Users
+      summary: Générer une nouvelle clé API (test ou production)
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: [test, live]
+          description: Type de clé API à générer
+      responses:
+        "200":
+          description: Clé API générée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      testApiKey:
+                        type: string
+                        description: "Retourné si type=test"
+                      liveApiKey:
+                        type: string
+                        description: "Retourné si type=live"
+
+  /payment/initiate:
+    post:
+      tags:
+        - Payments
+      summary: Initier un paiement
+      description: Initie une transaction de paiement mobile money
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - amount
+                - mode
+              properties:
+                phone:
+                  type: string
+                  description: Numéro de téléphone du client
+                  example: "053518256"
+                amount:
+                  type: number
+                  description: Montant de la transaction
+                  example: 150
+                mode:
+                  type: string
+                  description: Mode de paiement (airtel, mtn)
+                  example: "airtel"
+                reference:
+                  type: string
+                  description: Référence optionnelle du paiement. Si non fournie, une référence unique sera générée automatiquement (format PAY_REF_timestamp)
+                  example: "ORDER_123456"
+      responses:
+        "200":
+          description: Paiement initié avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: number
+                        example: 200
+                      message:
+                        type: string
+                        example: "Paiement initié avec succès"
+                      paymentId:
+                        type: number
+                        example: 28
+                      token:
+                        type: string
+                        example: "28257ddbaf7a11ef86feac1f6be4442c"
+                      composition:
+                        type: string
+                        example: "*128*128*1159*PIN#"
+                      transID:
+                        type: string
+                        example: "JKUCJDFLIKDGDGD-328"
+
+  /payment/status/{paymentId}:
+    get:
+      tags:
+        - Payments
+      summary: Obtenir le statut d'un paiement avec vérification automatique
+      description: |
+        Récupère le statut d'un paiement avec **vérification externe automatique** si nécessaire.
+
+        **Comportement intelligent** :
+        - Si le paiement est `pending` et a un token externe → vérification externe automatique
+        - Si le paiement est finalisé mais la dernière vérification date de plus d'1 heure → re-vérification
+        - Sinon → retourne les données de la base de données
+
+        Cette route agit comme un **cache intelligent** qui se synchronise automatiquement avec l'API externe quand c'est pertinent.
+
+        ⚠️ **Note** : Contrairement aux routes `/verify` et `/verify-by-id`, cette route ne force PAS une vérification externe à chaque appel.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: paymentId
+          required: true
+          schema:
+            type: integer
+          description: ID du paiement (doit appartenir à l'utilisateur connecté)
+      responses:
+        "200":
+          description: Statut du paiement récupéré avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: [pending, completed, failed]
+                        description: Statut interne du paiement
+                        example: "completed"
+                      amount:
+                        type: number
+                        description: Montant de la transaction
+                        example: 150.0
+                      phone:
+                        type: string
+                        description: Numéro de téléphone utilisé
+                        example: "053518256"
+                      mode:
+                        type: string
+                        description: Mode de paiement utilisé
+                        example: "airtel"
+                      reference:
+                        type: string
+                        description: Référence interne du paiement
+                        example: "PAY_REF_123"
+                      externalReference:
+                        type: string
+                        description: Token de référence externe
+                        example: "414754bb67b811f08f9bac1f6be4442c"
+                      externalStatus:
+                        type: string
+                        enum: [SUCCESSFUL, FAILED, PENDING]
+                        description: Statut exact de l'API externe (si vérifié)
+                        example: "SUCCESSFUL"
+                      transactionId:
+                        type: string
+                        description: ID de transaction externe (si disponible)
+                        example: "TXN_123456789"
+                      financial:
+                        type: string
+                        description: ID financier (si vérifié récemment)
+                        example: "FIN_987654321"
+                      responseData:
+                        type: object
+                        description: Données complètes de la dernière réponse externe
+                      createdAt:
+                        type: string
+                        format: date-time
+                        description: Date de création du paiement
+                      completedAt:
+                        type: string
+                        format: date-time
+                        description: Date de finalisation du paiement (si complété)
+                      autoVerified:
+                        type: boolean
+                        description: Indique si une vérification automatique a eu lieu lors de cet appel
+                        example: false
+        "401":
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Paiement non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /payment/verify:
+    post:
+      tags:
+        - Payments
+      summary: Vérifier le statut d'un paiement par token
+      description: |
+        **TOUJOURS effectue une vérification externe en temps réel** auprès de l'API upay.t-innov.cg.
+
+        Cette route agit comme une **passerelle (gateway)** qui :
+        1. Recherche le paiement en base de données
+        2. Effectue un appel **SYSTÉMATIQUE** à l'API externe
+        3. Met à jour la base de données avec les nouvelles informations
+        4. Retourne les données synchronisées en temps réel
+
+        ⚠️ **Important** : Cette route effectue TOUJOURS une vérification externe, même si le paiement semble déjà finalisé.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - mode
+              properties:
+                token:
+                  type: string
+                  description: Token du paiement à vérifier (reçu lors de l'initiation)
+                  example: "414754bb67b811f08f9bac1f6be4442c"
+                mode:
+                  type: string
+                  description: Mode de paiement (airtel, momo)
+                  enum: [airtel, momo]
+                  example: "airtel"
+      responses:
+        "200":
+          description: Vérification effectuée avec succès (données synchronisées avec l'API externe)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      paymentId:
+                        type: number
+                        description: ID du paiement dans votre base de données
+                        example: 123
+                      status:
+                        type: string
+                        enum: [pending, completed, failed]
+                        description: Statut interne du paiement
+                        example: "completed"
+                      externalStatus:
+                        type: string
+                        enum: [SUCCESSFUL, FAILED, PENDING]
+                        description: Statut exact retourné par l'API upay.t-innov.cg
+                        example: "SUCCESSFUL"
+                      transactionId:
+                        type: string
+                        description: ID de transaction externe (si disponible)
+                        example: "TXN_123456789"
+                      amount:
+                        type: number
+                        description: Montant de la transaction
+                        example: 150.0
+                      financial:
+                        type: string
+                        description: ID financier de la transaction (si disponible)
+                        example: "FIN_987654321"
+                      phone:
+                        type: string
+                        description: Numéro de téléphone utilisé
+                        example: "053518256"
+                      mode:
+                        type: string
+                        description: Mode de paiement utilisé
+                        example: "airtel"
+                      reference:
+                        type: string
+                        description: Référence interne du paiement
+                        example: "PAY_REF_123"
+                      externalReference:
+                        type: string
+                        description: Token de référence externe
+                        example: "414754bb67b811f08f9bac1f6be4442c"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        description: Date de création du paiement
+                      completedAt:
+                        type: string
+                        format: date-time
+                        description: Date de finalisation du paiement (si complété)
+                      verifiedExternally:
+                        type: boolean
+                        description: Indique qu'une vérification externe a été effectuée
+                        example: true
+        "400":
+          description: Paramètres manquants ou invalides
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Paiement non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Erreur lors de la vérification externe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /payment/verify-by-id:
+    post:
+      tags:
+        - Payments
+      summary: Vérifier le statut d'un paiement par ID
+      description: |
+        **TOUJOURS effectue une vérification externe en temps réel** auprès de l'API upay.t-innov.cg.
+
+        Cette route agit comme une **passerelle (gateway)** qui :
+        1. Recherche le paiement en base de données par son ID
+        2. Récupère le token associé au paiement
+        3. Effectue un appel **SYSTÉMATIQUE** à l'API externe avec ce token
+        4. Met à jour la base de données avec les nouvelles informations
+        5. Retourne les données synchronisées en temps réel
+
+        ⚠️ **Important** : 
+        - Nécessite une authentification (token Bearer)
+        - Le paiement doit avoir un token externe pour être vérifié
+        - Cette route effectue TOUJOURS une vérification externe
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - paymentId
+              properties:
+                paymentId:
+                  type: integer
+                  description: ID du paiement à vérifier (doit appartenir à l'utilisateur connecté)
+                  example: 123
+      responses:
+        "200":
+          description: Vérification effectuée avec succès (données synchronisées avec l'API externe)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      paymentId:
+                        type: number
+                        description: ID du paiement dans votre base de données
+                        example: 123
+                      status:
+                        type: string
+                        enum: [pending, completed, failed]
+                        description: Statut interne du paiement (mis à jour)
+                        example: "completed"
+                      externalStatus:
+                        type: string
+                        enum: [SUCCESSFUL, FAILED, PENDING]
+                        description: Statut exact retourné par l'API upay.t-innov.cg
+                        example: "SUCCESSFUL"
+                      transactionId:
+                        type: string
+                        description: ID de transaction externe (si disponible)
+                        example: "TXN_123456789"
+                      amount:
+                        type: number
+                        description: Montant de la transaction (peut être mis à jour)
+                        example: 150.0
+                      financial:
+                        type: string
+                        description: ID financier de la transaction (si disponible)
+                        example: "FIN_987654321"
+                      phone:
+                        type: string
+                        description: Numéro de téléphone utilisé
+                        example: "053518256"
+                      mode:
+                        type: string
+                        description: Mode de paiement utilisé
+                        example: "airtel"
+                      reference:
+                        type: string
+                        description: Référence interne du paiement
+                        example: "PAY_REF_123"
+                      externalReference:
+                        type: string
+                        description: Token de référence externe utilisé pour la vérification
+                        example: "414754bb67b811f08f9bac1f6be4442c"
+                      createdAt:
+                        type: string
+                        format: date-time
+                        description: Date de création du paiement
+                      completedAt:
+                        type: string
+                        format: date-time
+                        description: Date de finalisation du paiement (si complété)
+                      verifiedExternally:
+                        type: boolean
+                        description: Indique qu'une vérification externe a été effectuée
+                        example: true
+        "400":
+          description: Paramètres manquants ou invalides
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Paiement non trouvé ou token externe manquant
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Erreur lors de la vérification externe
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /payment/webhook:
+    post:
+      tags:
+        - Payments
+      summary: Webhook pour les notifications de paiement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reference
+                - status
+                - transactionId
+              properties:
+                reference:
+                  type: string
+                status:
+                  type: string
+                  enum: [COMPLETED, FAILED]
+                transactionId:
+                  type: string
+      responses:
+        "200":
+          description: Notification traitée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: boolean
+
+  /payment/transactions:
+    get:
+      tags:
+        - Payments
+      summary: Récupérer l'historique des transactions de l'utilisateur
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Liste des transactions récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    enum: [200]
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TransactionHistory"
+        "401":
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /domains:
+    get:
+      tags:
+        - Domains
+      summary: Liste des domaines (filtrée par utilisateur pour les non-admin)
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Liste des domaines
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      domains:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/WhitelistedDomain"
+
+  /domains/new:
+    post:
+      tags:
+        - Domains
+      summary: Ajouter un nouveau domaine (en attente de validation)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - domain
+              properties:
+                domain:
+                  type: string
+                  description: Nom de domaine à whitelister
+      responses:
+        "201":
+          description: Domaine ajouté avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      domain:
+                        $ref: "#/components/schemas/WhitelistedDomain"
+                      message:
+                        type: string
+                        example: "Domaine ajouté avec succès. En attente de validation par un administrateur."
+
+  /domains/{domainId}/validate:
+    patch:
+      tags:
+        - Domains
+      summary: Valider ou rejeter un domaine (ADMIN uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: domainId
+          required: true
+          schema:
+            type: integer
+          description: ID du domaine à valider/rejeter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [APPROVED, REJECTED]
+                  description: Nouveau statut du domaine
+                reason:
+                  type: string
+                  description: Raison du rejet (requis si status=REJECTED)
+      responses:
+        "200":
+          description: Domaine validé/rejeté avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      domain:
+                        $ref: "#/components/schemas/WhitelistedDomain"
+
+  /domains/{domainId}:
+    put:
+      tags:
+        - Domains
+      summary: Mettre à jour un domaine (ADMIN uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: domainId
+          required: true
+          schema:
+            type: integer
+          description: ID du domaine à mettre à jour
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - domain
+              properties:
+                domain:
+                  type: string
+                  description: Nouveau nom de domaine
+      responses:
+        "200":
+          description: Domaine mis à jour avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    type: object
+                    properties:
+                      domain:
+                        $ref: "#/components/schemas/WhitelistedDomain"
+    delete:
+      tags:
+        - Domains
+      summary: Supprimer un domaine (ADMIN uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: domainId
+          required: true
+          schema:
+            type: integer
+          description: ID du domaine à supprimer
+      responses:
+        "200":
+          description: Domaine supprimé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  message:
+                    type: string
+
+  /domains/stats:
+    get:
+      tags:
+        - Domains
+      summary: Statistiques des domaines (filtrées par utilisateur pour les non-admin)
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Statistiques des domaines
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                  data:
+                    $ref: "#/components/schemas/DomainStats"
