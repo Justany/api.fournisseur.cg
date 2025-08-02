@@ -97,7 +97,7 @@ router.get('/docs', async () => {
       <!doctype html>
       <html>
         <head>
-          <title>API Reference - Fournisseur CG</title>
+          <title>v3 - API Reference - Fournisseur CG</title>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <style>
@@ -501,7 +501,7 @@ router
         await next()
       })
   })
-  .prefix('/v2')
+  .prefix('/v3')
   .middleware([() => import('#middleware/scalar_auth_middleware')])
 
 export default router

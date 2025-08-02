@@ -1,5 +1,5 @@
 # Configuration Scalar Galaxy pour API Fournisseur CG
-# Généré automatiquement le 2025-08-02T23:40:48.493Z
+# Généré automatiquement le 2025-08-02T23:45:08.942Z
 # Combine AutoSwagger (routes) + Configuration Scalar (UI/UX)
 
 openapi: 3.0.0
@@ -65,7 +65,7 @@ tags:
   - name: Analytics
     description: Métriques, rapports et données analytiques de la plateforme
 paths:
-  /v2:
+  /v3:
     get:
       summary: route
       description: |2-
@@ -80,7 +80,7 @@ paths:
           content:
             application/json: {}
       security: []
-  /v2/auth/register:
+  /v3/auth/register:
     post:
       summary: Register new user (register)
       description: |-
@@ -130,7 +130,7 @@ paths:
               fullName: John Doe
               email: john@example.com
               password: password123
-  /v2/auth/login:
+  /v3/auth/login:
     post:
       summary: User login (login)
       description: |-
@@ -168,7 +168,7 @@ paths:
             example:
               email: john@example.com
               password: password123
-  /v2/auth/get-token:
+  /v3/auth/get-token:
     post:
       summary: Get clear token (for testing) (getToken)
       description: |-
@@ -201,7 +201,7 @@ paths:
             example:
               email: test@example.com
               password: password123
-  /v2/auth/logout:
+  /v3/auth/logout:
     post:
       summary: User logout (logout)
       description: |-
@@ -235,7 +235,7 @@ paths:
                 error: Token invalide
           description: Returns **401** (Unauthorized) as **application/json**
       security: []
-  /v2/auth/profile:
+  /v3/auth/profile:
     get:
       summary: User profile (profile)
       description: |-
@@ -262,7 +262,7 @@ paths:
                 error: Non authentifié
           description: Returns **401** (Unauthorized) as **application/json**
       security: []
-  /v2/auth/refresh-token:
+  /v3/auth/refresh-token:
     post:
       summary: Refresh token (refreshToken)
       description: |-
@@ -300,7 +300,7 @@ paths:
                 error: Token invalide
           description: Returns **401** (Unauthorized) as **application/json**
       security: []
-  /v2/appwrite/health:
+  /v3/appwrite/health:
     get:
       summary: Appwrite connection health check (health)
       description: |-
@@ -338,7 +338,7 @@ paths:
                 details: Connection failed
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/appwrite/databases:
+  /v3/appwrite/databases:
     get:
       summary: List all Appwrite databases (listDatabases)
       description: |-
@@ -382,7 +382,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/appwrite/databases/{databaseId}/collections:
+  /v3/appwrite/databases/{databaseId}/collections:
     get:
       summary: List database collections (listCollections)
       description: |-
@@ -498,7 +498,7 @@ paths:
               name: Commandes
               permissions: []
               documentSecurity: false
-  /v2/appwrite/databases/{databaseId}/collections/{collectionId}/documents:
+  /v3/appwrite/databases/{databaseId}/collections/{collectionId}/documents:
     get:
       summary: List collection documents (listDocuments)
       description: |-
@@ -639,7 +639,7 @@ paths:
                 title: Test
                 status: active
               permissions: []
-  /v2/appwrite/databases/{databaseId}/collections/{collectionId}/documents/{documentId}:
+  /v3/appwrite/databases/{databaseId}/collections/{collectionId}/documents/{documentId}:
     get:
       summary: Get specific document (getDocument)
       description: |-
@@ -846,7 +846,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/string:
+  /v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/string:
     post:
       summary: Create string attribute (createStringAttribute)
       description: |-
@@ -919,7 +919,7 @@ paths:
               size: 255
               required: true
               defaultValue: ''
-  /v2/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/integer:
+  /v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/integer:
     post:
       summary: Create integer attribute (createIntegerAttribute)
       description: |-
@@ -996,7 +996,7 @@ paths:
               min: 0
               max: 999999
               defaultValue: 0
-  /v2/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/boolean:
+  /v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/boolean:
     post:
       summary: Create boolean attribute (createBooleanAttribute)
       description: |-
@@ -1067,7 +1067,7 @@ paths:
               key: isActive
               required: false
               defaultValue: true
-  /v2/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/datetime:
+  /v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/datetime:
     post:
       summary: Create datetime attribute (createDatetimeAttribute)
       description: |-
@@ -1138,7 +1138,7 @@ paths:
               key: createdAt
               required: true
               defaultValue: '2024-01-01T00:00:00.000Z'
-  /v2/collections/initialize:
+  /v3/collections/initialize:
     post:
       summary: Initialize all Appwrite collections (initializeAllCollections)
       description: |-
@@ -1202,7 +1202,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/collections/actions:
+  /v3/collections/actions:
     post:
       summary: Execute actions on specific collections (executeCollectionActions)
       description: |-
@@ -1286,7 +1286,7 @@ paths:
                 collection: QUOTES
               - action: update
                 collection: CONTACTS
-  /v2/collections/status:
+  /v3/collections/status:
     get:
       summary: Get collection status (getCollectionStatus)
       description: |-
@@ -1338,7 +1338,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/collections/configuration:
+  /v3/collections/configuration:
     get:
       summary: Get collection configuration (getCollectionConfiguration)
       description: |-
@@ -1355,7 +1355,7 @@ paths:
               example: '{"collections": ["QUOTES", "CONTACTS"], "attributes": {...}, "indexes": {...}, "permissions": {...}}'
           description: Returns **200** (OK) as **text/plain**
       security: []
-  /v2/spaark-pay/health:
+  /v3/spaark-pay/health:
     get:
       summary: Spaark Pay connection health check (health)
       description: |-
@@ -1391,7 +1391,7 @@ paths:
                 message: Erreur de connexion
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/spaark-pay/test:
+  /v3/spaark-pay/test:
     get:
       summary: Test integration (test)
       description: |-
@@ -1408,7 +1408,7 @@ paths:
               example: '{"status": "ok", "message": "Intégration Spaark Pay fonctionnelle", "config": {...}}'
           description: Returns **200** (OK) as **text/plain**
       security: []
-  /v2/spaark-pay/initiate:
+  /v3/spaark-pay/initiate:
     post:
       summary: Initiate mobile money payment (initiatePayment)
       description: |-
@@ -1479,7 +1479,7 @@ paths:
               amount: 150
               mode: airtel
               reference: ORDER_123
-  /v2/spaark-pay/status/{paymentId}:
+  /v3/spaark-pay/status/{paymentId}:
     get:
       summary: Get payment status (getPaymentStatus)
       description: |-
@@ -1542,7 +1542,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/spaark-pay/verify:
+  /v3/spaark-pay/verify:
     post:
       summary: Verify payment by token (verifyPayment)
       description: |-
@@ -1603,7 +1603,7 @@ paths:
             example:
               token: 414754bb67b811f08f9bac1f6be4442c
               mode: airtel
-  /v2/spaark-pay/verify-by-id:
+  /v3/spaark-pay/verify-by-id:
     post:
       summary: Verify payment by ID (verifyPaymentById)
       description: |-
@@ -1662,7 +1662,7 @@ paths:
                 paymentId: 123
             example:
               paymentId: 123
-  /v2/spaark-pay/webhook:
+  /v3/spaark-pay/webhook:
     post:
       summary: Process payment webhook (processWebhook)
       description: |-
@@ -1707,7 +1707,7 @@ paths:
               reference: PAY_REF_123
               status: COMPLETED
               transactionId: TXN_123456
-  /v2/spaark-pay/transactions:
+  /v3/spaark-pay/transactions:
     get:
       summary: Get transaction history (getTransactionHistory)
       description: |-
@@ -1756,7 +1756,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/spaark-pay/domains:
+  /v3/spaark-pay/domains:
     get:
       summary: Get domains list (getDomains)
       description: |-
@@ -1861,7 +1861,7 @@ paths:
                 domain: example.com
             example:
               domain: example.com
-  /v2/spaark-pay/domains/{domainId}/validate:
+  /v3/spaark-pay/domains/{domainId}/validate:
     patch:
       summary: Validate or reject domain (validateDomain)
       description: |-
@@ -1931,7 +1931,7 @@ paths:
             example:
               status: APPROVED
               reason: Domaine valide
-  /v2/spaark-pay/domains/stats:
+  /v3/spaark-pay/domains/stats:
     get:
       summary: Get domain statistics (getDomainStats)
       description: |-
@@ -1971,7 +1971,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/spaark-pay/api-key/{type}:
+  /v3/spaark-pay/api-key/{type}:
     post:
       summary: Generate new API key (generateApiKey)
       description: |-
@@ -2017,7 +2017,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/sms/health:
+  /v3/sms/health:
     get:
       summary: SMS connection health check (health)
       description: |-
@@ -2053,7 +2053,7 @@ paths:
                 message: Erreur de connexion
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/sms/test:
+  /v3/sms/test:
     get:
       summary: Test SMS integration (test)
       description: |-
@@ -2070,7 +2070,7 @@ paths:
               example: '{"status": "ok", "message": "Intégration SMS fonctionnelle", "config": {...}}'
           description: Returns **200** (OK) as **text/plain**
       security: []
-  /v2/sms/send:
+  /v3/sms/send:
     post:
       summary: Send SMS (sendSms)
       description: |-
@@ -2137,7 +2137,7 @@ paths:
               message: Votre code de vérification est 123456
               from: Fournisseur
               reference: VERIFY_001
-  /v2/sms/status/{messageId}:
+  /v3/sms/status/{messageId}:
     get:
       summary: Get SMS status (getSmsStatus)
       description: |-
@@ -2194,7 +2194,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/sms/history:
+  /v3/sms/history:
     get:
       summary: Get SMS history (getSmsHistory)
       description: |-
@@ -2241,7 +2241,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/sms/stats:
+  /v3/sms/stats:
     get:
       summary: Get SMS statistics (getSmsStats)
       description: |-
@@ -2283,7 +2283,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/sms/send/test:
+  /v3/sms/send/test:
     post:
       summary: Send test SMS (sendTestSms)
       description: |-
@@ -2340,7 +2340,7 @@ paths:
                 to: '053518256'
             example:
               to: '053518256'
-  /v2/sms/send/otp:
+  /v3/sms/send/otp:
     post:
       summary: Send OTP SMS (sendOtpSms)
       description: |-
@@ -2401,7 +2401,7 @@ paths:
               to: '053518256'
               code: '123456'
               expiresIn: 5
-  /v2/sms/send/notification:
+  /v3/sms/send/notification:
     post:
       summary: Send notification SMS (sendNotificationSms)
       description: |-
@@ -2462,7 +2462,7 @@ paths:
               to: '053518256'
               title: Commande
               message: Votre commande a été confirmée
-  /v2/sms/balance:
+  /v3/sms/balance:
     get:
       summary: Check SMS balance (checkBalance)
       description: |-
@@ -2498,7 +2498,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/sms/calculate-cost:
+  /v3/sms/calculate-cost:
     post:
       summary: Calculate SMS cost (calculateSmsCost)
       description: |-
@@ -2543,7 +2543,7 @@ paths:
                 message: Votre code de vérification est 123456
             example:
               message: Votre code de vérification est 123456
-  /v2/sms/api-info:
+  /v3/sms/api-info:
     get:
       summary: Get SMS API info (getApiInfo)
       description: |-
@@ -2572,7 +2572,7 @@ paths:
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-  /v2/sms/webhook:
+  /v3/sms/webhook:
     post:
       summary: Process SMS webhook (processWebhook)
       description: |-
@@ -2621,7 +2621,7 @@ paths:
               status: delivered
               to: '053518256'
               timestamp: '2025-08-02T15:30:00Z'
-  /v2/sms/webhook/config:
+  /v3/sms/webhook/config:
     post:
       summary: Configure SMS webhook (configureWebhook)
       description: |-
@@ -2756,4 +2756,4 @@ x-scalar:
     showLastModified: true
     showGeneratedBy: true
     generatedBy: API Fournisseur CG - AutoSwagger + Scalar
-    generatedAt: '2025-08-02T23:40:48.480Z'
+    generatedAt: '2025-08-02T23:45:08.932Z'

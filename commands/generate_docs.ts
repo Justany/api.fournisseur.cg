@@ -367,11 +367,11 @@ ${yamlContent}`
 
         // Déterminer le tag basé sur le chemin
         let tag = 'API Info'
-        if (cleanPath.includes('/v2/auth')) tag = 'Authentication'
-        else if (cleanPath.includes('/v2/appwrite')) tag = 'Database Management'
-        else if (cleanPath.includes('/v2/collections')) tag = 'Collection Management'
-        else if (cleanPath.includes('/v2/spaark-pay')) tag = 'Payment Processing'
-        else if (cleanPath.includes('/v2/sms')) tag = 'SMS Notifications'
+        if (cleanPath.includes('/v3/auth')) tag = 'Authentication'
+        else if (cleanPath.includes('/v3/appwrite')) tag = 'Database Management'
+        else if (cleanPath.includes('/v3/collections')) tag = 'Collection Management'
+        else if (cleanPath.includes('/v3/spaark-pay')) tag = 'Payment Processing'
+        else if (cleanPath.includes('/v3/sms')) tag = 'SMS Notifications'
         else if (cleanPath.includes('/swagger') || cleanPath.includes('/docs'))
           tag = 'Documentation'
 
@@ -527,8 +527,8 @@ ${yamlContent}`
     const publicPaths = [
       '/health',
       '/test',
-      '/v2/auth/login',
-      '/v2/auth/register',
+      '/v3/auth/login',
+      '/v3/auth/register',
       '/swagger',
       '/docs',
       '/',
