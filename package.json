@@ -11,7 +11,11 @@
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "appwrite:init": "node ace appwrite:init all",
+    "appwrite:status": "node ace appwrite:init status",
+    "collections:create": "node ace appwrite:init create",
+    "collections:update": "node ace appwrite:init update"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
@@ -26,6 +30,7 @@
     "#providers/*": "./providers/*.js",
     "#policies/*": "./app/policies/*.js",
     "#abilities/*": "./app/abilities/*.js",
+    "#types/*": "./app/types/*.js",
     "#database/*": "./database/*.js",
     "#start/*": "./start/*.js",
     "#tests/*": "./tests/*.js",
@@ -58,6 +63,7 @@
     "@vinejs/vine": "^3.0.1",
     "adonis-autoswagger": "^3.73.0",
     "luxon": "^3.7.1",
+    "node-appwrite": "^17.2.0",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2"
   },

@@ -36,262 +36,119 @@ router
     // Route de base pour vérifier que l'API fonctionne
     router.get('/', async () => {
       return {
-        message: 'API Fournisseur CG v3',
+        message: 'API Fournisseur CG v3 - Orchestrateur Logistique',
+        description: "Wrapper central pour l'écosystème Fournisseur Congo",
         version: '3.0.0',
-        status: 'active',
-        timestamp: new Date().toISOString(),
-      }
-    })
-
-    // Route de santé de l'API
-    router.get('/health', async () => {
-      return {
         status: 'healthy',
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
+        environment: process.env.NODE_ENV || 'development',
+        services: {
+          appwrite: {
+            status: 'intégré',
+            description: 'Backend principal (collections, documents, utilisateurs)',
+          },
+          mailersend: {
+            status: 'en attente',
+            description: 'Emails marketing et notifications',
+          },
+          smtp: {
+            status: 'en attente',
+            description: 'Messages système et bienvenue',
+          },
+          sparkpay: {
+            status: 'en attente (documentation requise)',
+            description: 'Paiements mobiles MTN Money, Airtel Money',
+          },
+        },
+        endpoints: {
+          documentation: '/v3/docs',
+          swagger: '/v3/swagger',
+          appwrite: '/v3/appwrite',
+          health: '/v3/health',
+        },
       }
     })
 
-    // ============================================================================
-    // ROUTES D'AUTHENTIFICATION
-    // ============================================================================
+    // =====================================
+    // Routes Appwrite Integration (IMPLÉMENTÉES)
+    // =====================================
     router
       .group(() => {
-        router.post('/register', async () => {
-          return { message: 'Register endpoint - à implémenter' }
-        })
+        const AppwritesController = () => import('#controllers/appwrites_controller')
 
-        router.post('/login', async () => {
-          return { message: 'Login endpoint - à implémenter' }
-        })
+        // Health check Appwrite
+        router.get('/health', [AppwritesController, 'health'])
 
-        router.post('/logout', async () => {
-          return { message: 'Logout endpoint - à implémenter' }
-        })
+        // Gestion des bases de données
+        router.get('/databases', [AppwritesController, 'listDatabases'])
 
-        router.post('/refresh', async () => {
-          return { message: 'Refresh token endpoint - à implémenter' }
-        })
-      })
-      .prefix('/auth')
+        // Gestion des collections
+        router.get('/databases/:databaseId/collections', [AppwritesController, 'listCollections'])
+        router.post('/databases/:databaseId/collections', [AppwritesController, 'createCollection'])
 
-    // ============================================================================
-    // ROUTES UTILISATEURS
-    // ============================================================================
-    router
-      .group(() => {
-        router.get('/profile', async () => {
-          return { message: 'Profile endpoint - à implémenter' }
-        })
+        // Gestion des documents
+        router.get('/databases/:databaseId/collections/:collectionId/documents', [
+          AppwritesController,
+          'listDocuments',
+        ])
+        router.post('/databases/:databaseId/collections/:collectionId/documents', [
+          AppwritesController,
+          'createDocument',
+        ])
+        router.get('/databases/:databaseId/collections/:collectionId/documents/:documentId', [
+          AppwritesController,
+          'getDocument',
+        ])
+        router.patch('/databases/:databaseId/collections/:collectionId/documents/:documentId', [
+          AppwritesController,
+          'updateDocument',
+        ])
+        router.delete('/databases/:databaseId/collections/:collectionId/documents/:documentId', [
+          AppwritesController,
+          'deleteDocument',
+        ])
 
-        router.put('/profile', async () => {
-          return { message: 'Update profile endpoint - à implémenter' }
-        })
-
-        router.get('/dashboard', async () => {
-          return { message: 'Dashboard endpoint - à implémenter' }
-        })
-      })
-      .prefix('/users')
-
-    // ============================================================================
-    // ROUTES FOURNISSEURS
-    // ============================================================================
-    router
-      .group(() => {
-        router.get('/', async () => {
-          return { message: 'Liste des fournisseurs - à implémenter' }
-        })
-
-        router.get('/:id', async () => {
-          return { message: 'Détails fournisseur - à implémenter' }
-        })
-
-        router.post('/', async () => {
-          return { message: 'Créer fournisseur - à implémenter' }
-        })
-
-        router.put('/:id', async () => {
-          return { message: 'Modifier fournisseur - à implémenter' }
-        })
-
-        router.delete('/:id', async () => {
-          return { message: 'Supprimer fournisseur - à implémenter' }
-        })
-      })
-      .prefix('/fournisseurs')
-
-    // ============================================================================
-    // ROUTES COMMANDES
-    // ============================================================================
-    router
-      .group(() => {
-        router.get('/', async () => {
-          return { message: 'Liste des commandes - à implémenter' }
-        })
-
-        router.get('/:id', async () => {
-          return { message: 'Détails commande - à implémenter' }
-        })
-
-        router.post('/', async () => {
-          return { message: 'Créer commande - à implémenter' }
-        })
-
-        router.put('/:id/status', async () => {
-          return { message: 'Mettre à jour statut commande - à implémenter' }
-        })
-      })
-      .prefix('/commandes')
-
-    // ============================================================================
-    // ROUTES DEVIS
-    // ============================================================================
-    router
-      .group(() => {
-        router.get('/', async () => {
-          return { message: 'Liste des devis - à implémenter' }
-        })
-
-        router.get('/:id', async () => {
-          return { message: 'Détails devis - à implémenter' }
-        })
-
-        router.post('/', async () => {
-          return { message: 'Créer devis - à implémenter' }
-        })
-
-        router.put('/:id', async () => {
-          return { message: 'Modifier devis - à implémenter' }
-        })
-      })
-      .prefix('/devis')
-
-    // ============================================================================
-    // ROUTES LOGISTIQUE
-    // ============================================================================
-    router
-      .group(() => {
-        router.get('/tracking/:id', async () => {
-          return { message: 'Suivi logistique - à implémenter' }
-        })
-
-        router.post('/expedition', async () => {
-          return { message: 'Créer expédition - à implémenter' }
-        })
-
-        router.get('/tarifs', async () => {
-          return { message: 'Tarifs logistiques - à implémenter' }
-        })
-      })
-      .prefix('/logistique')
-
-    // ============================================================================
-    // ROUTES PAIEMENT
-    // ============================================================================
-    router
-      .group(() => {
-        router.post('/create-payment', async () => {
-          return { message: 'Créer paiement - à implémenter' }
-        })
-
-        router.post('/webhook', async () => {
-          return { message: 'Webhook paiement - à implémenter' }
-        })
-
-        router.get('/transactions', async () => {
-          return { message: 'Historique transactions - à implémenter' }
-        })
-      })
-      .prefix('/paiement')
-
-    // ============================================================================
-    // ROUTES NOTIFICATIONS
-    // ============================================================================
-    router
-      .group(() => {
-        router.post('/email', async () => {
-          return { message: 'Envoi email - à implémenter' }
-        })
-
-        router.post('/whatsapp', async () => {
-          return { message: 'Envoi WhatsApp - à implémenter' }
-        })
-
-        router.get('/webhook', async () => {
-          return { message: 'WhatsApp verification - à implémenter' }
-        })
-
-        router.post('/webhook', async () => {
-          return { message: 'WhatsApp webhook - à implémenter' }
-        })
-      })
-      .prefix('/notifications')
-
-    // ============================================================================
-    // ROUTES APPRITE
-    // ============================================================================
-    router
-      .group(() => {
-        router.get('/collections', async () => {
-          return { message: 'Liste collections Appwrite - à implémenter' }
-        })
-
-        router.post('/collections', async () => {
-          return { message: 'Créer collection Appwrite - à implémenter' }
-        })
-
-        router.get('/documents/:collectionId', async () => {
-          return { message: 'Liste documents Appwrite - à implémenter' }
-        })
-
-        router.post('/documents/:collectionId', async () => {
-          return { message: 'Créer document Appwrite - à implémenter' }
-        })
+        // Gestion des attributs
+        router.post('/databases/:databaseId/collections/:collectionId/attributes/string', [
+          AppwritesController,
+          'createStringAttribute',
+        ])
+        router.post('/databases/:databaseId/collections/:collectionId/attributes/integer', [
+          AppwritesController,
+          'createIntegerAttribute',
+        ])
+        router.post('/databases/:databaseId/collections/:collectionId/attributes/boolean', [
+          AppwritesController,
+          'createBooleanAttribute',
+        ])
+        router.post('/databases/:databaseId/collections/:collectionId/attributes/datetime', [
+          AppwritesController,
+          'createDatetimeAttribute',
+        ])
       })
       .prefix('/appwrite')
 
-    // ============================================================================
-    // ROUTES SERVICES FOURNISSEUR CG
-    // ============================================================================
+    // =====================================
+    // Routes Collection Management (NOUVELLES)
+    // =====================================
     router
       .group(() => {
-        // Fournisseur Direct
-        router.get('/direct', async () => {
-          return { message: 'Service Fournisseur Direct - à implémenter' }
-        })
+        const CollectionManagersController = () => import('#controllers/collection_managers_controller')
 
-        // Fournisseur Express
-        router.get('/express', async () => {
-          return { message: 'Service Fournisseur Express - à implémenter' }
-        })
+        // Initialisation complète des collections
+        router.post('/initialize', [CollectionManagersController, 'initializeAllCollections'])
 
-        // Fournisseur Pro
-        router.get('/pro', async () => {
-          return { message: 'Service Fournisseur Pro - à implémenter' }
-        })
+        // Exécution d'actions spécifiques
+        router.post('/actions', [CollectionManagersController, 'executeCollectionActions'])
 
-        // Fournisseur Max
-        router.get('/max', async () => {
-          return { message: 'Service Fournisseur Max - à implémenter' }
-        })
+        // Status des collections
+        router.get('/status', [CollectionManagersController, 'getCollectionStatus'])
 
-        // Fournisseur Academy
-        router.get('/academy', async () => {
-          return { message: 'Service Fournisseur Academy - à implémenter' }
-        })
-
-        // Fournisseur Compare
-        router.get('/compare', async () => {
-          return { message: 'Service Fournisseur Compare - à implémenter' }
-        })
-
-        // Fournisseur IA
-        router.get('/ia', async () => {
-          return { message: 'Service Fournisseur IA - à implémenter' }
-        })
+        // Configuration des collections
+        router.get('/configuration', [CollectionManagersController, 'getCollectionConfiguration'])
       })
-      .prefix('/services')
+      .prefix('/collections')
   })
   .prefix('/v3')
 

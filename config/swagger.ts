@@ -27,7 +27,7 @@ const swaggerConfig = {
   },
   snakeCase: true,
   debug: true,
-  ignore: ['/swagger', '/docs'],
+  ignore: ['/swagger', '/docs', '/'],
   preferredPutPatch: 'PUT',
   tags: [
     {

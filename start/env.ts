@@ -44,6 +44,16 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
+  | Variables pour Appwrite (Backend principal)
+  |----------------------------------------------------------
+  */
+  APPWRITE_ENDPOINT: Env.schema.string(),
+  APPWRITE_PROJECT_ID: Env.schema.string(),
+  APPWRITE_API_KEY: Env.schema.string(),
+  APPWRITE_DATABASE_ID: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
   | Variables pour les services externes
   |----------------------------------------------------------
   */
