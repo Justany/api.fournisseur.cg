@@ -1,12 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import { SmsService } from '#services/sms_service'
-import type {
-  SendSmsRequest,
-  SmsStatusRequest,
-  SmsWebhookRequest,
-  SmsWebhookConfig,
-} from '#types/sms_types'
+import type { SendSmsRequest, SmsWebhookRequest, SmsWebhookConfig } from '#types/sms_types'
 
 @inject()
 export default class SmsController {
@@ -52,8 +47,6 @@ export default class SmsController {
             baseUrl: config.baseUrl,
             environment: config.environment,
             hasApiKey: !!config.apiKey,
-            hasUsername: !!config.username,
-            hasPassword: !!config.password,
           },
         },
       })
@@ -78,7 +71,13 @@ export default class SmsController {
    */
   async sendSms({ request, response }: HttpContext) {
     try {
-      const data = request.only(['to', 'message', 'from', 'reference', 'priority']) as SendSmsRequest
+      const data = request.only([
+        'to',
+        'message',
+        'from',
+        'reference',
+        'priority',
+      ]) as SendSmsRequest
 
       // Validation des données
       if (!data.to || !data.message) {
@@ -113,10 +112,10 @@ export default class SmsController {
         data: result,
       })
     } catch (error) {
-      console.error('Erreur lors de l\'envoi du SMS:', error)
+      console.error("Erreur lors de l'envoi du SMS:", error)
       return response.internalServerError({
         success: false,
-        error: 'Erreur lors de l\'envoi du SMS',
+        error: "Erreur lors de l'envoi du SMS",
         details: error.message,
       })
     }
@@ -139,7 +138,7 @@ export default class SmsController {
       if (!messageId) {
         return response.badRequest({
           error: 'ID de message manquant',
-          details: 'L\'ID du message est requis',
+          details: "L'ID du message est requis",
         })
       }
 
@@ -171,8 +170,8 @@ export default class SmsController {
    */
   async getSmsHistory({ request, response }: HttpContext) {
     try {
-      const page = parseInt(request.input('page', '1'))
-      const limit = parseInt(request.input('limit', '50'))
+      const page = Number.parseInt(request.input('page', '1'))
+      const limit = Number.parseInt(request.input('limit', '50'))
 
       if (page < 1 || limit < 1 || limit > 100) {
         return response.badRequest({
@@ -188,10 +187,10 @@ export default class SmsController {
         data: result,
       })
     } catch (error) {
-      console.error('Erreur lors de la récupération de l\'historique:', error)
+      console.error("Erreur lors de la récupération de l'historique:", error)
       return response.internalServerError({
         success: false,
-        error: 'Erreur lors de la récupération de l\'historique',
+        error: "Erreur lors de la récupération de l'historique",
         details: error.message,
       })
     }
@@ -254,7 +253,14 @@ export default class SmsController {
    */
   async processWebhook({ request, response }: HttpContext) {
     try {
-      const data = request.only(['messageId', 'status', 'to', 'from', 'timestamp', 'failureReason']) as SmsWebhookRequest
+      const data = request.only([
+        'messageId',
+        'status',
+        'to',
+        'from',
+        'timestamp',
+        'failureReason',
+      ]) as SmsWebhookRequest
 
       if (!data.messageId || !data.status || !data.to || !data.timestamp) {
         return response.badRequest({
@@ -313,13 +319,13 @@ export default class SmsController {
       } catch {
         return response.badRequest({
           error: 'URL invalide',
-          details: 'L\'URL doit être valide',
+          details: "L'URL doit être valide",
         })
       }
 
       // Validation des événements
       const validEvents = ['delivered', 'failed']
-      if (!data.events.every(event => validEvents.includes(event))) {
+      if (!data.events.every((event) => validEvents.includes(event))) {
         return response.badRequest({
           error: 'Événements invalides',
           details: 'Les événements doivent être "delivered" et/ou "failed"',
@@ -380,10 +386,10 @@ export default class SmsController {
         data: result,
       })
     } catch (error) {
-      console.error('Erreur lors de l\'envoi du SMS de test:', error)
+      console.error("Erreur lors de l'envoi du SMS de test:", error)
       return response.internalServerError({
         success: false,
-        error: 'Erreur lors de l\'envoi du SMS de test',
+        error: "Erreur lors de l'envoi du SMS de test",
         details: error.message,
       })
     }
@@ -434,10 +440,10 @@ export default class SmsController {
         data: result,
       })
     } catch (error) {
-      console.error('Erreur lors de l\'envoi du SMS OTP:', error)
+      console.error("Erreur lors de l'envoi du SMS OTP:", error)
       return response.internalServerError({
         success: false,
-        error: 'Erreur lors de l\'envoi du SMS OTP',
+        error: "Erreur lors de l'envoi du SMS OTP",
         details: error.message,
       })
     }
@@ -495,10 +501,10 @@ export default class SmsController {
         data: result,
       })
     } catch (error) {
-      console.error('Erreur lors de l\'envoi du SMS de notification:', error)
+      console.error("Erreur lors de l'envoi du SMS de notification:", error)
       return response.internalServerError({
         success: false,
-        error: 'Erreur lors de l\'envoi du SMS de notification',
+        error: "Erreur lors de l'envoi du SMS de notification",
         details: error.message,
       })
     }

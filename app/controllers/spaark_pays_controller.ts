@@ -7,7 +7,7 @@ import type {
   VerifyPaymentByIdRequest,
   WebhookRequest,
   AddDomainRequest,
-  ValidateDomainRequest
+  ValidateDomainRequest,
 } from '#types/spaark_pay_types'
 
 @inject()
@@ -29,7 +29,7 @@ export default class SpaarkPaysController {
     } catch (error) {
       return response.internalServerError({
         status: 'unhealthy',
-        message: `Erreur lors du health check Spaark Pay: ${error.message}`
+        message: `Erreur lors du health check Spaark Pay: ${error.message}`,
       })
     }
   }
@@ -52,21 +52,21 @@ export default class SpaarkPaysController {
       if (!data.phone || !data.amount || !data.mode) {
         return response.badRequest({
           error: 'Paramètres manquants',
-          details: 'phone, amount et mode sont requis'
+          details: 'phone, amount et mode sont requis',
         })
       }
 
       if (!['airtel', 'momo'].includes(data.mode)) {
         return response.badRequest({
           error: 'Mode invalide',
-          details: 'Le mode doit être "airtel" ou "momo"'
+          details: 'Le mode doit être "airtel" ou "momo"',
         })
       }
 
       if (data.amount <= 0) {
         return response.badRequest({
           error: 'Montant invalide',
-          details: 'Le montant doit être supérieur à 0'
+          details: 'Le montant doit être supérieur à 0',
         })
       }
 
@@ -75,14 +75,14 @@ export default class SpaarkPaysController {
       return response.ok({
         success: true,
         message: 'Paiement initié avec succès',
-        data: result
+        data: result,
       })
     } catch (error) {
-      console.error('Erreur lors de l\'initiation du paiement:', error)
+      console.error("Erreur lors de l'initiation du paiement:", error)
       return response.internalServerError({
         success: false,
-        error: 'Erreur lors de l\'initiation du paiement',
-        details: error.message
+        error: "Erreur lors de l'initiation du paiement",
+        details: error.message,
       })
     }
   }
@@ -99,12 +99,12 @@ export default class SpaarkPaysController {
    */
   async getPaymentStatus({ params, response }: HttpContext) {
     try {
-      const paymentId = parseInt(params.paymentId)
+      const paymentId = Number.parseInt(params.paymentId)
 
-      if (isNaN(paymentId)) {
+      if (Number.isNaN(paymentId)) {
         return response.badRequest({
           error: 'ID de paiement invalide',
-          details: 'L\'ID doit être un nombre'
+          details: "L'ID doit être un nombre",
         })
       }
 
@@ -112,14 +112,14 @@ export default class SpaarkPaysController {
 
       return response.ok({
         success: true,
-        data: result
+        data: result,
       })
     } catch (error) {
       console.error('Erreur lors de la récupération du statut:', error)
       return response.internalServerError({
         success: false,
         error: 'Erreur lors de la récupération du statut',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -141,14 +141,14 @@ export default class SpaarkPaysController {
       if (!data.token || !data.mode) {
         return response.badRequest({
           error: 'Paramètres manquants',
-          details: 'token et mode sont requis'
+          details: 'token et mode sont requis',
         })
       }
 
       if (!['airtel', 'momo'].includes(data.mode)) {
         return response.badRequest({
           error: 'Mode invalide',
-          details: 'Le mode doit être "airtel" ou "momo"'
+          details: 'Le mode doit être "airtel" ou "momo"',
         })
       }
 
@@ -156,14 +156,14 @@ export default class SpaarkPaysController {
 
       return response.ok({
         success: true,
-        data: result
+        data: result,
       })
     } catch (error) {
       console.error('Erreur lors de la vérification du paiement:', error)
       return response.internalServerError({
         success: false,
         error: 'Erreur lors de la vérification du paiement',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -185,7 +185,7 @@ export default class SpaarkPaysController {
       if (!data.paymentId) {
         return response.badRequest({
           error: 'ID manquant',
-          details: 'paymentId est requis'
+          details: 'paymentId est requis',
         })
       }
 
@@ -193,14 +193,14 @@ export default class SpaarkPaysController {
 
       return response.ok({
         success: true,
-        data: result
+        data: result,
       })
     } catch (error) {
       console.error('Erreur lors de la vérification du paiement:', error)
       return response.internalServerError({
         success: false,
         error: 'Erreur lors de la vérification du paiement',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -221,14 +221,14 @@ export default class SpaarkPaysController {
       if (!data.reference || !data.status || !data.transactionId) {
         return response.badRequest({
           error: 'Données webhook invalides',
-          details: 'reference, status et transactionId sont requis'
+          details: 'reference, status et transactionId sont requis',
         })
       }
 
       if (!['COMPLETED', 'FAILED'].includes(data.status)) {
         return response.badRequest({
           error: 'Statut invalide',
-          details: 'Le statut doit être "COMPLETED" ou "FAILED"'
+          details: 'Le statut doit être "COMPLETED" ou "FAILED"',
         })
       }
 
@@ -236,14 +236,14 @@ export default class SpaarkPaysController {
 
       return response.ok({
         success: true,
-        data: result
+        data: result,
       })
     } catch (error) {
       console.error('Erreur lors du traitement du webhook:', error)
       return response.internalServerError({
         success: false,
         error: 'Erreur lors du traitement du webhook',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -264,15 +264,15 @@ export default class SpaarkPaysController {
         success: true,
         data: {
           transactions,
-          total: transactions.length
-        }
+          total: transactions.length,
+        },
       })
     } catch (error) {
-      console.error('Erreur lors de la récupération de l\'historique:', error)
+      console.error("Erreur lors de la récupération de l'historique:", error)
       return response.internalServerError({
         success: false,
-        error: 'Erreur lors de la récupération de l\'historique',
-        details: error.message
+        error: "Erreur lors de la récupération de l'historique",
+        details: error.message,
       })
     }
   }
@@ -293,15 +293,15 @@ export default class SpaarkPaysController {
         success: true,
         data: {
           domains,
-          total: domains.length
-        }
+          total: domains.length,
+        },
       })
     } catch (error) {
       console.error('Erreur lors de la récupération des domaines:', error)
       return response.internalServerError({
         success: false,
         error: 'Erreur lors de la récupération des domaines',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -323,7 +323,7 @@ export default class SpaarkPaysController {
       if (!data.domain) {
         return response.badRequest({
           error: 'Domaine manquant',
-          details: 'Le domaine est requis'
+          details: 'Le domaine est requis',
         })
       }
 
@@ -332,14 +332,14 @@ export default class SpaarkPaysController {
       return response.created({
         success: true,
         data: { domain },
-        message: 'Domaine ajouté avec succès. En attente de validation par un administrateur.'
+        message: 'Domaine ajouté avec succès. En attente de validation par un administrateur.',
       })
     } catch (error) {
-      console.error('Erreur lors de l\'ajout du domaine:', error)
+      console.error("Erreur lors de l'ajout du domaine:", error)
       return response.internalServerError({
         success: false,
-        error: 'Erreur lors de l\'ajout du domaine',
-        details: error.message
+        error: "Erreur lors de l'ajout du domaine",
+        details: error.message,
       })
     }
   }
@@ -357,34 +357,34 @@ export default class SpaarkPaysController {
    */
   async validateDomain({ params, request, response }: HttpContext) {
     try {
-      const domainId = parseInt(params.domainId)
+      const domainId = Number.parseInt(params.domainId)
       const data = request.only(['status', 'reason']) as ValidateDomainRequest
 
-      if (isNaN(domainId)) {
+      if (Number.isNaN(domainId)) {
         return response.badRequest({
           error: 'ID de domaine invalide',
-          details: 'L\'ID doit être un nombre'
+          details: "L'ID doit être un nombre",
         })
       }
 
       if (!data.status) {
         return response.badRequest({
           error: 'Statut manquant',
-          details: 'Le statut est requis'
+          details: 'Le statut est requis',
         })
       }
 
       if (!['APPROVED', 'REJECTED'].includes(data.status)) {
         return response.badRequest({
           error: 'Statut invalide',
-          details: 'Le statut doit être "APPROVED" ou "REJECTED"'
+          details: 'Le statut doit être "APPROVED" ou "REJECTED"',
         })
       }
 
       if (data.status === 'REJECTED' && !data.reason) {
         return response.badRequest({
           error: 'Raison manquante',
-          details: 'Une raison est requise pour rejeter un domaine'
+          details: 'Une raison est requise pour rejeter un domaine',
         })
       }
 
@@ -392,14 +392,14 @@ export default class SpaarkPaysController {
 
       return response.ok({
         success: true,
-        data: { domain }
+        data: { domain },
       })
     } catch (error) {
       console.error('Erreur lors de la validation du domaine:', error)
       return response.internalServerError({
         success: false,
         error: 'Erreur lors de la validation du domaine',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -418,14 +418,14 @@ export default class SpaarkPaysController {
 
       return response.ok({
         success: true,
-        data: stats
+        data: stats,
       })
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques:', error)
       return response.internalServerError({
         success: false,
         error: 'Erreur lors de la récupération des statistiques',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -447,7 +447,7 @@ export default class SpaarkPaysController {
       if (!['test', 'live'].includes(type)) {
         return response.badRequest({
           error: 'Type invalide',
-          details: 'Le type doit être "test" ou "live"'
+          details: 'Le type doit être "test" ou "live"',
         })
       }
 
@@ -455,14 +455,14 @@ export default class SpaarkPaysController {
 
       return response.ok({
         success: true,
-        data: result
+        data: result,
       })
     } catch (error) {
       console.error('Erreur lors de la génération de la clé API:', error)
       return response.internalServerError({
         success: false,
         error: 'Erreur lors de la génération de la clé API',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -488,15 +488,15 @@ export default class SpaarkPaysController {
             environment: config.environment,
             hasToken: !!config.token,
             hasTestApiKey: !!config.testApiKey,
-            hasLiveApiKey: !!config.liveApiKey
-          }
-        }
+            hasLiveApiKey: !!config.liveApiKey,
+          },
+        },
       })
     } catch (error) {
       return response.internalServerError({
         success: false,
         error: 'Erreur lors du test',
-        details: error.message
+        details: error.message,
       })
     }
   }

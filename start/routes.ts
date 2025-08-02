@@ -64,16 +64,46 @@ router
         endpoints: {
           documentation: '/v3/docs',
           swagger: '/v3/swagger',
+          auth: '/v3/auth',
           appwrite: '/v3/appwrite',
           collections: '/v3/collections',
           spaarkpay: '/v3/spaark-pay',
+          sms: '/v3/sms',
           health: '/v3/health',
         },
       }
     })
 
     // =====================================
-    // Routes Appwrite Integration (IMPLÉMENTÉES)
+    // 1. AUTHENTICATION
+    // =====================================
+    router
+      .group(() => {
+        const AuthController = () => import('#controllers/auth_controller')
+
+        // Public authentication routes
+        router.post('/register', [AuthController, 'register'])
+        router.post('/login', [AuthController, 'login'])
+        router.post('/get-token', [AuthController, 'getToken']) // Temporary route to get token
+
+        // Protected authentication routes
+        router
+          .group(() => {
+            router.post('/logout', [AuthController, 'logout'])
+            router.get('/profile', [AuthController, 'profile'])
+            router.post('/refresh-token', [AuthController, 'refreshToken'])
+          })
+          .middleware([
+            () => import('#middleware/user_auth_middleware'),
+            () => import('#middleware/validation_middleware'),
+            () => import('#middleware/rate_limit_middleware'),
+            () => import('#middleware/security_log_middleware'),
+          ])
+      })
+      .prefix('/auth')
+
+    // =====================================
+    // 2. DATABASE MANAGEMENT
     // =====================================
     router
       .group(() => {
@@ -82,14 +112,14 @@ router
         // Health check Appwrite
         router.get('/health', [AppwritesController, 'health'])
 
-        // Gestion des bases de données
+        // Database management
         router.get('/databases', [AppwritesController, 'listDatabases'])
 
-        // Gestion des collections
+        // Collection management
         router.get('/databases/:databaseId/collections', [AppwritesController, 'listCollections'])
         router.post('/databases/:databaseId/collections', [AppwritesController, 'createCollection'])
 
-        // Gestion des documents
+        // Document management
         router.get('/databases/:databaseId/collections/:collectionId/documents', [
           AppwritesController,
           'listDocuments',
@@ -111,7 +141,7 @@ router
           'deleteDocument',
         ])
 
-        // Gestion des attributs
+        // Attribute management
         router.post('/databases/:databaseId/collections/:collectionId/attributes/string', [
           AppwritesController,
           'createStringAttribute',
@@ -132,44 +162,44 @@ router
       .prefix('/appwrite')
 
     // =====================================
-    // Routes Collection Management (NOUVELLES)
+    // 3. COLLECTION MANAGEMENT
     // =====================================
     router
       .group(() => {
         const CollectionManagersController = () =>
           import('#controllers/collection_managers_controller')
 
-        // Initialisation complète des collections
+        // Complete collection initialization
         router.post('/initialize', [CollectionManagersController, 'initializeAllCollections'])
 
-        // Exécution d'actions spécifiques
+        // Execute specific actions
         router.post('/actions', [CollectionManagersController, 'executeCollectionActions'])
 
-        // Status des collections
+        // Collection status
         router.get('/status', [CollectionManagersController, 'getCollectionStatus'])
 
-        // Configuration des collections
+        // Collection configuration
         router.get('/configuration', [CollectionManagersController, 'getCollectionConfiguration'])
       })
       .prefix('/collections')
 
     // =====================================
-    // Routes Spaark Pay Integration (NOUVELLES)
+    // 4. PAYMENT PROCESSING
     // =====================================
     router
       .group(() => {
         const SpaarkPaysController = () => import('#controllers/spaark_pays_controller')
 
-        // Health check Spaark Pay (sans authentification)
+        // Health check Spaark Pay (no authentication)
         router.get('/health', [SpaarkPaysController, 'health'])
 
-        // Test simple (sans authentification)
+        // Simple test (no authentication)
         router.get('/test', [SpaarkPaysController, 'test'])
 
-        // Routes protégées avec authentification
+        // Protected routes with authentication
         router
           .group(() => {
-            // Paiements
+            // Payments
             router.post('/initiate', [SpaarkPaysController, 'initiatePayment'])
             router.get('/status/:paymentId', [SpaarkPaysController, 'getPaymentStatus'])
             router.post('/verify', [SpaarkPaysController, 'verifyPayment'])
@@ -177,13 +207,13 @@ router
             router.post('/webhook', [SpaarkPaysController, 'processWebhook'])
             router.get('/transactions', [SpaarkPaysController, 'getTransactionHistory'])
 
-            // Domaines
+            // Domains
             router.get('/domains', [SpaarkPaysController, 'getDomains'])
             router.post('/domains', [SpaarkPaysController, 'addDomain'])
             router.patch('/domains/:domainId/validate', [SpaarkPaysController, 'validateDomain'])
             router.get('/domains/stats', [SpaarkPaysController, 'getDomainStats'])
 
-            // Utilisateurs
+            // Users
             router.post('/api-key/:type', [SpaarkPaysController, 'generateApiKey'])
           })
           .middleware([
@@ -195,7 +225,7 @@ router
       })
       .prefix('/spaark-pay')
       .middleware(async (ctx, next) => {
-        // Headers de sécurité pour toutes les routes Spaark Pay
+        // Security headers for all Spaark Pay routes
         ctx.response.header('X-Content-Type-Options', 'nosniff')
         ctx.response.header('X-Frame-Options', 'DENY')
         ctx.response.header('X-XSS-Protection', '1; mode=block')
@@ -206,28 +236,28 @@ router
       })
 
     // =====================================
-    // Routes SMS Integration (NOUVELLES)
+    // 5. SMS NOTIFICATIONS
     // =====================================
     router
       .group(() => {
         const SmsController = () => import('#controllers/sms_controller')
 
-        // Health check SMS (sans authentification)
+        // Health check SMS (no authentication)
         router.get('/health', [SmsController, 'health'])
 
-        // Test simple (sans authentification)
+        // Simple test (no authentication)
         router.get('/test', [SmsController, 'test'])
 
-        // Routes protégées avec authentification
+        // Protected routes with authentication
         router
           .group(() => {
-            // Envoi et gestion des SMS
+            // SMS sending and management
             router.post('/send', [SmsController, 'sendSms'])
             router.get('/status/:messageId', [SmsController, 'getSmsStatus'])
             router.get('/history', [SmsController, 'getSmsHistory'])
             router.get('/stats', [SmsController, 'getSmsStats'])
 
-            // Nouvelles fonctionnalités SMS
+            // New SMS features
             router.post('/send/test', [SmsController, 'sendTestSms'])
             router.post('/send/otp', [SmsController, 'sendOtpSms'])
             router.post('/send/notification', [SmsController, 'sendNotificationSms'])
@@ -248,7 +278,7 @@ router
       })
       .prefix('/sms')
       .middleware(async (ctx, next) => {
-        // Headers de sécurité pour toutes les routes SMS
+        // Security headers for all SMS routes
         ctx.response.header('X-Content-Type-Options', 'nosniff')
         ctx.response.header('X-Frame-Options', 'DENY')
         ctx.response.header('X-XSS-Protection', '1; mode=block')

@@ -15,7 +15,7 @@ export default class CollectionManagersController {
    * @initializeAllCollections
    * @summary Initialiser toutes les collections Appwrite
    * @description Crée toutes les collections définies dans la configuration avec leurs attributs et index
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @responseBody 200 - {"success": true, "collections": {"created": ["QUOTES", "CONTACTS"], "updated": [], "skipped": [], "errors": []}, "duration": 1500, "timestamp": "2024-01-01T00:00:00.000Z"}
    * @responseBody 500 - {"success": false, "error": "Erreur lors de l'initialisation", "details": "string"}
    */
@@ -50,7 +50,7 @@ export default class CollectionManagersController {
    * @executeCollectionActions
    * @summary Exécuter des actions sur des collections spécifiques
    * @description Permet d'exécuter des actions ciblées (create, update, recreate, delete) sur des collections
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @requestBody [{"action": "create", "collection": "QUOTES"}, {"action": "update", "collection": "CONTACTS"}]
    * @responseBody 200 - {"success": true, "collections": {"created": ["QUOTES"], "updated": ["CONTACTS"], "skipped": [], "errors": []}}
    * @responseBody 400 - {"error": "Actions requises", "details": "Le body doit contenir un tableau d'actions"}
@@ -119,7 +119,7 @@ export default class CollectionManagersController {
    * @getCollectionStatus
    * @summary Obtenir le statut des collections
    * @description Récupère l'état actuel de toutes les collections configurées
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @responseBody 200 - {"collections": {"QUOTES": {"exists": true, "attributes": 15, "indexes": 4}, "CONTACTS": {"exists": false}}}
    * @responseBody 500 - {"error": "Erreur lors de la récupération du statut", "details": "string"}
    */
@@ -179,7 +179,7 @@ export default class CollectionManagersController {
    * @getCollectionConfiguration
    * @summary Obtenir la configuration des collections
    * @description Récupère la configuration complète des collections (attributs, index, permissions)
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @responseBody 200 - {"collections": ["QUOTES", "CONTACTS"], "attributes": {...}, "indexes": {...}, "permissions": {...}}
    */
   async getCollectionConfiguration({ response }: HttpContext) {

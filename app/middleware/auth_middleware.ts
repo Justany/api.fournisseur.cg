@@ -1,6 +1,17 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import env from '#start/env'
 
+// Étendre le type HttpContext pour inclure authInfo
+declare module '@adonisjs/core/http' {
+  interface HttpContext {
+    authInfo?: {
+      apiKey: string | null
+      token: string | null
+      timestamp: string
+    }
+  }
+}
+
 /**
  * Middleware d'authentification pour les endpoints Spaark Pay
  * Vérifie la présence d'un token API valide
@@ -15,7 +26,7 @@ export default class AuthMiddleware {
       return ctx.response.unauthorized({
         success: false,
         error: 'Authentification requise',
-        details: 'Clé API ou token d\'authentification manquant'
+        details: "Clé API ou token d'authentification manquant",
       })
     }
 
@@ -23,14 +34,14 @@ export default class AuthMiddleware {
     if (apiKey) {
       const validApiKeys = [
         env.get('SPAARK_PAY_TEST_API_KEY'),
-        env.get('SPAARK_PAY_LIVE_API_KEY')
+        env.get('SPAARK_PAY_LIVE_API_KEY'),
       ].filter(Boolean)
 
       if (!validApiKeys.includes(apiKey)) {
         return ctx.response.unauthorized({
           success: false,
           error: 'Clé API invalide',
-          details: 'La clé API fournie n\'est pas valide'
+          details: "La clé API fournie n'est pas valide",
         })
       }
     }
@@ -41,7 +52,7 @@ export default class AuthMiddleware {
         return ctx.response.unauthorized({
           success: false,
           error: 'Format de token invalide',
-          details: 'Le token doit être au format "Bearer <token>"'
+          details: 'Le token doit être au format "Bearer <token>"',
         })
       }
 
@@ -52,7 +63,7 @@ export default class AuthMiddleware {
         return ctx.response.unauthorized({
           success: false,
           error: 'Token invalide',
-          details: 'Le token d\'authentification n\'est pas valide'
+          details: "Le token d'authentification n'est pas valide",
         })
       }
     }
@@ -61,7 +72,7 @@ export default class AuthMiddleware {
     ctx.authInfo = {
       apiKey: apiKey || null,
       token: authToken ? authToken.replace('Bearer ', '') : null,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }
 
     await next()

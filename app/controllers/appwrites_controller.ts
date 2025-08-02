@@ -10,7 +10,7 @@ export default class AppwritesController {
    * @health
    * @summary Health check de la connexion Appwrite
    * @description Vérifier l'état de la connexion avec le serveur Appwrite
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @responseBody 200 - {"status": "healthy", "databases": 2, "timestamp": "2024-01-01T00:00:00.000Z"}
    * @responseBody 500 - {"error": "Erreur lors du health check Appwrite", "details": "Connection failed"}
    */
@@ -21,7 +21,7 @@ export default class AppwritesController {
     } catch (error) {
       return response.internalServerError({
         error: 'Erreur lors du health check Appwrite',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -30,7 +30,7 @@ export default class AppwritesController {
    * @listDatabases
    * @summary Lister toutes les bases de données Appwrite
    * @description Récupérer la liste de toutes les bases de données disponibles
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @responseBody 200 - {"success": true, "data": {"total": 2, "databases": []}}
    * @responseBody 500 - {"error": "Erreur lors de la récupération des bases de données", "details": "string"}
    */
@@ -39,12 +39,12 @@ export default class AppwritesController {
       const databases = await this.appwrite.databases.list()
       return response.ok({
         success: true,
-        data: databases
+        data: databases,
       })
     } catch (error) {
       return response.internalServerError({
         error: 'Erreur lors de la récupération des bases de données',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -53,7 +53,7 @@ export default class AppwritesController {
    * @listCollections
    * @summary Lister les collections d'une base de données
    * @description Récupérer toutes les collections d'une base de données spécifique
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @responseBody 200 - {"success": true, "data": {"total": 5, "collections": []}}
    * @responseBody 500 - {"error": "Erreur lors de la récupération des collections", "details": "string"}
@@ -65,12 +65,12 @@ export default class AppwritesController {
 
       return response.ok({
         success: true,
-        data: collections
+        data: collections,
       })
     } catch (error) {
       return response.internalServerError({
         error: 'Erreur lors de la récupération des collections',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -79,7 +79,7 @@ export default class AppwritesController {
    * @createCollection
    * @summary Créer une nouvelle collection
    * @description Créer une nouvelle collection dans une base de données Appwrite
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @requestBody {"collectionId": "orders", "name": "Commandes", "permissions": [], "documentSecurity": false}
    * @responseBody 201 - {"success": true, "data": {"$id": "orders", "name": "Commandes"}}
@@ -92,7 +92,7 @@ export default class AppwritesController {
         'collectionId',
         'name',
         'permissions',
-        'documentSecurity'
+        'documentSecurity',
       ])
 
       const collection = await this.appwrite.createCollection(
@@ -105,12 +105,12 @@ export default class AppwritesController {
 
       return response.created({
         success: true,
-        data: collection
+        data: collection,
       })
     } catch (error) {
       return response.internalServerError({
         error: 'Erreur lors de la création de la collection',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -119,7 +119,7 @@ export default class AppwritesController {
    * @listDocuments
    * @summary Lister les documents d'une collection
    * @description Récupérer tous les documents d'une collection avec filtres optionnels
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
    * @paramQuery queries - Requêtes de filtrage - @type(array) @default([])
@@ -131,20 +131,16 @@ export default class AppwritesController {
       const { databaseId, collectionId } = params
       const queries = request.input('queries', [])
 
-      const documents = await this.appwrite.listDocuments(
-        databaseId,
-        collectionId,
-        queries
-      )
+      const documents = await this.appwrite.listDocuments(databaseId, collectionId, queries)
 
       return response.ok({
         success: true,
-        data: documents
+        data: documents,
       })
     } catch (error) {
       return response.internalServerError({
         error: 'Erreur lors de la récupération des documents',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -153,7 +149,7 @@ export default class AppwritesController {
    * @createDocument
    * @summary Créer un nouveau document
    * @description Créer un nouveau document dans une collection Appwrite
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
    * @requestBody {"documentId": "unique()", "data": {"title": "Test", "status": "active"}, "permissions": []}
@@ -163,11 +159,7 @@ export default class AppwritesController {
   async createDocument({ params, request, response }: HttpContext) {
     try {
       const { databaseId, collectionId } = params
-      const { documentId, data, permissions } = request.only([
-        'documentId',
-        'data',
-        'permissions'
-      ])
+      const { documentId, data, permissions } = request.only(['documentId', 'data', 'permissions'])
 
       const document = await this.appwrite.createDocument(
         databaseId,
@@ -179,12 +171,12 @@ export default class AppwritesController {
 
       return response.created({
         success: true,
-        data: document
+        data: document,
       })
     } catch (error) {
       return response.internalServerError({
         error: 'Erreur lors de la création du document',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -193,7 +185,7 @@ export default class AppwritesController {
    * @getDocument
    * @summary Obtenir un document spécifique
    * @description Récupérer un document par son ID avec requêtes optionnelles
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
    * @paramPath documentId - ID du document - @type(string) @required
@@ -215,12 +207,12 @@ export default class AppwritesController {
 
       return response.ok({
         success: true,
-        data: document
+        data: document,
       })
     } catch (error) {
       return response.internalServerError({
         error: 'Erreur lors de la récupération du document',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -229,7 +221,7 @@ export default class AppwritesController {
    * @updateDocument
    * @summary Mettre à jour un document
    * @description Mettre à jour les données d'un document existant
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
    * @paramPath documentId - ID du document - @type(string) @required
@@ -252,12 +244,12 @@ export default class AppwritesController {
 
       return response.ok({
         success: true,
-        data: document
+        data: document,
       })
     } catch (error) {
       return response.internalServerError({
         error: 'Erreur lors de la mise à jour du document',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -266,7 +258,7 @@ export default class AppwritesController {
    * @deleteDocument
    * @summary Supprimer un document
    * @description Supprimer définitivement un document d'une collection
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
    * @paramPath documentId - ID du document - @type(string) @required
@@ -281,12 +273,12 @@ export default class AppwritesController {
 
       return response.ok({
         success: true,
-        message: 'Document supprimé avec succès'
+        message: 'Document supprimé avec succès',
       })
     } catch (error) {
       return response.internalServerError({
         error: 'Erreur lors de la suppression du document',
-        details: error.message
+        details: error.message,
       })
     }
   }
@@ -295,7 +287,7 @@ export default class AppwritesController {
    * @createStringAttribute
    * @summary Créer un attribut string
    * @description Créer un nouvel attribut de type string pour une collection
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
    * @requestBody {"key": "title", "size": 255, "required": true, "defaultValue": ""}
@@ -309,7 +301,7 @@ export default class AppwritesController {
         'key',
         'size',
         'required',
-        'defaultValue'
+        'defaultValue',
       ])
 
       const attribute = await this.appwrite.createStringAttribute(
@@ -323,12 +315,12 @@ export default class AppwritesController {
 
       return response.created({
         success: true,
-        data: attribute
+        data: attribute,
       })
     } catch (error) {
       return response.internalServerError({
-        error: 'Erreur lors de la création de l\'attribut string',
-        details: error.message
+        error: "Erreur lors de la création de l'attribut string",
+        details: error.message,
       })
     }
   }
@@ -337,7 +329,7 @@ export default class AppwritesController {
    * @createIntegerAttribute
    * @summary Créer un attribut integer
    * @description Créer un nouvel attribut de type entier pour une collection
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
    * @requestBody {"key": "price", "required": false, "min": 0, "max": 999999, "defaultValue": 0}
@@ -352,7 +344,7 @@ export default class AppwritesController {
         'required',
         'min',
         'max',
-        'defaultValue'
+        'defaultValue',
       ])
 
       const attribute = await this.appwrite.createIntegerAttribute(
@@ -367,12 +359,12 @@ export default class AppwritesController {
 
       return response.created({
         success: true,
-        data: attribute
+        data: attribute,
       })
     } catch (error) {
       return response.internalServerError({
-        error: 'Erreur lors de la création de l\'attribut integer',
-        details: error.message
+        error: "Erreur lors de la création de l'attribut integer",
+        details: error.message,
       })
     }
   }
@@ -381,7 +373,7 @@ export default class AppwritesController {
    * @createBooleanAttribute
    * @summary Créer un attribut boolean
    * @description Créer un nouvel attribut de type booléen pour une collection
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
    * @requestBody {"key": "isActive", "required": false, "defaultValue": true}
@@ -391,11 +383,7 @@ export default class AppwritesController {
   async createBooleanAttribute({ params, request, response }: HttpContext) {
     try {
       const { databaseId, collectionId } = params
-      const { key, required, defaultValue } = request.only([
-        'key',
-        'required',
-        'defaultValue'
-      ])
+      const { key, required, defaultValue } = request.only(['key', 'required', 'defaultValue'])
 
       const attribute = await this.appwrite.createBooleanAttribute(
         databaseId,
@@ -407,12 +395,12 @@ export default class AppwritesController {
 
       return response.created({
         success: true,
-        data: attribute
+        data: attribute,
       })
     } catch (error) {
       return response.internalServerError({
-        error: 'Erreur lors de la création de l\'attribut boolean',
-        details: error.message
+        error: "Erreur lors de la création de l'attribut boolean",
+        details: error.message,
       })
     }
   }
@@ -421,7 +409,7 @@ export default class AppwritesController {
    * @createDatetimeAttribute
    * @summary Créer un attribut datetime
    * @description Créer un nouvel attribut de type date/heure pour une collection
-   * @tag Appwrite Integration
+   * @tag Appwrite
    * @paramPath databaseId - ID de la base de données - @type(string) @required
    * @paramPath collectionId - ID de la collection - @type(string) @required
    * @requestBody {"key": "createdAt", "required": true, "defaultValue": "2024-01-01T00:00:00.000Z"}
@@ -431,11 +419,7 @@ export default class AppwritesController {
   async createDatetimeAttribute({ params, request, response }: HttpContext) {
     try {
       const { databaseId, collectionId } = params
-      const { key, required, defaultValue } = request.only([
-        'key',
-        'required',
-        'defaultValue'
-      ])
+      const { key, required, defaultValue } = request.only(['key', 'required', 'defaultValue'])
 
       const attribute = await this.appwrite.createDatetimeAttribute(
         databaseId,
@@ -447,12 +431,12 @@ export default class AppwritesController {
 
       return response.created({
         success: true,
-        data: attribute
+        data: attribute,
       })
     } catch (error) {
       return response.internalServerError({
-        error: 'Erreur lors de la création de l\'attribut datetime',
-        details: error.message
+        error: "Erreur lors de la création de l'attribut datetime",
+        details: error.message,
       })
     }
   }
