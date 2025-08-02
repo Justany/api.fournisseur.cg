@@ -61,14 +61,14 @@ router
             description: 'Paiements mobiles MTN Money, Airtel Money',
           },
         },
-                  endpoints: {
-            documentation: '/v3/docs',
-            swagger: '/v3/swagger',
-            appwrite: '/v3/appwrite',
-            collections: '/v3/collections',
-            spaarkpay: '/v3/spaark-pay',
-            health: '/v3/health',
-          },
+        endpoints: {
+          documentation: '/v3/docs',
+          swagger: '/v3/swagger',
+          appwrite: '/v3/appwrite',
+          collections: '/v3/collections',
+          spaarkpay: '/v3/spaark-pay',
+          health: '/v3/health',
+        },
       }
     })
 
@@ -136,7 +136,8 @@ router
     // =====================================
     router
       .group(() => {
-        const CollectionManagersController = () => import('#controllers/collection_managers_controller')
+        const CollectionManagersController = () =>
+          import('#controllers/collection_managers_controller')
 
         // Initialisation complète des collections
         router.post('/initialize', [CollectionManagersController, 'initializeAllCollections'])
@@ -159,30 +160,103 @@ router
       .group(() => {
         const SpaarkPaysController = () => import('#controllers/spaark_pays_controller')
 
-        // Health check Spaark Pay
+        // Health check Spaark Pay (sans authentification)
         router.get('/health', [SpaarkPaysController, 'health'])
 
-        // Test simple
+        // Test simple (sans authentification)
         router.get('/test', [SpaarkPaysController, 'test'])
 
-        // Paiements
-        router.post('/initiate', [SpaarkPaysController, 'initiatePayment'])
-        router.get('/status/:paymentId', [SpaarkPaysController, 'getPaymentStatus'])
-        router.post('/verify', [SpaarkPaysController, 'verifyPayment'])
-        router.post('/verify-by-id', [SpaarkPaysController, 'verifyPaymentById'])
-        router.post('/webhook', [SpaarkPaysController, 'processWebhook'])
-        router.get('/transactions', [SpaarkPaysController, 'getTransactionHistory'])
+        // Routes protégées avec authentification
+        router
+          .group(() => {
+            // Paiements
+            router.post('/initiate', [SpaarkPaysController, 'initiatePayment'])
+            router.get('/status/:paymentId', [SpaarkPaysController, 'getPaymentStatus'])
+            router.post('/verify', [SpaarkPaysController, 'verifyPayment'])
+            router.post('/verify-by-id', [SpaarkPaysController, 'verifyPaymentById'])
+            router.post('/webhook', [SpaarkPaysController, 'processWebhook'])
+            router.get('/transactions', [SpaarkPaysController, 'getTransactionHistory'])
 
-        // Domaines
-        router.get('/domains', [SpaarkPaysController, 'getDomains'])
-        router.post('/domains', [SpaarkPaysController, 'addDomain'])
-        router.patch('/domains/:domainId/validate', [SpaarkPaysController, 'validateDomain'])
-        router.get('/domains/stats', [SpaarkPaysController, 'getDomainStats'])
+            // Domaines
+            router.get('/domains', [SpaarkPaysController, 'getDomains'])
+            router.post('/domains', [SpaarkPaysController, 'addDomain'])
+            router.patch('/domains/:domainId/validate', [SpaarkPaysController, 'validateDomain'])
+            router.get('/domains/stats', [SpaarkPaysController, 'getDomainStats'])
 
-        // Utilisateurs
-        router.post('/api-key/:type', [SpaarkPaysController, 'generateApiKey'])
+            // Utilisateurs
+            router.post('/api-key/:type', [SpaarkPaysController, 'generateApiKey'])
+          })
+          .middleware([
+            () => import('#middleware/auth_middleware'),
+            () => import('#middleware/validation_middleware'),
+            () => import('#middleware/rate_limit_middleware'),
+            () => import('#middleware/security_log_middleware'),
+          ])
       })
       .prefix('/spaark-pay')
+      .middleware(async (ctx, next) => {
+        // Headers de sécurité pour toutes les routes Spaark Pay
+        ctx.response.header('X-Content-Type-Options', 'nosniff')
+        ctx.response.header('X-Frame-Options', 'DENY')
+        ctx.response.header('X-XSS-Protection', '1; mode=block')
+        ctx.response.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+        ctx.response.header('Content-Security-Policy', "default-src 'self'")
+
+        await next()
+      })
+
+    // =====================================
+    // Routes SMS Integration (NOUVELLES)
+    // =====================================
+    router
+      .group(() => {
+        const SmsController = () => import('#controllers/sms_controller')
+
+        // Health check SMS (sans authentification)
+        router.get('/health', [SmsController, 'health'])
+
+        // Test simple (sans authentification)
+        router.get('/test', [SmsController, 'test'])
+
+        // Routes protégées avec authentification
+        router
+          .group(() => {
+            // Envoi et gestion des SMS
+            router.post('/send', [SmsController, 'sendSms'])
+            router.get('/status/:messageId', [SmsController, 'getSmsStatus'])
+            router.get('/history', [SmsController, 'getSmsHistory'])
+            router.get('/stats', [SmsController, 'getSmsStats'])
+
+            // Nouvelles fonctionnalités SMS
+            router.post('/send/test', [SmsController, 'sendTestSms'])
+            router.post('/send/otp', [SmsController, 'sendOtpSms'])
+            router.post('/send/notification', [SmsController, 'sendNotificationSms'])
+            router.get('/balance', [SmsController, 'checkBalance'])
+            router.post('/calculate-cost', [SmsController, 'calculateSmsCost'])
+            router.get('/api-info', [SmsController, 'getApiInfo'])
+
+            // Webhooks
+            router.post('/webhook', [SmsController, 'processWebhook'])
+            router.post('/webhook/config', [SmsController, 'configureWebhook'])
+          })
+          .middleware([
+            () => import('#middleware/auth_middleware'),
+            () => import('#middleware/validation_middleware'),
+            () => import('#middleware/rate_limit_middleware'),
+            () => import('#middleware/security_log_middleware'),
+          ])
+      })
+      .prefix('/sms')
+      .middleware(async (ctx, next) => {
+        // Headers de sécurité pour toutes les routes SMS
+        ctx.response.header('X-Content-Type-Options', 'nosniff')
+        ctx.response.header('X-Frame-Options', 'DENY')
+        ctx.response.header('X-XSS-Protection', '1; mode=block')
+        ctx.response.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+        ctx.response.header('Content-Security-Policy', "default-src 'self'")
+
+        await next()
+      })
   })
   .prefix('/v3')
 

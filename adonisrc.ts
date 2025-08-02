@@ -50,6 +50,7 @@ export default defineConfig({
     () => import('#providers/appwrite_provider'),
     () => import('#providers/collection_manager_provider'),
     () => import('#providers/spaark_pay_provider'),
+    () => import('#providers/sm_provider'),
   ],
 
   /*
