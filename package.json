@@ -15,7 +15,10 @@
     "appwrite:init": "node ace appwrite:init all",
     "appwrite:status": "node ace appwrite:init status",
     "collections:create": "node ace appwrite:init create",
-    "collections:update": "node ace appwrite:init update"
+    "collections:update": "node ace appwrite:init update",
+    "spaark:test": "node ace spaark:test health",
+    "spaark:config": "node ace spaark:test config",
+    "spaark:domains": "node ace spaark:test domains"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",

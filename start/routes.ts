@@ -56,17 +56,19 @@ router
             status: 'en attente',
             description: 'Messages système et bienvenue',
           },
-          sparkpay: {
-            status: 'en attente (documentation requise)',
+          spaarkpay: {
+            status: 'intégré',
             description: 'Paiements mobiles MTN Money, Airtel Money',
           },
         },
-        endpoints: {
-          documentation: '/v3/docs',
-          swagger: '/v3/swagger',
-          appwrite: '/v3/appwrite',
-          health: '/v3/health',
-        },
+                  endpoints: {
+            documentation: '/v3/docs',
+            swagger: '/v3/swagger',
+            appwrite: '/v3/appwrite',
+            collections: '/v3/collections',
+            spaarkpay: '/v3/spaark-pay',
+            health: '/v3/health',
+          },
       }
     })
 
@@ -149,6 +151,38 @@ router
         router.get('/configuration', [CollectionManagersController, 'getCollectionConfiguration'])
       })
       .prefix('/collections')
+
+    // =====================================
+    // Routes Spaark Pay Integration (NOUVELLES)
+    // =====================================
+    router
+      .group(() => {
+        const SpaarkPaysController = () => import('#controllers/spaark_pays_controller')
+
+        // Health check Spaark Pay
+        router.get('/health', [SpaarkPaysController, 'health'])
+
+        // Test simple
+        router.get('/test', [SpaarkPaysController, 'test'])
+
+        // Paiements
+        router.post('/initiate', [SpaarkPaysController, 'initiatePayment'])
+        router.get('/status/:paymentId', [SpaarkPaysController, 'getPaymentStatus'])
+        router.post('/verify', [SpaarkPaysController, 'verifyPayment'])
+        router.post('/verify-by-id', [SpaarkPaysController, 'verifyPaymentById'])
+        router.post('/webhook', [SpaarkPaysController, 'processWebhook'])
+        router.get('/transactions', [SpaarkPaysController, 'getTransactionHistory'])
+
+        // Domaines
+        router.get('/domains', [SpaarkPaysController, 'getDomains'])
+        router.post('/domains', [SpaarkPaysController, 'addDomain'])
+        router.patch('/domains/:domainId/validate', [SpaarkPaysController, 'validateDomain'])
+        router.get('/domains/stats', [SpaarkPaysController, 'getDomainStats'])
+
+        // Utilisateurs
+        router.post('/api-key/:type', [SpaarkPaysController, 'generateApiKey'])
+      })
+      .prefix('/spaark-pay')
   })
   .prefix('/v3')
 

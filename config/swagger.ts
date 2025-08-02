@@ -42,10 +42,10 @@ const swaggerConfig = {
       name: 'Orders Management',
       description: 'Gestion des commandes internationales et suivi logistique',
     },
-    {
-      name: 'Payments',
-      description: 'Intégration Spark Pay - Paiements mobiles (MTN Money, Airtel Money)',
-    },
+               {
+             name: 'Payments',
+             description: 'Intégration Spaark Pay - Paiements mobiles (MTN Money, Airtel Money)',
+           },
     {
       name: 'Shipping Services',
       description: 'Services de transport (DHL, FedEx, UPS) et estimation des coûts',
