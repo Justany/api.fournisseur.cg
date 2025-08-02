@@ -166,18 +166,19 @@ export class SpaarkPayService {
    * Récupérer l'historique des transactions
    */
   async getTransactionHistory(): Promise<SpaarkPayTransactionHistory[]> {
-    const response = await this.makeRequest<
-      SpaarkPayResponse<{ data: SpaarkPayTransactionHistory[] }>
-    >('/payment/transactions', {
+    const response = await this.makeRequest<{
+      status: number
+      data: SpaarkPayTransactionHistory[]
+    }>('/payment/transactions', {
       method: 'GET',
       requiresAuth: true,
     })
 
-    if (response.status === 'success' && response.data) {
-      return response.data.data
+    if (response.status === 200 && response.data) {
+      return response.data
     }
 
-    throw new Error(`Échec de la récupération de l'historique: ${response.message}`)
+    throw new Error(`Échec de la récupération de l'historique: ${response.status}`)
   }
 
   /**
