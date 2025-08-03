@@ -290,13 +290,13 @@ Fournisseur CG est une plateforme complète de logistique internationale qui s'a
 ## Communauté et Support
 
 ### Ressources
-- [Documentation API](https://docs.fournisseur-cg.com)
-- [Guide d'utilisation](https://help.fournisseur-cg.com)
-- [Blog technique](https://blog.fournisseur-cg.com)
-- [Forum communautaire](https://community.fournisseur-cg.com)
+- [Documentation API](https://docs.fournisseur.cg)
+- [Guide d'utilisation](https://help.fournisseur.cg)
+- [Blog technique](https://blog.fournisseur.cg)
+- [Forum communautaire](https://community.fournisseur.cg)
 
 ### Contact
-- **Email** : contact@fournisseur-cg.com
+- **Email** : contact@fournisseur.cg
 - **Téléphone** : +242 06 XXX XXX
 - **Adresse** : Brazzaville, République du Congo
 - **Horaires** : Lundi-Vendredi 8h-18h
@@ -305,4 +305,4 @@ Fournisseur CG est une plateforme complète de logistique internationale qui s'a
 
 *Fournisseur CG - Simplifiez vos achats internationaux depuis le Congo*
 
-*Dernière mise à jour : Janvier 2024* 
+*Dernière mise à jour : Janvier 2024*

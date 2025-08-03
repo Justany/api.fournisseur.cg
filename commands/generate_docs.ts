@@ -97,7 +97,7 @@ export default class GenerateDocs extends BaseCommand {
             description: 'Production - API officielle',
           },
           {
-            url: 'https://staging.api.fournisseur.cg',
+            url: 'https://staging-api.fournisseur.cg',
             description: 'Staging - Tests et validation',
           },
           {

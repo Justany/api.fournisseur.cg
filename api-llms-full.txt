@@ -278,7 +278,7 @@ node ace migration:rollback
 
 ### 🔧 **Configuration Appwrite**
 ```env
-APPWRITE_ENDPOINT=https://appwrite.fournisseur-cg.com
+APPWRITE_ENDPOINT=https://appwrite.fournisseur.cg
 APPWRITE_PROJECT_ID=fournisseur-cg
 APPWRITE_API_KEY=your_server_api_key
 ```
@@ -286,8 +286,8 @@ APPWRITE_API_KEY=your_server_api_key
 ### 📧 **Configuration Email**
 ```env
 MAILERSEND_API_KEY=your_mailersend_key
-SMTP_HOST=smtp.fournisseur-cg.com
-SMTP_USERNAME=noreply@fournisseur-cg.com
+SMTP_HOST=smtp.fournisseur.cg
+SMTP_USERNAME=noreply@fournisseur.cg
 ```
 
 ### 💳 **Configuration Paiements**
@@ -344,8 +344,8 @@ Orchestration des notifications multi-canaux :
 
 ### 🔧 **Environnements**
 - **Development** : http://localhost:3333
-- **Staging** : https://api-staging.fournisseur-cg.com
-- **Production** : https://api.fournisseur-cg.com
+- **Staging** : https://staging-api.fournisseur.cg
+- **Production** : https://api.fournisseur.cg
 
 ### 📚 **Documentation**
 - API Documentation (Swagger UI)
@@ -376,16 +376,16 @@ Orchestration des notifications multi-canaux :
 ## Contact et Ressources
 
 ### 📞 **Support Technique**
-- **Email** : dev@fournisseur-cg.com
+- **Email** : dev@fournisseur.cg
 - **Slack** : #api-support
-- **Documentation** : https://docs-api.fournisseur-cg.com
-- **Status Page** : https://status.fournisseur-cg.com
+- **Documentation** : https://docs-api.fournisseur.cg
+- **Status Page** : https://status.fournisseur.cg
 
 ### 🔗 **Liens Utiles**
 - [Repository GitHub](https://github.com/fournisseur-cg/api)
-- [Swagger Documentation](https://api.fournisseur-cg.com/docs)
-- [Postman Collection](https://postman.fournisseur-cg.com)
-- [SDK JavaScript](https://npm.fournisseur-cg.com)
+- [Swagger Documentation](https://api.fournisseur.cg/docs)
+- [Postman Collection](https://postman.fournisseur.cg)
+- [SDK JavaScript](https://npm.fournisseur.cg)
 
 ---
 

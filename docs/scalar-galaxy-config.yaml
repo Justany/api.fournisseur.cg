@@ -1,5 +1,5 @@
 # Configuration Scalar Galaxy pour API Fournisseur CG
-# Généré automatiquement le 2025-08-03T13:16:32.329Z
+# Généré automatiquement le 2025-08-03T13:53:56.579Z
 # Combine AutoSwagger (routes) + Configuration Scalar (UI/UX)
 
 openapi: 3.0.0
@@ -98,7 +98,7 @@ info:
 servers:
   - url: https://api.fournisseur.cg
     description: Production - API officielle
-  - url: https://staging.api.fournisseur.cg
+  - url: https://staging-api.fournisseur.cg
     description: Staging - Tests et validation
   - url: http://localhost:3333
     description: Développement local
@@ -2851,4 +2851,4 @@ x-scalar:
     showLastModified: true
     showGeneratedBy: true
     generatedBy: API Fournisseur CG - AutoSwagger + Scalar
-    generatedAt: '2025-08-03T13:16:32.298Z'
+    generatedAt: '2025-08-03T13:53:56.569Z'
