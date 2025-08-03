@@ -394,6 +394,7 @@ router
 
         // Test simple (no authentication)
         router.get('/test', [SpaarkPaysController, 'test'])
+        router.get('/test-external', [SpaarkPaysController, 'testExternal'])
 
         // Protected routes with authentication
         router.group(() => {

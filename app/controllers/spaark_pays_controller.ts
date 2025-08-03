@@ -500,4 +500,29 @@ export default class SpaarkPaysController {
       })
     }
   }
+
+  /**
+   * @testExternal
+   * @summary Test external API connectivity
+   * @description Test connectivity with external payment API
+   * @tag Payments
+   * @responseBody 200 - {"status": "ok", "message": "API externe accessible", "details": {...}}
+   */
+  async testExternal({ response }: HttpContext) {
+    try {
+      const result = await this.spaarkPay.testExternalApi()
+
+      return response.ok({
+        success: result.status === 'ok',
+        message: result.message,
+        data: result.details,
+      })
+    } catch (error) {
+      return response.internalServerError({
+        success: false,
+        error: 'Erreur lors du test externe',
+        details: error.message,
+      })
+    }
+  }
 }

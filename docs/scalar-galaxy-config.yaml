@@ -1,5 +1,5 @@
 # Configuration Scalar Galaxy pour API Fournisseur CG
-# Généré automatiquement le 2025-08-03T10:17:53.353Z
+# Généré automatiquement le 2025-08-03T13:16:32.329Z
 # Combine AutoSwagger (routes) + Configuration Scalar (UI/UX)
 
 openapi: 3.0.0
@@ -7,8 +7,86 @@ info:
   title: API Fournisseur CG - Orchestrateur Logistique
   version: 3.0.0
   description: >-
-    API REST centrale servant de wrapper pour l'écosystème Fournisseur Congo. Orchestrateur entre applications clientes
-    (web Vue.js, mobile) et services backend (Appwrite, MailerSend, SMTP, Spark Pay).
+    API REST centrale pour l'écosystème logistique du Congo. Orchestre les services backend pour une expérience
+    e-commerce unifiée.
+
+
+    ## Mission
+
+    Connecter fournisseurs locaux et clients internationaux via une plateforme spécialisée pour l'écosystème congolais.
+
+
+    ## Services Intégrés
+
+    - **Appwrite** - Backend principal (DB, Auth, Storage)
+
+    - **Spaark Pay** - Paiements mobiles (MTN Money, Airtel Money)
+
+    - **SMS API** - Notifications et codes OTP
+
+    - **MailerSend** - Emails marketing
+
+    - **SMTP** - Notifications système
+
+
+    ## Collections Principales
+
+    - **QUOTES** - Demandes de devis
+
+    - **CONTACTS** - Messages de contact clients
+
+    - **PRODUCTS** - Catalogue multi-plateformes
+
+    - **ORDERS** - Commandes (FC-ORD-XXXX-YYYY)
+
+    - **PAYMENTS** - Transactions de paiement
+
+
+    ## Fonctionnalités Clés
+
+    - **Paiements Mobiles** : Support natif MTN Money et Airtel Money
+
+    - **SMS Avancé** : Codes OTP sécurisés et notifications personnalisées
+
+    - **Collections Auto-Configurées** : Création automatique d'attributs et d'index
+
+
+    ## Authentification
+
+    1. **Bearer Token** - JWT pour utilisateurs connectés
+
+    2. **API Key** - Authentification service-à-service
+
+    3. **Basic Auth** - Endpoints administrateur
+
+
+    ## Spécificités Congo
+
+    - Numéros congolais : +243 format
+
+    - Devise : XAF (Franc CFA)
+
+    - Opérateurs : MTN Money (053/054), Airtel Money (097/098)
+
+
+    ## Health Checks
+
+    - /v3 - État général
+
+    - /v3/spaark-pay/health - Connexion Spaark Pay
+
+    - /v3/sms/health - Connexion SMS API
+
+    - /v3/appwrite/health - Connexion Appwrite
+
+
+    ## Ressources
+
+    - Documentation : https://docs.fournisseur.cg
+
+    - Support : dev@fournisseur.cg
+
+    - Status : https://status.fournisseur.cg
   contact:
     name: Équipe Technique Fournisseur CG
     email: dev@fournisseur.cg
@@ -1408,6 +1486,23 @@ paths:
               example: '{"status": "ok", "message": "Intégration Spaark Pay fonctionnelle", "config": {...}}'
           description: Returns **200** (OK) as **text/plain**
       security: []
+  /v3/spaark-pay/test-external:
+    get:
+      summary: Test external API connectivity (testExternal)
+      description: |-
+        Returns **200** (OK) as **text/plain**
+
+         _app/controllers/spaark_pays_controller.ts_ - **testExternal**
+      parameters: []
+      tags:
+        - PAYMENTS
+      responses:
+        '200':
+          content:
+            text/plain:
+              example: '{"status": "ok", "message": "API externe accessible", "details": {...}}'
+          description: Returns **200** (OK) as **text/plain**
+      security: []
   /v3/spaark-pay/initiate:
     post:
       summary: Initiate mobile money payment (initiatePayment)
@@ -2756,4 +2851,4 @@ x-scalar:
     showLastModified: true
     showGeneratedBy: true
     generatedBy: API Fournisseur CG - AutoSwagger + Scalar
-    generatedAt: '2025-08-03T10:17:53.347Z'
+    generatedAt: '2025-08-03T13:16:32.298Z'

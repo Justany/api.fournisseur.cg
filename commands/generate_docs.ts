@@ -57,7 +57,7 @@ export default class GenerateDocs extends BaseCommand {
       // Créer le dossier de sortie s'il n'existe pas
       if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true })
-        this.logger.info(`📁 Dossier créé: ${outputDir}`)
+        this.logger.info(`📁 Dossier créé: ${outputDir}`) // ...
       }
 
       // Générer la documentation OpenAPI en combinant AutoSwagger + notre config
@@ -193,11 +193,61 @@ export default class GenerateDocs extends BaseCommand {
   }
 
   private generateScalarConfig(openApiSpec: any): string {
+    // Créer une info enrichie avec description Markdown complète
+    const enrichedInfo = {
+      ...openApiSpec.info,
+      title: 'API Fournisseur CG - Orchestrateur Logistique',
+      description: `API REST centrale pour l'écosystème logistique du Congo. Orchestre les services backend pour une expérience e-commerce unifiée.
+
+## Mission
+Connecter fournisseurs locaux et clients internationaux via une plateforme spécialisée pour l'écosystème congolais.
+
+## Services Intégrés
+- **Appwrite** - Backend principal (DB, Auth, Storage)
+- **Spaark Pay** - Paiements mobiles (MTN Money, Airtel Money)
+- **SMS API** - Notifications et codes OTP
+- **MailerSend** - Emails marketing
+- **SMTP** - Notifications système
+
+## Collections Principales
+- **QUOTES** - Demandes de devis
+- **CONTACTS** - Messages de contact clients
+- **PRODUCTS** - Catalogue multi-plateformes
+- **ORDERS** - Commandes (FC-ORD-XXXX-YYYY)
+- **PAYMENTS** - Transactions de paiement
+
+## Fonctionnalités Clés
+- **Paiements Mobiles** : Support natif MTN Money et Airtel Money
+- **SMS Avancé** : Codes OTP sécurisés et notifications personnalisées
+- **Collections Auto-Configurées** : Création automatique d'attributs et d'index
+
+## Authentification
+1. **Bearer Token** - JWT pour utilisateurs connectés
+2. **API Key** - Authentification service-à-service
+3. **Basic Auth** - Endpoints administrateur
+
+## Spécificités Congo
+- Numéros congolais : +243 format
+- Devise : XAF (Franc CFA)
+- Opérateurs : MTN Money (053/054), Airtel Money (097/098)
+
+## Health Checks
+- /v3 - État général
+- /v3/spaark-pay/health - Connexion Spaark Pay
+- /v3/sms/health - Connexion SMS API
+- /v3/appwrite/health - Connexion Appwrite
+
+## Ressources
+- Documentation : https://docs.fournisseur.cg
+- Support : dev@fournisseur.cg
+- Status : https://status.fournisseur.cg`,
+    }
+
     // Générer un fichier YAML OpenAPI complet compatible avec Scalar
     // qui inclut les paths générés par AutoSwagger
     const yamlContent = this.convertToYaml({
       'openapi': '3.0.0',
-      'info': openApiSpec.info,
+      'info': enrichedInfo,
       'servers': openApiSpec.servers,
       'security': openApiSpec.security,
       'components': openApiSpec.components,
@@ -641,16 +691,57 @@ ${yamlContent}`
   private generateMetadata(openApiSpec: any): any {
     return {
       generatedAt: new Date().toISOString(),
+      generator: 'API Fournisseur CG - AutoSwagger + Scalar Generator',
+      version: '3.0.0',
       apiInfo: {
         title: openApiSpec.info.title,
         version: openApiSpec.info.version,
-        description: openApiSpec.info.description,
+        description: "API REST centrale pour l'écosystème logistique du Congo",
+        contact: {
+          name: 'Équipe Technique Fournisseur CG',
+          email: 'dev@fournisseur.cg',
+          url: 'https://fournisseur.cg',
+        },
+        license: {
+          name: 'Propriétaire - Fournisseur CG',
+          url: 'https://fournisseur.cg/license',
+        },
+      },
+      ecosystem: {
+        mission: 'Connecter fournisseurs locaux et clients internationaux',
+        region: 'Congo',
+        specialization: 'E-commerce et logistique africaine',
+        services: [
+          { name: 'Appwrite', role: 'Backend principal', status: 'active' },
+          { name: 'Spaark Pay', role: 'Paiements mobiles', status: 'active' },
+          { name: 'SMS API', role: 'Notifications', status: 'active' },
+          { name: 'MailerSend', role: 'Emails marketing', status: 'planned' },
+          { name: 'SMTP', role: 'Notifications système', status: 'planned' },
+        ],
+        collections: [
+          { name: 'QUOTES', description: 'Demandes de devis', format: 'FC-QMM-XXXX-YYYY' },
+          { name: 'CONTACTS', description: 'Messages de contact clients' },
+          { name: 'PRODUCTS', description: 'Catalogue multi-plateformes' },
+          { name: 'ORDERS', description: 'Commandes', format: 'FC-ORD-XXXX-YYYY' },
+          { name: 'PAYMENTS', description: 'Transactions de paiement' },
+        ],
+        features: [
+          'Paiements mobiles intelligents (MTN Money, Airtel Money)',
+          'Gestion SMS avancée avec codes OTP',
+          'Collections auto-configurées',
+          'Validation locale congolaise',
+          'Retry automatique pour erreurs temporaires',
+          'Documentation interactive avec Scalar UI',
+        ],
       },
       statistics: {
         totalEndpoints: Object.keys(openApiSpec.paths || {}).length,
         totalTags: openApiSpec.tags?.length || 0,
         totalSecuritySchemes: Object.keys(openApiSpec.components?.securitySchemes || {}).length,
         totalServers: openApiSpec.servers?.length || 0,
+        authMethods: ['Bearer Token (JWT)', 'API Key', 'Basic Auth'],
+        supportedFormats: ['JSON', 'YAML'],
+        mainVersion: 'v3',
       },
       endpoints: Object.keys(openApiSpec.paths || {}).map((pathKey) => ({
         path: pathKey,

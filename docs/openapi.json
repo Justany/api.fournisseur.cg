@@ -3,7 +3,7 @@
   "info": {
     "title": "API Fournisseur CG - Orchestrateur Logistique",
     "version": "3.0.0",
-    "description": "API REST centrale servant de wrapper pour l'écosystème Fournisseur Congo. Orchestrateur entre applications clientes (web Vue.js, mobile) et services backend (Appwrite, MailerSend, SMTP, Spark Pay).",
+    "description": "# API Fournisseur CG - Orchestrateur Logistique\n\nL'API Fournisseur CG est la **plateforme centrale** qui orchestre l'écosystème logistique du Congo. Elle sert de pont intelligent entre les applications clientes et les services backend, offrant une expérience unifiée pour la gestion des fournisseurs, commandes, paiements et livraisons.\n\n## 🎯 Mission\n\nConnecter les **fournisseurs locaux** aux **clients internationaux** en simplifiant la logistique, les paiements et la communication dans l'écosystème e-commerce congolais.\n\n## 🏗️ Architecture\n\n### **Services Intégrés**\n\n| Service | Rôle | Statut |\n|---------|------|--------|\n| **Appwrite** | Backend principal (DB, Auth, Storage) | ✅ Intégré |\n| **Spaark Pay** | Paiements mobiles (MTN Money, Airtel) | ✅ Intégré |\n| **SMS API** | Notifications et codes OTP | ✅ Intégré |\n| **MailerSend** | Emails marketing | 🔄 En cours |\n| **SMTP** | Notifications système | 🔄 En cours |\n\n### **Collections Principales**\n\n- **📋 QUOTES** - Demandes de devis (FC-QMM-XXXX-YYYY)\n- **📞 CONTACTS** - Messages de contact clients\n- **🛍️ PRODUCTS** - Catalogue multi-plateformes\n- **📦 ORDERS** - Commandes (FC-ORD-XXXX-YYYY)\n- **💳 PAYMENTS** - Transactions de paiement\n\n## 🚀 Fonctionnalités Clés\n\n### **Paiements Mobiles Intelligents**\n- Support natif **MTN Money** et **Airtel Money**\n- Vérification automatique des transactions\n- Gestion des webhooks en temps réel\n- Retry automatique pour les erreurs temporaires\n\n### **Gestion SMS Avancée**\n- Envoi de codes OTP sécurisés\n- Notifications personnalisées\n- Calcul automatique des coûts\n- Historique et statistiques détaillées\n\n### **Collections Auto-Configurées**\n- Définition déclarative des structures\n- Création automatique d'attributs et d'index\n- Permissions granulaires par collection\n- Migration et mise à jour automatiques\n\n## 🔐 Authentification\n\nL'API supporte **3 méthodes d'authentification** :\n\n1. **Bearer Token** - JWT pour les utilisateurs connectés\n2. **API Key** - Pour l'authentification service-à-service\n3. **Basic Auth** - Pour les endpoints administrateur\n\n<details>\n  <summary>Exemples d'utilisation</summary>\n\n  **Authentification Bearer**\n  ```bash\n  curl -H \"Authorization: Bearer YOUR_JWT_TOKEN\" \\\n       https://api.fournisseur.cg/v3/auth/profile\n  ```\n\n  **Authentification API Key**\n  ```bash\n  curl -H \"X-API-Key: YOUR_API_KEY\" \\\n       https://api.fournisseur.cg/v3/appwrite/health\n  ```\n\n  **Paiement Mobile**\n  ```bash\n  curl -X POST https://api.fournisseur.cg/v3/spaark-pay/initiate \\\n       -H \"Authorization: Bearer YOUR_JWT_TOKEN\" \\\n       -H \"Content-Type: application/json\" \\\n       -d '{\"phone\":\"053518256\",\"amount\":150,\"mode\":\"airtel\"}'\n  ```\n</details>\n\n## 🌍 Spécificités Congo\n\n### **Validation Locale**\n- Numéros de téléphone congolais (0XXXXXXXX)\n- Devise XAF (Franc CFA)\n- Adresses et codes postaux locaux\n- Gestion géographique spécifique\n\n### **Paiements Locaux**\n- **Airtel Money** : 04/05XXXXXXXX\n- **MTN Mobile Money** : 06XXXXXXXX\n- Intégration native avec les opérateurs locaux\n\n## 📊 Monitoring et Logs\n\n### **Health Checks**\n- `/v3` - État général de l'API\n- `/v3/spaark-pay/health` - Connexion Spaark Pay\n- `/v3/sms/health` - Connexion SMS API\n- `/v3/appwrite/health` - Connexion Appwrite\n\n### **Logs Détaillés**\n- Logs structurés pour chaque service\n- Suivi des tentatives de retry\n- Métriques de performance\n- Alertes automatiques\n\n## 🔗 Ressources\n\n* [Documentation complète](https://fournisseur.cg/docs)\n* [Interface d'administration](https://admin.fournisseur.cg)\n* [Support technique](mailto:support@fournisseur.cg)\n* [Statut des services](https://status.fournisseur.cg)\n\n## 📝 Support Markdown\n\nCette documentation supporte le **Markdown complet** :\n\n> [!tip]\n> **Conseil** : Utilisez les endpoints de test pour vérifier la connectivité avant les appels de production.\n\n> [!warning]\n> **Attention** : Les paiements mobiles peuvent avoir des délais de traitement variables selon l'opérateur.\n\n| Fonctionnalité | Disponibilité | Documentation |\n|----------------|---------------|---------------|\n| Paiements mobiles | ✅ Production | [Guide complet](#tag/Payment-Processing) |\n| SMS notifications | ✅ Production | [API SMS](#tag/SMS-Notifications) |\n| Gestion collections | ✅ Production | [Appwrite](#tag/Database-Management) |\n| Authentification | ✅ Production | [Auth](#tag/Authentication) |\n\n<details>\n  <summary>Exemples de réponses</summary>\n\n  **Paiement réussi**\n  ```json\n  {\n    \"success\": true,\n    \"data\": {\n      \"paymentId\": 28,\n      \"token\": \"28257ddbaf7a11ef86feac1f6be4442c\",\n      \"composition\": \"*128*128*1159*PIN#\",\n      \"transID\": \"JKUCJDFLIKDGDGD-328\"\n    }\n  }\n  ```\n\n  **SMS envoyé**\n  ```json\n  {\n    \"success\": true,\n    \"data\": {\n      \"messageId\": \"msg_123\",\n      \"status\": \"sent\",\n      \"to\": \"053518256\",\n      \"cost\": 25\n    }\n  }\n  ```\n</details>",
     "contact": {
       "name": "Équipe Technique Fournisseur CG",
       "email": "dev@fournisseur.cg",
@@ -1949,6 +1949,27 @@
             "content": {
               "text/plain": {
                 "example": "{\"status\": \"ok\", \"message\": \"Intégration Spaark Pay fonctionnelle\", \"config\": {...}}"
+              }
+            },
+            "description": "Returns **200** (OK) as **text/plain**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/spaark-pay/test-external": {
+      "get": {
+        "summary": "Test external API connectivity (testExternal)",
+        "description": "Returns **200** (OK) as **text/plain**\n\n _app/controllers/spaark_pays_controller.ts_ - **testExternal**",
+        "parameters": [],
+        "tags": [
+          "PAYMENTS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "example": "{\"status\": \"ok\", \"message\": \"API externe accessible\", \"details\": {...}}"
               }
             },
             "description": "Returns **200** (OK) as **text/plain**"

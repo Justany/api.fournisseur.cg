@@ -72,23 +72,63 @@ export class SpaarkPayService {
   }
 
   /**
-   * Initier un paiement
+   * Initier un paiement avec retry automatique
    */
   async initiatePayment(request: InitiatePaymentRequest): Promise<InitiatePaymentResponse> {
-    const response = await this.makeRequest<SpaarkPayResponse<InitiatePaymentResponse>>(
-      '/payment/initiate',
-      {
-        method: 'POST',
-        body: request,
-        requiresAuth: true,
-      }
-    )
+    const maxRetries = 3;
+    let lastError: Error | null = null;
 
-    if (response.status === 'success' && response.data) {
-      return response.data
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`🚀 [SpaarkPay] Initiating payment (attempt ${attempt}/${maxRetries}) with data:`, JSON.stringify(request, null, 2))
+
+        const response = await this.makeRequest<SpaarkPayResponse<InitiatePaymentResponse>>(
+          '/payment/initiate',
+          {
+            method: 'POST',
+            body: request,
+            requiresAuth: true,
+          }
+        )
+
+        console.log('✅ [SpaarkPay] Payment initiation response:', JSON.stringify(response, null, 2))
+
+        if (response.status === 'success' && response.data) {
+          return response.data
+        }
+
+        // Gestion spéciale pour l'erreur "Format de réponse invalide"
+        if (response.message && response.message.includes('Format de réponse invalide')) {
+          console.warn(`⚠️ [SpaarkPay] API externe (upay.t-innov.cg) retourne un format invalide (attempt ${attempt})`)
+
+          if (attempt < maxRetries) {
+            console.log(`🔄 [SpaarkPay] Retrying in 2 seconds...`)
+            await new Promise(resolve => setTimeout(resolve, 2000))
+            continue
+          } else {
+            console.warn('⚠️ [SpaarkPay] Max retries reached, giving up')
+            throw new Error(`Erreur temporaire de l'API externe: ${response.message}. Veuillez réessayer dans quelques minutes.`)
+          }
+        }
+
+        throw new Error(`Échec de l'initiation du paiement: ${response.message}`)
+      } catch (error) {
+        console.error(`❌ [SpaarkPay] Payment initiation error (attempt ${attempt}):`, error)
+        lastError = error as Error;
+
+        // Si c'est la dernière tentative, on lance l'erreur
+        if (attempt === maxRetries) {
+          console.error('❌ [SpaarkPay] Request data was:', JSON.stringify(request, null, 2))
+          throw lastError;
+        }
+
+        // Sinon, on attend avant de réessayer
+        console.log(`🔄 [SpaarkPay] Retrying in 2 seconds...`)
+        await new Promise(resolve => setTimeout(resolve, 2000))
+      }
     }
 
-    throw new Error(`Échec de l'initiation du paiement: ${response.message}`)
+    throw lastError || new Error('Échec de l\'initiation du paiement après tous les essais');
   }
 
   /**
@@ -414,6 +454,56 @@ export class SpaarkPayService {
       return {
         status: 'unhealthy',
         message: `Erreur de connexion: ${error.message}`,
+      }
+    }
+  }
+
+  /**
+   * Test de connectivité avec l'API externe
+   */
+  async testExternalApi(): Promise<{ status: 'ok' | 'error'; message: string; details?: any }> {
+    try {
+      console.log('🔍 [SpaarkPay] Testing external API connectivity...')
+
+      // Test avec un montant minimal
+      const testRequest: InitiatePaymentRequest = {
+        phone: '053518256',
+        amount: 50, // Montant minimal
+        mode: 'airtel',
+        reference: 'TEST_CONNECTIVITY_' + Date.now()
+      }
+
+      const response = await this.makeRequest<SpaarkPayResponse<InitiatePaymentResponse>>(
+        '/payment/initiate',
+        {
+          method: 'POST',
+          body: testRequest,
+          requiresAuth: true,
+        }
+      )
+
+      if (response.status === 'success' && response.data) {
+        return {
+          status: 'ok',
+          message: 'API externe accessible et fonctionnelle',
+          details: {
+            paymentId: response.data.paymentId,
+            token: response.data.token,
+            composition: response.data.composition
+          }
+        }
+      }
+
+      return {
+        status: 'error',
+        message: `API externe retourne une erreur: ${response.message}`,
+        details: response
+      }
+    } catch (error) {
+      return {
+        status: 'error',
+        message: `Erreur de connectivité: ${error.message}`,
+        details: error
       }
     }
   }

@@ -1,15 +1,100 @@
 {
-  "generatedAt": "2025-08-03T10:17:53.354Z",
+  "generatedAt": "2025-08-03T13:16:32.331Z",
+  "generator": "API Fournisseur CG - AutoSwagger + Scalar Generator",
+  "version": "3.0.0",
   "apiInfo": {
     "title": "API Fournisseur CG - Orchestrateur Logistique",
     "version": "3.0.0",
-    "description": "API REST centrale servant de wrapper pour l'écosystème Fournisseur Congo. Orchestrateur entre applications clientes (web Vue.js, mobile) et services backend (Appwrite, MailerSend, SMTP, Spark Pay)."
+    "description": "API REST centrale pour l'écosystème logistique du Congo",
+    "contact": {
+      "name": "Équipe Technique Fournisseur CG",
+      "email": "dev@fournisseur.cg",
+      "url": "https://fournisseur.cg"
+    },
+    "license": {
+      "name": "Propriétaire - Fournisseur CG",
+      "url": "https://fournisseur.cg/license"
+    }
+  },
+  "ecosystem": {
+    "mission": "Connecter fournisseurs locaux et clients internationaux",
+    "region": "Congo",
+    "specialization": "E-commerce et logistique africaine",
+    "services": [
+      {
+        "name": "Appwrite",
+        "role": "Backend principal",
+        "status": "active"
+      },
+      {
+        "name": "Spaark Pay",
+        "role": "Paiements mobiles",
+        "status": "active"
+      },
+      {
+        "name": "SMS API",
+        "role": "Notifications",
+        "status": "active"
+      },
+      {
+        "name": "MailerSend",
+        "role": "Emails marketing",
+        "status": "planned"
+      },
+      {
+        "name": "SMTP",
+        "role": "Notifications système",
+        "status": "planned"
+      }
+    ],
+    "collections": [
+      {
+        "name": "QUOTES",
+        "description": "Demandes de devis",
+        "format": "FC-QMM-XXXX-YYYY"
+      },
+      {
+        "name": "CONTACTS",
+        "description": "Messages de contact clients"
+      },
+      {
+        "name": "PRODUCTS",
+        "description": "Catalogue multi-plateformes"
+      },
+      {
+        "name": "ORDERS",
+        "description": "Commandes",
+        "format": "FC-ORD-XXXX-YYYY"
+      },
+      {
+        "name": "PAYMENTS",
+        "description": "Transactions de paiement"
+      }
+    ],
+    "features": [
+      "Paiements mobiles intelligents (MTN Money, Airtel Money)",
+      "Gestion SMS avancée avec codes OTP",
+      "Collections auto-configurées",
+      "Validation locale congolaise",
+      "Retry automatique pour erreurs temporaires",
+      "Documentation interactive avec Scalar UI"
+    ]
   },
   "statistics": {
-    "totalEndpoints": 46,
+    "totalEndpoints": 47,
     "totalTags": 9,
     "totalSecuritySchemes": 3,
-    "totalServers": 3
+    "totalServers": 3,
+    "authMethods": [
+      "Bearer Token (JWT)",
+      "API Key",
+      "Basic Auth"
+    ],
+    "supportedFormats": [
+      "JSON",
+      "YAML"
+    ],
+    "mainVersion": "v3"
   },
   "endpoints": [
     {
@@ -144,6 +229,12 @@
     },
     {
       "path": "/v3/spaark-pay/test",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/spaark-pay/test-external",
       "methods": [
         "get"
       ]
