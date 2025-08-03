@@ -129,7 +129,6 @@ router.get('/docs', async () => {
               color: var(--scalar-color-2);
             }
 
-
             /* basic theme */
             .light-mode {
               --scalar-color-1: #2a2f45;
