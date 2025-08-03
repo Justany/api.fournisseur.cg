@@ -1,7 +1,6 @@
 import { AppwriteService } from '#services/appwrite_service'
 import { ATTRIBUTES, INDEXES, PERMISSIONS, COLLECTIONS } from '#config/collections'
 import type {
-  CollectionAction,
   CollectionActionConfig,
   BaseAttribute,
   DatabaseInitResult,
@@ -37,6 +36,7 @@ export class CollectionManagerService {
 
       // Créer toutes les collections
       for (const [collectionName, collectionId] of Object.entries(COLLECTIONS)) {
+        console.log(`🔄 Création de la collection ${collectionId}...`)
         try {
           const action = await this.processCollectionAction({
             action: 'create',
@@ -326,7 +326,7 @@ export class CollectionManagerService {
             databaseId,
             collectionId,
             indexConfig.key,
-            indexConfig.type,
+            indexConfig.type as any,
             indexConfig.attributes
           )
           console.log(`  ✅ Index ${indexConfig.key} créé`)

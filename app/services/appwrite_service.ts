@@ -174,18 +174,6 @@ export class AppwriteService {
   }
 
   /**
-   * Obtenir les statistiques d'utilisation
-   */
-  async getDatabaseUsage(databaseId: string, range: string = '30d') {
-    try {
-      return await this.databases.getUsage(databaseId, range)
-    } catch (error) {
-      console.error('Erreur statistiques base:', error)
-      throw error
-    }
-  }
-
-  /**
    * Créer un attribut pour une collection
    */
   async createStringAttribute(
@@ -283,6 +271,31 @@ export class AppwriteService {
       )
     } catch (error) {
       console.error('Erreur création attribut datetime:', error)
+      throw error
+    }
+  }
+
+  async createFloatAttribute(
+    databaseId: string,
+    collectionId: string,
+    key: string,
+    required: boolean = false,
+    min?: number,
+    max?: number,
+    defaultValue?: number
+  ) {
+    try {
+      return await this.databases.createFloatAttribute(
+        databaseId,
+        collectionId,
+        key,
+        required,
+        min,
+        max,
+        defaultValue
+      )
+    } catch (error) {
+      console.error('Erreur création attribut float:', error)
       throw error
     }
   }

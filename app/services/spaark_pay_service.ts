@@ -26,12 +26,12 @@ import type {
  */
 export class SpaarkPayService {
   private config: SpaarkPayConfig
-  private options: SpaarkPayServiceOptions
   private authToken?: string
 
   constructor(options: SpaarkPayServiceOptions = {}) {
     console.log('🚀 SpaarkPayService constructor called ' + options)
-    this.options = {
+    // Options are used locally for configuration but not stored
+    const serviceOptions = {
       environment: 'development',
       timeout: 30000,
       retries: 3,
@@ -45,7 +45,7 @@ export class SpaarkPayService {
       token:
         env.get('SPAARK_PAY_TOKEN') ||
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzUzMjY5MzM2LCJleHAiOjE3Njg4MjEzMzZ9.rTTRB-2Ge_e1ELkukHfVPW-xUJ9k9Te_wqcQRs07rzw',
-      environment: (env.get('NODE_ENV') as 'development' | 'production') || 'development',
+      environment: serviceOptions.environment as 'development' | 'production',
     }
 
     // Initialiser le token d'authentification directement depuis la config
