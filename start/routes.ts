@@ -321,6 +321,7 @@ router.get('/docs', async () => {
               <a href="https://fournisseur.cg">Fournisseur CG</a>
               <a href="https://fournisseur.cg/docs">Documentation</a>
             </nav>
+
           </header>
           <script
             id="api-reference"

@@ -1,6 +1,0 @@
-openapi: 3.0.0
-info:
-  title: API Fournisseur CG
-  version: 3.0.0
-  description: API Fournisseur CG - Orchestrateur Logistique
-paths: {}
