@@ -21,9 +21,7 @@ export default class AppwriteAuthMiddleware {
     console.log('🗄️ [APPWRITE_AUTH] Middleware appelé pour:', ctx.request.url())
 
     // Routes publiques Appwrite
-    const publicRoutes = [
-      '/v3/appwrite/health',
-    ]
+    const publicRoutes = ['/v3/appwrite/health']
 
     // Vérifier si la route actuelle est publique
     const currentPath = ctx.request.url()
@@ -51,16 +49,15 @@ export default class AppwriteAuthMiddleware {
       return ctx.response.unauthorized({
         success: false,
         error: 'Authentification Appwrite requise',
-        details: "Clé API et Project ID Appwrite manquants",
+        details: 'Clé API et Project ID Appwrite manquants',
       })
     }
 
     // Vérifier la clé API Appwrite
     console.log('🔑 [APPWRITE_AUTH] Validation clé API Appwrite:', apiKey.substring(0, 10) + '...')
-    const validApiKeys = [
-      env.get('APPWRITE_API_KEY'),
-      env.get('APPWRITE_SERVER_KEY'),
-    ].filter(Boolean)
+    const validApiKeys = [env.get('APPWRITE_API_KEY'), env.get('APPWRITE_SERVER_KEY')].filter(
+      Boolean
+    )
 
     if (!validApiKeys.includes(apiKey)) {
       console.log('❌ [APPWRITE_AUTH] Clé API Appwrite invalide')

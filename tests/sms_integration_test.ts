@@ -128,14 +128,14 @@ test.group('SMS Integration Tests', () => {
     const mtnSuccessResponse = {
       resultat: 'envoyé (coût: 46 crédits)',
       status: '200',
-      id: '10'
+      id: '10',
     }
 
     // Simuler une réponse MTN d'erreur
     const mtnErrorResponse = {
       resultat: 'Erreur MSISDN: 24206846349',
       detail: 'format numéro incorrect dans le paramètre receivers: 24206846349',
-      status: '404'
+      status: '404',
     }
 
     assert.property(mtnSuccessResponse, 'resultat')

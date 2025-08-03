@@ -4,7 +4,7 @@ import type {
   CollectionAction,
   CollectionActionConfig,
   BaseAttribute,
-  DatabaseInitResult
+  DatabaseInitResult,
 } from '#types/database_types'
 
 /**
@@ -25,10 +25,10 @@ export class CollectionManagerService {
         created: [],
         updated: [],
         skipped: [],
-        errors: []
+        errors: [],
       },
       duration: 0,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }
 
     try {
@@ -40,7 +40,7 @@ export class CollectionManagerService {
         try {
           const action = await this.processCollectionAction({
             action: 'create',
-            collection: collectionName
+            collection: collectionName,
           })
 
           if (action.created) {
@@ -76,10 +76,10 @@ export class CollectionManagerService {
         created: [],
         updated: [],
         skipped: [],
-        errors: []
+        errors: [],
       },
       duration: 0,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }
 
     try {
@@ -159,17 +159,17 @@ export class CollectionManagerService {
   /**
    * Crée une collection avec ses attributs et index
    */
-  private async createCollection(collectionId: string, collectionName: string): Promise<{
+  private async createCollection(
+    collectionId: string,
+    collectionName: string
+  ): Promise<{
     created: boolean
     updated: boolean
     deleted: boolean
   }> {
     try {
       // Vérifier si la collection existe déjà
-      await this.appwrite.databases.getCollection(
-        process.env.APPWRITE_DATABASE_ID!,
-        collectionId
-      )
+      await this.appwrite.databases.getCollection(process.env.APPWRITE_DATABASE_ID!, collectionId)
       console.log(`ℹ️ Collection ${collectionName} existe déjà`)
       return { created: false, updated: false, deleted: false }
     } catch (error: any) {
@@ -204,7 +204,10 @@ export class CollectionManagerService {
   /**
    * Met à jour les permissions d'une collection
    */
-  private async updateCollection(collectionId: string, collectionName: string): Promise<{
+  private async updateCollection(
+    collectionId: string,
+    collectionName: string
+  ): Promise<{
     created: boolean
     updated: boolean
     deleted: boolean
@@ -228,7 +231,10 @@ export class CollectionManagerService {
   /**
    * Supprime une collection
    */
-  private async deleteCollection(collectionId: string, collectionName: string): Promise<{
+  private async deleteCollection(
+    collectionId: string,
+    collectionName: string
+  ): Promise<{
     created: boolean
     updated: boolean
     deleted: boolean
@@ -253,7 +259,10 @@ export class CollectionManagerService {
   /**
    * Met à jour la structure d'une collection (attributs et index)
    */
-  private async updateCollectionStructure(collectionId: string, collectionName: string): Promise<{
+  private async updateCollectionStructure(
+    collectionId: string,
+    collectionName: string
+  ): Promise<{
     created: boolean
     updated: boolean
     deleted: boolean
@@ -262,10 +271,7 @@ export class CollectionManagerService {
 
     // Vérifier que la collection existe
     try {
-      await this.appwrite.databases.getCollection(
-        process.env.APPWRITE_DATABASE_ID!,
-        collectionId
-      )
+      await this.appwrite.databases.getCollection(process.env.APPWRITE_DATABASE_ID!, collectionId)
     } catch (error: any) {
       if (error.code === 404) {
         console.log(`⚠️ Collection ${collectionName} n'existe pas, création...`)
@@ -283,7 +289,10 @@ export class CollectionManagerService {
   /**
    * Ajoute les attributs et index à une collection
    */
-  private async addAttributesAndIndexes(collectionId: string, collectionName: string): Promise<void> {
+  private async addAttributesAndIndexes(
+    collectionId: string,
+    collectionName: string
+  ): Promise<void> {
     const databaseId = process.env.APPWRITE_DATABASE_ID!
 
     // Création des attributs
@@ -342,7 +351,16 @@ export class CollectionManagerService {
     attrName: string,
     attrConfig: BaseAttribute
   ): Promise<void> {
-    const { type, required = false, array = false, size, elements, default: defaultValue, min, max } = attrConfig
+    const {
+      type,
+      required = false,
+      array = false,
+      size,
+      elements,
+      default: defaultValue,
+      min,
+      max,
+    } = attrConfig
 
     switch (type) {
       case 'string':

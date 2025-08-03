@@ -27,13 +27,7 @@ export interface CollectionPermissions {
   delete: string[]
 }
 
-export type CollectionAction =
-  | 'create'
-  | 'update'
-  | 'recreate'
-  | 'update-rows'
-  | 'delete'
-  | 'skip'
+export type CollectionAction = 'create' | 'update' | 'recreate' | 'update-rows' | 'delete' | 'skip'
 
 export interface CollectionActionConfig {
   action: CollectionAction

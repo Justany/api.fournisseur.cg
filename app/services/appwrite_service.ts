@@ -105,17 +105,9 @@ export class AppwriteService {
   /**
    * Supprimer un document avec vérifications
    */
-  async deleteDocument(
-    databaseId: string,
-    collectionId: string,
-    documentId: string
-  ) {
+  async deleteDocument(databaseId: string, collectionId: string, documentId: string) {
     try {
-      return await this.databases.deleteDocument(
-        databaseId,
-        collectionId,
-        documentId
-      )
+      return await this.databases.deleteDocument(databaseId, collectionId, documentId)
     } catch (error) {
       console.error('Erreur suppression document:', error)
       throw error
@@ -125,17 +117,9 @@ export class AppwriteService {
   /**
    * Lister des documents avec filtres avancés
    */
-  async listDocuments(
-    databaseId: string,
-    collectionId: string,
-    queries: string[] = []
-  ) {
+  async listDocuments(databaseId: string, collectionId: string, queries: string[] = []) {
     try {
-      return await this.databases.listDocuments(
-        databaseId,
-        collectionId,
-        queries
-      )
+      return await this.databases.listDocuments(databaseId, collectionId, queries)
     } catch (error) {
       console.error('Erreur liste documents:', error)
       throw error
@@ -152,12 +136,7 @@ export class AppwriteService {
     queries: string[] = []
   ) {
     try {
-      return await this.databases.getDocument(
-        databaseId,
-        collectionId,
-        documentId,
-        queries
-      )
+      return await this.databases.getDocument(databaseId, collectionId, documentId, queries)
     } catch (error) {
       console.error('Erreur récupération document:', error)
       throw error
@@ -175,13 +154,7 @@ export class AppwriteService {
     name?: string
   ) {
     try {
-      return await this.users.create(
-        userId,
-        email,
-        phone,
-        password,
-        name
-      )
+      return await this.users.create(userId, email, phone, password, name)
     } catch (error) {
       console.error('Erreur création utilisateur:', error)
       throw error
@@ -191,10 +164,7 @@ export class AppwriteService {
   /**
    * Mettre à jour les préférences utilisateur
    */
-  async updateUserPrefs(
-    userId: string,
-    prefs: Record<string, any>
-  ) {
+  async updateUserPrefs(userId: string, prefs: Record<string, any>) {
     try {
       return await this.users.updatePrefs(userId, prefs)
     } catch (error) {
@@ -327,13 +297,13 @@ export class AppwriteService {
       return {
         status: 'healthy',
         databases: result.total,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }
     } catch (error) {
       return {
         status: 'unhealthy',
         error: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }
     }
   }

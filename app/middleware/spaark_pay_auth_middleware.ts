@@ -21,10 +21,7 @@ export default class SpaarkPayAuthMiddleware {
     console.log('💰 [SPAARK_PAY_AUTH] Middleware appelé pour:', ctx.request.url())
 
     // Routes publiques Spaark Pay
-    const publicRoutes = [
-      '/v3/spaark-pay/health',
-      '/v3/spaark-pay/test',
-    ]
+    const publicRoutes = ['/v3/spaark-pay/health', '/v3/spaark-pay/test']
 
     // Vérifier si la route actuelle est publique
     const currentPath = ctx.request.url()

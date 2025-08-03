@@ -4,7 +4,7 @@ import { SpaarkPayService } from '#services/spaark_pay_service'
 
 export default class TestSpaarkPay extends BaseCommand {
   static commandName = 'spaark:test'
-  static description = 'Tester l\'intégration Spaark Pay'
+  static description = "Tester l'intégration Spaark Pay"
 
   static options: CommandOptions = {
     startApp: true,
@@ -14,20 +14,20 @@ export default class TestSpaarkPay extends BaseCommand {
 
   @args.string({
     description: 'Action à tester (health, config, domains)',
-    required: false
+    required: false,
   })
   declare action: string
 
   @flags.boolean({
     description: 'Mode verbose (plus de détails)',
-    alias: 'v'
+    alias: 'v',
   })
   declare verbose: boolean
 
   async run() {
     const action = this.action || 'health'
 
-    this.logger.info('🧪 Test de l\'intégration Spaark Pay')
+    this.logger.info("🧪 Test de l'intégration Spaark Pay")
 
     try {
       const spaarkPay = new SpaarkPayService()
@@ -50,7 +50,6 @@ export default class TestSpaarkPay extends BaseCommand {
           this.logger.info('Actions disponibles: health, config, domains')
           return
       }
-
     } catch (error) {
       this.logger.error('❌ Erreur lors du test Spaark Pay')
       this.logger.error(error.message)

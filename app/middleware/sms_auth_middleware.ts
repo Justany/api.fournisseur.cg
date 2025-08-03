@@ -21,10 +21,7 @@ export default class SmsAuthMiddleware {
     console.log('📱 [SMS_AUTH] Middleware appelé pour:', ctx.request.url())
 
     // Routes publiques SMS
-    const publicRoutes = [
-      '/v3/sms/health',
-      '/v3/sms/test',
-    ]
+    const publicRoutes = ['/v3/sms/health', '/v3/sms/test']
 
     // Vérifier si la route actuelle est publique
     const currentPath = ctx.request.url()
@@ -59,10 +56,7 @@ export default class SmsAuthMiddleware {
     // Vérifier la clé API si présente
     if (apiKey) {
       console.log('🔑 [SMS_AUTH] Validation clé API SMS:', apiKey.substring(0, 10) + '...')
-      const validApiKeys = [
-        env.get('SMS_API_KEY'),
-        env.get('SMS_TEST_API_KEY'),
-      ].filter(Boolean)
+      const validApiKeys = [env.get('SMS_API_KEY'), env.get('SMS_TEST_API_KEY')].filter(Boolean)
 
       if (!validApiKeys.includes(apiKey)) {
         console.log('❌ [SMS_AUTH] Clé API SMS invalide')

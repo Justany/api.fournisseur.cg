@@ -58,7 +58,7 @@ export default class AppwritesController {
    * @responseBody 200 - {"success": true, "data": {"total": 5, "collections": []}}
    * @responseBody 500 - {"error": "Erreur lors de la récupération des collections", "details": "string"}
    */
-    async listCollections({ params, response }: HttpContext) {
+  async listCollections({ params, response }: HttpContext) {
     try {
       console.log('🔍 [DEBUG] listCollections appelé avec databaseId:', params.databaseId)
       const { databaseId } = params
