@@ -85,7 +85,7 @@ const swaggerConfig = {
       description: 'Staging - Tests et validation',
     },
     {
-      url: 'https://localhost:3333',
+      url: 'http://localhost:3333',
       description: 'Développement local',
     },
   ],

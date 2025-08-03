@@ -13,7 +13,7 @@ export default class UserAuthMiddleware {
       return ctx.response.unauthorized({
         success: false,
         error: 'Authentification requise',
-        details: 'Token Bearer manquant dans l\'en-tête Authorization'
+        details: "Token Bearer manquant dans l'en-tête Authorization",
       })
     }
 
@@ -22,7 +22,7 @@ export default class UserAuthMiddleware {
       return ctx.response.unauthorized({
         success: false,
         error: 'Format de token invalide',
-        details: 'Le token doit être au format "Bearer <token>"'
+        details: 'Le token doit être au format "Bearer <token>"',
       })
     }
 

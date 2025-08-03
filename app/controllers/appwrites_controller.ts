@@ -58,16 +58,21 @@ export default class AppwritesController {
    * @responseBody 200 - {"success": true, "data": {"total": 5, "collections": []}}
    * @responseBody 500 - {"error": "Erreur lors de la récupération des collections", "details": "string"}
    */
-  async listCollections({ params, response }: HttpContext) {
+    async listCollections({ params, response }: HttpContext) {
     try {
+      console.log('🔍 [DEBUG] listCollections appelé avec databaseId:', params.databaseId)
       const { databaseId } = params
       const collections = await this.appwrite.databases.listCollections(databaseId)
+      console.log('🔍 [DEBUG] collections récupérées:', collections)
 
-      return response.ok({
+      const result = {
         success: true,
         data: collections,
-      })
+      }
+      console.log('🔍 [DEBUG] Envoi de la réponse:', result)
+      return response.ok(result)
     } catch (error) {
+      console.error('❌ [ERROR] listCollections:', error.message)
       return response.internalServerError({
         error: 'Erreur lors de la récupération des collections',
         details: error.message,

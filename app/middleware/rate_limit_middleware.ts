@@ -31,9 +31,10 @@ export default class RateLimitMiddleware {
     }
 
     // Trouver la limite pour cet endpoint
-    const limit = Object.entries(limits).find(([pattern]) =>
-      endpoint.includes(pattern)
-    )?.[1] || { max: 30, window: 60000 }
+    const limit = Object.entries(limits).find(([pattern]) => endpoint.includes(pattern))?.[1] || {
+      max: 30,
+      window: 60000,
+    }
 
     // Vérifier si la fenêtre de temps a expiré
     const existing = rateLimitStore.get(key)
@@ -50,7 +51,7 @@ export default class RateLimitMiddleware {
         success: false,
         error: 'Rate limit dépassé',
         details: `Limite de ${limit.max} requêtes par ${limit.window / 1000} secondes dépassée`,
-        retryAfter: Math.ceil((entry.resetTime - now) / 1000)
+        retryAfter: Math.ceil((entry.resetTime - now) / 1000),
       })
     }
 

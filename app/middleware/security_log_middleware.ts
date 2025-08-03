@@ -25,8 +25,8 @@ export default class SecurityLogMiddleware {
         'content-type': ctx.request.header('content-type'),
         'content-length': ctx.request.header('content-length'),
         'x-api-key': ctx.request.header('x-api-key') ? '***' : undefined,
-        'authorization': ctx.request.header('authorization') ? 'Bearer ***' : undefined
-      }
+        'authorization': ctx.request.header('authorization') ? 'Bearer ***' : undefined,
+      },
     }
 
     try {
@@ -41,11 +41,11 @@ export default class SecurityLogMiddleware {
         ...requestInfo,
         status: responseStatus,
         duration: `${duration}ms`,
-        success: responseStatus < 400
+        success: responseStatus < 400,
       })
 
       // Log spécial pour les paiements
-      if (url.includes('/initiate') && method === 'POST') {
+      if (url().includes('/initiate') && method() === 'POST') {
         const body = ctx.request.body()
         console.log('💰 [PAYMENT] Nouveau paiement initié:', {
           phone: body.phone,
@@ -53,22 +53,21 @@ export default class SecurityLogMiddleware {
           mode: body.mode,
           reference: body.reference,
           clientIP,
-          timestamp: DateTime.now().toISO()
+          timestamp: DateTime.now().toISO(),
         })
       }
 
       // Log pour les vérifications
-      if (url.includes('/verify') && method === 'POST') {
+      if (url().includes('/verify') && method() === 'POST') {
         const body = ctx.request.body()
         console.log('🔍 [VERIFY] Vérification de paiement:', {
           token: body.token ? '***' : undefined,
           paymentId: body.paymentId,
           mode: body.mode,
           clientIP,
-          timestamp: DateTime.now().toISO()
+          timestamp: DateTime.now().toISO(),
         })
       }
-
     } catch (error) {
       // Log d'erreur
       const duration = Date.now() - startTime
@@ -76,16 +75,16 @@ export default class SecurityLogMiddleware {
         ...requestInfo,
         error: error.message,
         stack: error.stack,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       })
 
       // Log d'alerte pour les erreurs de sécurité
       if (error.message.includes('unauthorized') || error.message.includes('forbidden')) {
-        console.warn('🚨 [ALERT] Tentative d'accès non autorisé:', {
+        console.warn("🚨 [ALERT] Tentative d'accès non autorisé:", {
           clientIP,
           url,
           userAgent,
-          timestamp: DateTime.now().toISO()
+          timestamp: DateTime.now().toISO(),
         })
       }
 

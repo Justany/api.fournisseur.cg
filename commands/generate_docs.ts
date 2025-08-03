@@ -101,7 +101,7 @@ export default class GenerateDocs extends BaseCommand {
             description: 'Staging - Tests et validation',
           },
           {
-            url: 'https://localhost:3333',
+            url: 'http://localhost:3333',
             description: 'Développement local',
           },
         ],
@@ -495,8 +495,10 @@ ${yamlContent}`
     if (routePath.includes('/health')) return `${action} Health Check`
     if (routePath.includes('/login')) return 'Connexion utilisateur'
     if (routePath.includes('/register')) return 'Inscription utilisateur'
+    if (routePath.includes('/get-token')) return "Obtenir un token d'accès"
     if (routePath.includes('/logout')) return 'Déconnexion utilisateur'
     if (routePath.includes('/profile')) return 'Profil utilisateur'
+    if (routePath.includes('/refresh-token')) return 'Renouveler le token'
     if (routePath.includes('/databases') && method === 'get') return 'Lister les bases de données'
     if (routePath.includes('/collections') && method === 'get') return 'Lister les collections'
     if (routePath.includes('/collections') && method === 'post') return 'Créer une collection'
@@ -513,7 +515,11 @@ ${yamlContent}`
     if (routePath.includes('/health')) return "Vérification de l'état de santé du service"
     if (routePath.includes('/login')) return 'Authentification avec email et mot de passe'
     if (routePath.includes('/register')) return "Création d'un nouveau compte utilisateur"
+    if (routePath.includes('/get-token'))
+      return 'Obtenir un token JWT pour authentification (route temporaire)'
     if (routePath.includes('/logout')) return 'Déconnexion et invalidation du token'
+    if (routePath.includes('/profile')) return 'Récupérer les informations du profil utilisateur'
+    if (routePath.includes('/refresh-token')) return 'Renouveler un token JWT expiré'
     if (routePath.includes('/databases')) return 'Opérations sur les bases de données Appwrite'
     if (routePath.includes('/collections')) return 'Gestion des collections Appwrite'
     if (routePath.includes('/documents')) return 'Gestion des documents dans les collections'
@@ -529,6 +535,7 @@ ${yamlContent}`
       '/test',
       '/v3/auth/login',
       '/v3/auth/register',
+      '/v3/auth/get-token',
       '/swagger',
       '/docs',
       '/',
@@ -555,6 +562,17 @@ ${yamlContent}`
         required: ['email', 'password'],
         properties: {
           fullName: { type: 'string', example: 'John Doe' },
+          email: { type: 'string', format: 'email', example: 'user@example.com' },
+          password: { type: 'string', example: 'password123' },
+        },
+      }
+    }
+
+    if (routePath.includes('/auth/get-token')) {
+      return {
+        type: 'object',
+        required: ['email', 'password'],
+        properties: {
           email: { type: 'string', format: 'email', example: 'user@example.com' },
           password: { type: 'string', example: 'password123' },
         },

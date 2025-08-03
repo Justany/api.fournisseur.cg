@@ -37,11 +37,11 @@ export default class DocsController {
             name: 'API Key',
             type: 'apiKey',
             in: 'header',
-            name: 'X-API-Key',
-            description: 'Clé API pour l\'authentification service-à-service',
+            // name: 'X-API-Key',
+            description: "Clé API pour l'authentification service-à-service",
             example: 'api_key_123456789abcdef',
             steps: [
-              '1. Contactez l\'équipe technique pour obtenir une clé API',
+              "1. Contactez l'équipe technique pour obtenir une clé API",
               '2. Cliquez sur "Authorize" en haut à droite',
               '3. Entrez votre clé API dans le champ X-API-Key',
               '4. Cliquez sur "Authorize" pour valider',
@@ -65,7 +65,7 @@ export default class DocsController {
           description: 'Staging - Tests et validation',
         },
         {
-          url: 'https://localhost:3333',
+          url: 'http://localhost:3333',
           description: 'Développement local',
         },
       ],

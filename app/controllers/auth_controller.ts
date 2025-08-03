@@ -9,7 +9,7 @@ export default class AuthController {
    * @summary Register new user
    * @description Create new user account
    * @tag Auth
-   * @requestBody {"fullName": "John Doe", "email": "john@example.com", "password": "password123"}
+   * @requestBody {"fullName": "John Doe", "email": "test@example.com", "password": "password123"}
    * @responseBody 201 - {"success": true, "message": "Compte créé avec succès", "data": {"user": {...}, "token": "..."}}
    * @responseBody 400 - {"error": "Données invalides"}
    * @responseBody 409 - {"error": "Email déjà utilisé"}
@@ -75,7 +75,7 @@ export default class AuthController {
    * @summary User login
    * @description Authenticate user and generate token
    * @tag Auth
-   * @requestBody {"email": "john@example.com", "password": "password123"}
+   * @requestBody {"email": "test@example.com", "password": "password123"}
    * @responseBody 200 - {"success": true, "message": "Connexion réussie", "data": {"user": {...}, "token": "..."}}
    * @responseBody 401 - {"error": "Identifiants invalides"}
    */

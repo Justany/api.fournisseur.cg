@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2025-08-02T23:45:08.943Z",
+  "generatedAt": "2025-08-03T00:56:12.113Z",
   "apiInfo": {
     "title": "API Fournisseur CG - Orchestrateur Logistique",
     "version": "3.0.0",
     "description": "API REST centrale servant de wrapper pour l'écosystème Fournisseur Congo. Orchestrateur entre applications clientes (web Vue.js, mobile) et services backend (Appwrite, MailerSend, SMTP, Spark Pay)."
   },
   "statistics": {
-    "totalEndpoints": 46,
+    "totalEndpoints": 11,
     "totalTags": 9,
     "totalSecuritySchemes": 3,
     "totalServers": 3
@@ -37,24 +37,6 @@
       ]
     },
     {
-      "path": "/v3/auth/logout",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/auth/profile",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/auth/refresh-token",
-      "methods": [
-        "post"
-      ]
-    },
-    {
       "path": "/v3/appwrite/health",
       "methods": [
         "get"
@@ -68,70 +50,6 @@
     },
     {
       "path": "/v3/appwrite/databases/{databaseId}/collections",
-      "methods": [
-        "get",
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/documents",
-      "methods": [
-        "get",
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/documents/{documentId}",
-      "methods": [
-        "get",
-        "patch",
-        "delete"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/string",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/integer",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/boolean",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/datetime",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/collections/initialize",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/collections/actions",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/collections/status",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/collections/configuration",
       "methods": [
         "get"
       ]
@@ -149,67 +67,6 @@
       ]
     },
     {
-      "path": "/v3/spaark-pay/initiate",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/status/{paymentId}",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/verify",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/verify-by-id",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/webhook",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/transactions",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/domains",
-      "methods": [
-        "get",
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/domains/{domainId}/validate",
-      "methods": [
-        "patch"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/domains/stats",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/api-key/{type}",
-      "methods": [
-        "post"
-      ]
-    },
-    {
       "path": "/v3/sms/health",
       "methods": [
         "get"
@@ -219,78 +76,6 @@
       "path": "/v3/sms/test",
       "methods": [
         "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/send",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/status/{messageId}",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/history",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/stats",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/send/test",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/send/otp",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/send/notification",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/balance",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/calculate-cost",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/api-info",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/webhook",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/webhook/config",
-      "methods": [
-        "post"
       ]
     }
   ],
@@ -359,7 +144,7 @@
       "description": "Staging - Tests et validation"
     },
     {
-      "url": "https://localhost:3333",
+      "url": "http://localhost:3333",
       "description": "Développement local"
     }
   ]
