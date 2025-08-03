@@ -93,11 +93,11 @@ export default class GenerateDocs extends BaseCommand {
         // Nos configurations spécifiques (prioritaires)
         servers: swagger.servers || [
           {
-            url: 'https://api.fournisseur.cg',
+            url: 'https://api.arkelys.cloud',
             description: 'Production - API officielle',
           },
           {
-            url: 'https://staging-api.fournisseur.cg',
+            url: 'https://staging-api.arkelys.cloud',
             description: 'Staging - Tests et validation',
           },
           {

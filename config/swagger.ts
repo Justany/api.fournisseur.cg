@@ -71,18 +71,18 @@ L'API supporte **3 méthodes d'authentification** :
   **Authentification Bearer**
   \`\`\`bash
   curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
-       https://api.fournisseur.cg/v3/auth/profile
+       https://api.arkelys.cloud/v3/auth/profile
   \`\`\`
 
   **Authentification API Key**
   \`\`\`bash
   curl -H "X-API-Key: YOUR_API_KEY" \\
-       https://api.fournisseur.cg/v3/appwrite/health
+       https://api.arkelys.cloud/v3/appwrite/health
   \`\`\`
 
   **Paiement Mobile**
   \`\`\`bash
-  curl -X POST https://api.fournisseur.cg/v3/spaark-pay/initiate \\
+  curl -X POST https://api.arkelys.cloud/v3/spaark-pay/initiate \\
        -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
        -H "Content-Type: application/json" \\
        -d '{"phone":"053518256","amount":150,"mode":"airtel"}'
@@ -235,11 +235,11 @@ Cette documentation supporte le **Markdown complet** :
   // Configuration des serveurs au niveau racine (comme Scalar Galaxy)
   servers: [
     {
-      url: 'https://api.fournisseur.cg',
+      url: 'https://api.arkelys.cloud',
       description: 'Production - API officielle',
     },
     {
-      url: 'https://staging-api.fournisseur.cg',
+      url: 'https://staging-api.arkelys.cloud',
       description: 'Staging - Tests et validation',
     },
     {

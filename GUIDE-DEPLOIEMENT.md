@@ -3,13 +3,13 @@
 ## 📋 Configurations Disponibles
 
 ### 🔴 **Production** (Port 3333)
-- **Domaine** : `https://api.fournisseur.cg`
+- **Domaine** : `https://api.arkelys.cloud`
 - **Port** : `3333`
 - **PM2 Name** : `api-fournisseur-prod`
 - **Configuration** : `env.production.example`
 
 ### 🟡 **Staging** (Port 3334)
-- **Domaine** : `https://staging-api.fournisseur.cg`
+- **Domaine** : `https://staging-api.arkelys.cloud`
 - **Port** : `3334`
 - **PM2 Name** : `api-fournisseur-staging`
 - **Configuration** : `env.staging.example`
@@ -80,7 +80,7 @@ pm2 restart api-fournisseur-prod
 # /etc/nginx/sites-available/api-fournisseur-prod
 server {
     listen 8080;
-    server_name api.fournisseur.cg;
+    server_name api.arkelys.cloud;
 
     location / {
         proxy_pass http://localhost:3333;
@@ -105,7 +105,7 @@ server {
 # /etc/nginx/sites-available/api-fournisseur-staging
 server {
     listen 8081;
-    server_name staging-api.fournisseur.cg;
+    server_name staging-api.arkelys.cloud;
 
     location / {
         proxy_pass http://localhost:3334;
@@ -141,7 +141,7 @@ api-fournisseur-prod-nginx:
   labels:
     - traefik.enable=true
     - traefik.docker.network=traefik_spaarkcloud
-    - "traefik.http.routers.api-fournisseur-prod.rule=Host(`api.fournisseur.cg`)"
+    - "traefik.http.routers.api-fournisseur-prod.rule=Host(`api.arkelys.cloud`)"
     - "traefik.http.routers.api-fournisseur-prod.entrypoints=websecure"
     - "traefik.http.routers.api-fournisseur-prod.tls=true"
     - "traefik.http.services.api-fournisseur-prod.loadbalancer.server.port=8080"
@@ -162,7 +162,7 @@ api-fournisseur-staging-nginx:
   labels:
     - traefik.enable=true
     - traefik.docker.network=traefik_spaarkcloud
-    - "traefik.http.routers.api-fournisseur-staging.rule=Host(`staging-api.fournisseur.cg`)"
+    - "traefik.http.routers.api-fournisseur-staging.rule=Host(`staging-api.arkelys.cloud`)"
     - "traefik.http.routers.api-fournisseur-staging.entrypoints=websecure"
     - "traefik.http.routers.api-fournisseur-staging.tls=true"
     - "traefik.http.services.api-fournisseur-staging.loadbalancer.server.port=8081"
@@ -204,10 +204,10 @@ curl http://localhost:8080/v3
 curl http://localhost:8081/v3
 
 # Test public production
-curl https://api.fournisseur.cg/v3
+curl https://api.arkelys.cloud/v3
 
 # Test public staging
-curl https://staging-api.fournisseur.cg/v3
+curl https://staging-api.arkelys.cloud/v3
 ```
 
 ### Logs Utiles
@@ -242,7 +242,7 @@ pnpm run dev
 ./deploy.sh staging
 
 # Tester l'API staging
-curl https://staging-api.fournisseur.cg/v3
+curl https://staging-api.arkelys.cloud/v3
 ```
 
 ### 3. Déploiement Production
@@ -251,7 +251,7 @@ curl https://staging-api.fournisseur.cg/v3
 ./deploy.sh production
 
 # Vérifier la production
-curl https://api.fournisseur.cg/v3
+curl https://api.arkelys.cloud/v3
 ```
 
 ## 🆘 Dépannage

@@ -297,8 +297,8 @@ export default class SmsController {
    * @summary Configure SMS webhook
    * @description Configure webhook for status notifications
    * @tag SMS
-   * @requestBody {"url": "https://api.fournisseur.cg/webhook/sms", "events": ["delivered", "failed"], "secret": "webhook_secret"}
-   * @responseBody 201 - {"id": "webhook_123", "url": "https://api.fournisseur.cg/webhook/sms", "isActive": true}
+   * @requestBody {"url": "https://api.arkelys.cloud/webhook/sms", "events": ["delivered", "failed"], "secret": "webhook_secret"}
+   * @responseBody 201 - {"id": "webhook_123", "url": "https://api.arkelys.cloud/webhook/sms", "isActive": true}
    * @responseBody 400 - {"error": "Configuration invalide"}
    * @responseBody 500 - {"error": "Erreur lors de la configuration", "details": "string"}
    */

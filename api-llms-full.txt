@@ -344,8 +344,8 @@ Orchestration des notifications multi-canaux :
 
 ### 🔧 **Environnements**
 - **Development** : http://localhost:3333
-- **Staging** : https://staging-api.fournisseur.cg
-- **Production** : https://api.fournisseur.cg
+- **Staging** : https://staging-api.arkelys.cloud
+- **Production** : https://api.arkelys.cloud
 
 ### 📚 **Documentation**
 - API Documentation (Swagger UI)
@@ -378,12 +378,12 @@ Orchestration des notifications multi-canaux :
 ### 📞 **Support Technique**
 - **Email** : dev@fournisseur.cg
 - **Slack** : #api-support
-- **Documentation** : https://docs-api.fournisseur.cg
+- **Documentation** : https://docs-api.arkelys.cloud
 - **Status Page** : https://status.fournisseur.cg
 
 ### 🔗 **Liens Utiles**
 - [Repository GitHub](https://github.com/fournisseur-cg/api)
-- [Swagger Documentation](https://api.fournisseur.cg/docs)
+- [Swagger Documentation](https://api.arkelys.cloud/docs)
 - [Postman Collection](https://postman.fournisseur.cg)
 - [SDK JavaScript](https://npm.fournisseur.cg)
 

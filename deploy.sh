@@ -22,13 +22,13 @@ DEPLOY_DIR="/var/www/adonisjs-apps/api-fournisseur"
 # Configuration par environnement
 if [ "$ENVIRONMENT" = "production" ]; then
     PORT=3333
-    DOMAIN="api.fournisseur.cg"
+    DOMAIN="api.arkelys.cloud"
     PM2_NAME="api-fournisseur-prod"
     ENV_FILE="env.production.example"
     echo -e "${GREEN}🚀 Déploiement en PRODUCTION${NC}"
 elif [ "$ENVIRONMENT" = "staging" ]; then
     PORT=3334
-    DOMAIN="staging-api.fournisseur.cg"
+    DOMAIN="staging-api.arkelys.cloud"
     PM2_NAME="api-fournisseur-staging"
     ENV_FILE="env.staging.example"
     echo -e "${YELLOW}🧪 Déploiement en STAGING${NC}"

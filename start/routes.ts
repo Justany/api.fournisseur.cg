@@ -622,7 +622,7 @@ router
           methods: ['Bearer Token', 'API Key', 'Basic Auth'],
           loginEndpoint: '/v3/auth/login',
           registerEndpoint: '/v3/auth/register',
-          documentation: 'https://api.fournisseur.cg/v3/docs#authentication',
+          documentation: 'https://api.arkelys.cloud/v3/docs#authentication',
         },
       }
     })

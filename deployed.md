@@ -1,4 +1,4 @@
-itoua@srv737568:/var/www/adonisjs-apps$ git clone https://github.com/Justany/api.fournisseur.cg.git api-fournisseur
+itoua@srv737568:/var/www/adonisjs-apps$ git clone https://github.com/Justany/api.arkelys.cloud.git api-fournisseur
 cd api-fournisseur
 Cloning into 'api-fournisseur'...
 remote: Enumerating objects: 351, done.
@@ -13,17 +13,17 @@ remote: Counting objects: 100% (5/5), done.
 remote: Compressing objects: 100% (2/2), done.
 remote: Total 3 (delta 1), reused 3 (delta 1), pack-reused 0 (from 0)
 Unpacking objects: 100% (3/3), 1.67 KiB | 1.67 MiB/s, done.
-From https://github.com/Justany/api.fournisseur.cg
+From https://github.com/Justany/api.arkelys.cloud
    e4c1702..378da6b  main       -> origin/main
 Updating e4c1702..378da6b
 Fast-forward
  .env.example | 39 +++++++++++++++++++++++++++------------
  1 file changed, 27 insertions(+), 12 deletions(-)
-itoua@srv737568:/var/www/adonisjs-apps/api-fournisseur$ /var/www/adonisjs-apps/deploy-adonisjs.sh api-fournisseur 3333 api.fournisseur.cg
+itoua@srv737568:/var/www/adonisjs-apps/api-fournisseur$ /var/www/adonisjs-apps/deploy-adonisjs.sh api-fournisseur 3333 api.arkelys.cloud
 🚀 Déploiement de l'application AdonisJS: api-fournisseur
 📂 Dossier: /var/www/adonisjs-apps/api-fournisseur
 🌐 Port: 3333
-🔗 Domaine: api.fournisseur.cg
+🔗 Domaine: api.arkelys.cloud
 📦 Installation des dépendances avec pnpm...
 Lockfile is up to date, resolution step is skipped
 Packages: +610
@@ -72,7 +72,7 @@ devDependencies:
 Done in 7.7s using pnpm v10.13.1
 🏗️ Construction de l'application...
 
-> api.fournisseur.cg@0.0.0 build /var/www/adonisjs-apps/api-fournisseur
+> api.arkelys.cloud@0.0.0 build /var/www/adonisjs-apps/api-fournisseur
 > node ace build
 
 [ info ] cleaning up output directory (build)
@@ -118,13 +118,13 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_spaarkcloud
-      - "traefik.http.routers.api-fournisseur.rule=Host(\`api.fournisseur.cg\`)"
+      - "traefik.http.routers.api-fournisseur.rule=Host(\`api.arkelys.cloud\`)"
       - "traefik.http.routers.api-fournisseur.entrypoints=websecure"
       - "traefik.http.routers.api-fournisseur.tls=true"
       - "traefik.http.services.api-fournisseur.loadbalancer.server.port=8080"
 
 ✅ Déploiement terminé!
-🔗 L'application devrait être accessible via: https://api.fournisseur.cg
+🔗 L'application devrait être accessible via: https://api.arkelys.cloud
 
 📋 Commandes utiles:
   pm2 status
@@ -147,10 +147,10 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_spaarkcloud
-      - "traefik.http.routers.api-fournisseur.rule=Host(\`api.fournisseur.cg\`)"
+      - "traefik.http.routers.api-fournisseur.rule=Host(\`api.arkelys.cloud\`)"
       - "traefik.http.routers.api-fournisseur.entrypoints=websecure"
       - "traefik.http.routers.api-fournisseur.tls=true"
       - "traefik.http.services.api-fournisseur.loadbalancer.server.port=8080"
 
 ✅ Déploiement terminé!
-🔗 L'application devrait être accessible via: https://api.fournisseur.cg
+🔗 L'application devrait être accessible via: https://api.arkelys.cloud
