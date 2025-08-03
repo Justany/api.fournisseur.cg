@@ -22,11 +22,11 @@
 
 ```bash
 # Copier et personnaliser pour la production
-cp env.production.example .env.production
+cp .env.production.example .env.production
 nano .env.production
 
 # Copier et personnaliser pour le staging
-cp env.staging.example .env.staging
+cp .env.staging.example .env.staging
 nano .env.staging
 ```
 
@@ -64,7 +64,7 @@ sudo cp -r build/* /var/www/adonisjs-apps/api-fournisseur/
 sudo cp package.json /var/www/adonisjs-apps/api-fournisseur/
 
 # 3. Copier la configuration d'environnement
-sudo cp env.production.example /var/www/adonisjs-apps/api-fournisseur/.env
+sudo cp .env.production.example /var/www/adonisjs-apps/api-fournisseur/.env
 
 # 4. Installer les dépendances
 cd /var/www/adonisjs-apps/api-fournisseur
