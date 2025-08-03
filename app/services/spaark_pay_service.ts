@@ -293,16 +293,16 @@ export class SpaarkPayService {
       'Accept': 'application/json',
     }
 
+    // Toujours inclure la clé API appropriée
+    const apiKey =
+      this.config.environment === 'production' ? this.config.liveApiKey : this.config.testApiKey
+    headers['x-api-key'] = apiKey
+
     if (options.requiresAuth) {
       if (!this.authToken) {
         await this.ensureAuthenticated()
       }
       headers['Authorization'] = `Bearer ${this.authToken}`
-    } else {
-      // Utiliser la clé API appropriée
-      const apiKey =
-        this.config.environment === 'production' ? this.config.liveApiKey : this.config.testApiKey
-      headers['x-api-key'] = apiKey
     }
 
     const requestOptions: RequestInit = {

@@ -8,19 +8,12 @@
 */
 
 import router from '@adonisjs/core/services/router'
-import AutoSwagger from 'adonis-autoswagger'
 import swagger from '#config/swagger'
+import AutoSwagger from 'adonis-autoswagger'
 
-// Route de fallback pour les anciennes versions
-router.get('/', async () => {
-  return {
-    message: 'API Fournisseur CG',
-    currentVersion: 'v3',
-    availableVersions: ['v3'],
-    documentation: 'https://api.fournisseur.cg/v3/docs',
-  }
-})
-
+// =====================================
+// DOCUMENTATION
+// =====================================
 // returns swagger in YAML (libre de middlewares)
 router.get('/swagger', async () => {
   return AutoSwagger.default.docs(router.toJSON(), swagger)
@@ -239,7 +232,7 @@ router.get('/docs', async () => {
 })
 
 // =====================================
-// ROUTES PUBLIQUES /v3 (sans middleware)
+// ROUTES /v3 (avec middleware pour les routes protégées)
 // =====================================
 router
   .group(() => {
@@ -290,29 +283,17 @@ router
       }
     })
 
-    // Routes publiques d'authentification (SANS MIDDLEWARE)
+    // Routes d'authentification (publiques et protégées)
     router
       .group(() => {
         const AuthController = () => import('#controllers/auth_controller')
 
+        // Routes publiques d'authentification
         router.post('/register', [AuthController, 'register'])
         router.post('/login', [AuthController, 'login'])
         router.post('/get-token', [AuthController, 'getToken'])
-      })
-      .prefix('/auth')
-  })
-  .prefix('/v3')
 
-// =====================================
-// ROUTES PROTÉGÉES /v3 (avec middleware)
-// =====================================
-router
-  .group(() => {
-    // Routes protégées d'authentification
-    router
-      .group(() => {
-        const AuthController = () => import('#controllers/auth_controller')
-
+        // Routes protégées d'authentification
         router.post('/logout', [AuthController, 'logout'])
         router.get('/profile', [AuthController, 'profile'])
         router.post('/refresh-token', [AuthController, 'refreshToken'])
@@ -377,6 +358,7 @@ router
         ])
       })
       .prefix('/appwrite')
+    // .middleware([() => import('#middleware/appwrite_auth_middleware')]) // DÉSACTIVÉ TEMPORAIREMENT
 
     // =====================================
     // 3. COLLECTION MANAGEMENT
@@ -432,12 +414,7 @@ router
           // Users
           router.post('/api-key/:type', [SpaarkPaysController, 'generateApiKey'])
         })
-        // .middleware([
-        //   () => import('#middleware/auth_middleware'),
-        //   () => import('#middleware/validation_middleware'),
-        //   () => import('#middleware/rate_limit_middleware'),
-        //   () => import('#middleware/security_log_middleware'),
-        // ]) // DÉSACTIVÉ TEMPORAIREMENT
+        // .middleware([() => import('#middleware/spaark_pay_auth_middleware')]) // DÉSACTIVÉ TEMPORAIREMENT
       })
       .prefix('/spaark-pay')
 
@@ -474,16 +451,10 @@ router
           router.post('/webhook', [SmsController, 'processWebhook'])
           router.post('/webhook/config', [SmsController, 'configureWebhook'])
         })
-        // .middleware([
-        //   () => import('#middleware/auth_middleware'),
-        //   () => import('#middleware/validation_middleware'),
-        //   () => import('#middleware/rate_limit_middleware'),
-        //   () => import('#middleware/security_log_middleware'),
-        // ]) // DÉSACTIVÉ TEMPORAIREMENT
+        // .middleware([() => import('#middleware/sms_auth_middleware')]) // DÉSACTIVÉ TEMPORAIREMENT
       })
       .prefix('/sms')
   })
   .prefix('/v3')
-  .middleware([() => import('#middleware/scalar_auth_middleware')])
 
 export default router

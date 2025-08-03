@@ -78,7 +78,3677 @@
       "description": "Métriques, rapports et données analytiques de la plateforme"
     }
   ],
-  "paths": {},
+  "paths": {
+    "/v3": {
+      "get": {
+        "summary": "route",
+        "description": "\n\n __ - ****",
+        "parameters": [],
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/auth/register": {
+      "post": {
+        "summary": "Register new user (register)",
+        "description": "Returns **201** (Created) as **text/plain**\n\n _app/controllers/auth_controller.ts_ - **register**",
+        "parameters": [],
+        "tags": [
+          "AUTH"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "text/plain": {
+                "example": "{\"success\": true, \"message\": \"Compte créé avec succès\", \"data\": {\"user\": {...}, \"token\": \"...\"}}"
+              }
+            },
+            "description": "Returns **201** (Created) as **text/plain**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Données invalides"
+                  }
+                },
+                "example": {
+                  "error": "Données invalides"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Email déjà utilisé"
+                  }
+                },
+                "example": {
+                  "error": "Email déjà utilisé"
+                }
+              }
+            },
+            "description": "Returns **409** (Conflict) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": "John Doe",
+                  "email": "test@example.com",
+                  "password": "password123"
+                }
+              },
+              "example": {
+                "fullName": "John Doe",
+                "email": "test@example.com",
+                "password": "password123"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/auth/login": {
+      "post": {
+        "summary": "User login (login)",
+        "description": "Authenticate user and generate token\n\n _app/controllers/auth_controller.ts_ - **login**",
+        "parameters": [],
+        "tags": [
+          "AUTH"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "example": "{\"success\": true, \"message\": \"Connexion réussie\", \"data\": {\"user\": {...}, \"token\": \"...\"}}"
+              }
+            },
+            "description": "Returns **200** (OK) as **text/plain**"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Identifiants invalides"
+                  }
+                },
+                "example": {
+                  "error": "Identifiants invalides"
+                }
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": "test@example.com",
+                  "password": "password123"
+                }
+              },
+              "example": {
+                "email": "test@example.com",
+                "password": "password123"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/auth/get-token": {
+      "post": {
+        "summary": "Get clear token (for testing) (getToken)",
+        "description": "Temporary route to get complete token\n\n _app/controllers/auth_controller.ts_ - **getToken**",
+        "parameters": [],
+        "tags": [
+          "AUTH"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": "Bearer ..."
+                  }
+                },
+                "example": {
+                  "token": "Bearer ..."
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": "test@example.com",
+                  "password": "password123"
+                }
+              },
+              "example": {
+                "email": "test@example.com",
+                "password": "password123"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/auth/logout": {
+      "post": {
+        "summary": "User logout (logout)",
+        "description": "Invalidate current access token\n\n _app/controllers/auth_controller.ts_ - **logout**",
+        "parameters": [],
+        "tags": [
+          "AUTH"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "message": "Déconnexion réussie"
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "message": "Déconnexion réussie"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Token invalide"
+                  }
+                },
+                "example": {
+                  "error": "Token invalide"
+                }
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/auth/profile": {
+      "get": {
+        "summary": "User profile (profile)",
+        "description": "Returns **200** (OK) as **text/plain**\n\n _app/controllers/auth_controller.ts_ - **profile**",
+        "parameters": [],
+        "tags": [
+          "AUTH"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "example": "{\"success\": true, \"data\": {\"user\": {...}}}"
+              }
+            },
+            "description": "Returns **200** (OK) as **text/plain**"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Non authentifié"
+                  }
+                },
+                "example": {
+                  "error": "Non authentifié"
+                }
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/auth/refresh-token": {
+      "post": {
+        "summary": "Refresh token (refreshToken)",
+        "description": "Generate new access token\n\n _app/controllers/auth_controller.ts_ - **refreshToken**",
+        "parameters": [],
+        "tags": [
+          "AUTH"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": "..."
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "token": "..."
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Token invalide"
+                  }
+                },
+                "example": {
+                  "error": "Token invalide"
+                }
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/appwrite/health": {
+      "get": {
+        "summary": "Appwrite connection health check (health)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **health**",
+        "parameters": [],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": "healthy",
+                    "databases": 2,
+                    "timestamp": "2024-01-01T00:00:00.000Z"
+                  }
+                },
+                "example": {
+                  "status": "healthy",
+                  "databases": 2,
+                  "timestamp": "2024-01-01T00:00:00.000Z"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors du health check Appwrite",
+                    "details": "Connection failed"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors du health check Appwrite",
+                  "details": "Connection failed"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/appwrite/databases": {
+      "get": {
+        "summary": "List all Appwrite databases (listDatabases)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **listDatabases**",
+        "parameters": [],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": 2,
+                        "databases": {
+                          "type": "object",
+                          "properties": {}
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "total": 2,
+                    "databases": []
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération des bases de données",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération des bases de données",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/appwrite/databases/{databaseId}/collections": {
+      "get": {
+        "summary": "List database collections (listCollections)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **listCollections**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": 5,
+                        "collections": {
+                          "type": "object",
+                          "properties": {}
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "total": 5,
+                    "collections": []
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération des collections",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération des collections",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Create new collection (createCollection)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **createCollection**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "$id": "orders",
+                        "name": "Commandes"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "$id": "orders",
+                    "name": "Commandes"
+                  }
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la création de la collection",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la création de la collection",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "collectionId": "orders",
+                  "name": "Commandes",
+                  "permissions": {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  "documentSecurity": false
+                }
+              },
+              "example": {
+                "collectionId": "orders",
+                "name": "Commandes",
+                "permissions": [],
+                "documentSecurity": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/documents": {
+      "get": {
+        "summary": "List collection documents (listDocuments)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **listDocuments**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "collectionId",
+            "description": "ID de la collection",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "queries",
+            "description": "Requêtes de filtrage",
+            "schema": {
+              "example": "",
+              "type": "array"
+            },
+            "required": false
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": 10,
+                        "documents": {
+                          "type": "object",
+                          "properties": {}
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "total": 10,
+                    "documents": []
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération des documents",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération des documents",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Create new document (createDocument)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **createDocument**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "collectionId",
+            "description": "ID de la collection",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "$id": "document123",
+                        "title": "Test"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "$id": "document123",
+                    "title": "Test"
+                  }
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la création du document",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la création du document",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documentId": "unique()",
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "title": "Test",
+                      "status": "active"
+                    }
+                  },
+                  "permissions": {
+                    "type": "object",
+                    "properties": {}
+                  }
+                }
+              },
+              "example": {
+                "documentId": "unique()",
+                "data": {
+                  "title": "Test",
+                  "status": "active"
+                },
+                "permissions": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/documents/{documentId}": {
+      "get": {
+        "summary": "Get specific document (getDocument)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **getDocument**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "collectionId",
+            "description": "ID de la collection",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "documentId",
+            "description": "ID du document",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "queries",
+            "description": "Requêtes de filtrage",
+            "schema": {
+              "example": "",
+              "type": "array"
+            },
+            "required": false
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "$id": "document123",
+                        "title": "Test"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "$id": "document123",
+                    "title": "Test"
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération du document",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération du document",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      },
+      "patch": {
+        "summary": "Update document (updateDocument)",
+        "description": "Update existing document data\n\n _app/controllers/appwrites_controller.ts_ - **updateDocument**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "collectionId",
+            "description": "ID de la collection",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "documentId",
+            "description": "ID du document",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "$id": "document123",
+                        "title": "Nouveau titre"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "$id": "document123",
+                    "title": "Nouveau titre"
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la mise à jour du document",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la mise à jour du document",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "title": "Nouveau titre",
+                      "status": "updated"
+                    }
+                  },
+                  "permissions": {
+                    "type": "object",
+                    "properties": {}
+                  }
+                }
+              },
+              "example": {
+                "data": {
+                  "title": "Nouveau titre",
+                  "status": "updated"
+                },
+                "permissions": []
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete document (deleteDocument)",
+        "description": "Permanently delete document from collection\n\n _app/controllers/appwrites_controller.ts_ - **deleteDocument**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "collectionId",
+            "description": "ID de la collection",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "documentId",
+            "description": "ID du document",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "message": "Document supprimé avec succès"
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "message": "Document supprimé avec succès"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la suppression du document",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la suppression du document",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/string": {
+      "post": {
+        "summary": "Create string attribute (createStringAttribute)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **createStringAttribute**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "collectionId",
+            "description": "ID de la collection",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "key": "title",
+                        "type": "string",
+                        "size": 255
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "key": "title",
+                    "type": "string",
+                    "size": 255
+                  }
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la création de l'attribut string",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la création de l'attribut string",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key": "title",
+                  "size": 255,
+                  "required": true,
+                  "defaultValue": ""
+                }
+              },
+              "example": {
+                "key": "title",
+                "size": 255,
+                "required": true,
+                "defaultValue": ""
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/integer": {
+      "post": {
+        "summary": "Create integer attribute (createIntegerAttribute)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **createIntegerAttribute**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "collectionId",
+            "description": "ID de la collection",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "key": "price",
+                        "type": "integer",
+                        "min": 0,
+                        "max": 999999
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "key": "price",
+                    "type": "integer",
+                    "min": 0,
+                    "max": 999999
+                  }
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la création de l'attribut integer",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la création de l'attribut integer",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key": "price",
+                  "required": false,
+                  "min": 0,
+                  "max": 999999,
+                  "defaultValue": 0
+                }
+              },
+              "example": {
+                "key": "price",
+                "required": false,
+                "min": 0,
+                "max": 999999,
+                "defaultValue": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/boolean": {
+      "post": {
+        "summary": "Create boolean attribute (createBooleanAttribute)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **createBooleanAttribute**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "collectionId",
+            "description": "ID de la collection",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "key": "isActive",
+                        "type": "boolean",
+                        "default": true
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "key": "isActive",
+                    "type": "boolean",
+                    "default": true
+                  }
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la création de l'attribut boolean",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la création de l'attribut boolean",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key": "isActive",
+                  "required": false,
+                  "defaultValue": true
+                }
+              },
+              "example": {
+                "key": "isActive",
+                "required": false,
+                "defaultValue": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/datetime": {
+      "post": {
+        "summary": "Create datetime attribute (createDatetimeAttribute)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/appwrites_controller.ts_ - **createDatetimeAttribute**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "databaseId",
+            "description": "ID de la base de données",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "collectionId",
+            "description": "ID de la collection",
+            "schema": {
+              "example": "",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "key": "createdAt",
+                        "type": "datetime",
+                        "format": "datetime"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "key": "createdAt",
+                    "type": "datetime",
+                    "format": "datetime"
+                  }
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la création de l'attribut datetime",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la création de l'attribut datetime",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key": "createdAt",
+                  "required": true,
+                  "defaultValue": "2024-01-01T00:00:00.000Z"
+                }
+              },
+              "example": {
+                "key": "createdAt",
+                "required": true,
+                "defaultValue": "2024-01-01T00:00:00.000Z"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/collections/initialize": {
+      "post": {
+        "summary": "Initialize all Appwrite collections (initializeAllCollections)",
+        "description": "Create all collections defined in configuration with attributes and indexes\n\n _app/controllers/collection_managers_controller.ts_ - **initializeAllCollections**",
+        "parameters": [],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "collections": {
+                      "type": "object",
+                      "properties": {
+                        "created": {
+                          "type": "object",
+                          "properties": {
+                            "0": "QUOTES",
+                            "1": "CONTACTS"
+                          }
+                        },
+                        "updated": {
+                          "type": "object",
+                          "properties": {}
+                        },
+                        "skipped": {
+                          "type": "object",
+                          "properties": {}
+                        },
+                        "errors": {
+                          "type": "object",
+                          "properties": {}
+                        }
+                      }
+                    },
+                    "duration": 1500,
+                    "timestamp": "2024-01-01T00:00:00.000Z"
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "collections": {
+                    "created": [
+                      "QUOTES",
+                      "CONTACTS"
+                    ],
+                    "updated": [],
+                    "skipped": [],
+                    "errors": []
+                  },
+                  "duration": 1500,
+                  "timestamp": "2024-01-01T00:00:00.000Z"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Erreur lors de l'initialisation",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Erreur lors de l'initialisation",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/collections/actions": {
+      "post": {
+        "summary": "Execute actions on specific collections (executeCollectionActions)",
+        "description": "Execute targeted actions (create, update, recreate, delete) on collections\n\n _app/controllers/collection_managers_controller.ts_ - **executeCollectionActions**",
+        "parameters": [],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "collections": {
+                      "type": "object",
+                      "properties": {
+                        "created": {
+                          "type": "object",
+                          "properties": {
+                            "0": "QUOTES"
+                          }
+                        },
+                        "updated": {
+                          "type": "object",
+                          "properties": {
+                            "0": "CONTACTS"
+                          }
+                        },
+                        "skipped": {
+                          "type": "object",
+                          "properties": {}
+                        },
+                        "errors": {
+                          "type": "object",
+                          "properties": {}
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "collections": {
+                    "created": [
+                      "QUOTES"
+                    ],
+                    "updated": [
+                      "CONTACTS"
+                    ],
+                    "skipped": [],
+                    "errors": []
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Actions requises",
+                    "details": "Le body doit contenir un tableau d'actions"
+                  }
+                },
+                "example": {
+                  "error": "Actions requises",
+                  "details": "Le body doit contenir un tableau d'actions"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Erreur lors de l'exécution",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Erreur lors de l'exécution",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "example": [
+                {
+                  "action": "create",
+                  "collection": "QUOTES"
+                },
+                {
+                  "action": "update",
+                  "collection": "CONTACTS"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/v3/collections/status": {
+      "get": {
+        "summary": "Get collection status (getCollectionStatus)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/collection_managers_controller.ts_ - **getCollectionStatus**",
+        "parameters": [],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "collections": {
+                      "type": "object",
+                      "properties": {
+                        "QUOTES": {
+                          "type": "object",
+                          "properties": {
+                            "exists": true,
+                            "attributes": 15,
+                            "indexes": 4
+                          }
+                        },
+                        "CONTACTS": {
+                          "type": "object",
+                          "properties": {
+                            "exists": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "collections": {
+                    "QUOTES": {
+                      "exists": true,
+                      "attributes": 15,
+                      "indexes": 4
+                    },
+                    "CONTACTS": {
+                      "exists": false
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération du statut",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération du statut",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/collections/configuration": {
+      "get": {
+        "summary": "Get collection configuration (getCollectionConfiguration)",
+        "description": "Returns **200** (OK) as **text/plain**\n\n _app/controllers/collection_managers_controller.ts_ - **getCollectionConfiguration**",
+        "parameters": [],
+        "tags": [
+          "APPWRITE"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "example": "{\"collections\": [\"QUOTES\", \"CONTACTS\"], \"attributes\": {...}, \"indexes\": {...}, \"permissions\": {...}}"
+              }
+            },
+            "description": "Returns **200** (OK) as **text/plain**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/spaark-pay/health": {
+      "get": {
+        "summary": "Spaark Pay connection health check (health)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/spaark_pays_controller.ts_ - **health**",
+        "parameters": [],
+        "tags": [
+          "PAYMENTS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": "healthy",
+                    "message": "Connexion à Spaark Pay API établie"
+                  }
+                },
+                "example": {
+                  "status": "healthy",
+                  "message": "Connexion à Spaark Pay API établie"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": "unhealthy",
+                    "message": "Erreur de connexion"
+                  }
+                },
+                "example": {
+                  "status": "unhealthy",
+                  "message": "Erreur de connexion"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/spaark-pay/test": {
+      "get": {
+        "summary": "Test integration (test)",
+        "description": "Returns **200** (OK) as **text/plain**\n\n _app/controllers/spaark_pays_controller.ts_ - **test**",
+        "parameters": [],
+        "tags": [
+          "PAYMENTS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "example": "{\"status\": \"ok\", \"message\": \"Intégration Spaark Pay fonctionnelle\", \"config\": {...}}"
+              }
+            },
+            "description": "Returns **200** (OK) as **text/plain**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/spaark-pay/initiate": {
+      "post": {
+        "summary": "Initiate mobile money payment (initiatePayment)",
+        "description": "Initiate mobile money transaction (Airtel Money, MTN Mobile Money)\n\n _app/controllers/spaark_pays_controller.ts_ - **initiatePayment**",
+        "parameters": [],
+        "tags": [
+          "PAYMENTS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": 200,
+                    "message": "Paiement initié avec succès",
+                    "paymentId": 28,
+                    "token": "28257ddbaf7a11ef86feac1f6be4442c",
+                    "composition": "*128*128*1159*PIN#",
+                    "transID": "JKUCJDFLIKDGDGD-328"
+                  }
+                },
+                "example": {
+                  "status": 200,
+                  "message": "Paiement initié avec succès",
+                  "paymentId": 28,
+                  "token": "28257ddbaf7a11ef86feac1f6be4442c",
+                  "composition": "*128*128*1159*PIN#",
+                  "transID": "JKUCJDFLIKDGDGD-328"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Paramètres invalides",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Paramètres invalides",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de l'initiation",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de l'initiation",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone": "053518256",
+                  "amount": 150,
+                  "mode": "airtel",
+                  "reference": "ORDER_123"
+                }
+              },
+              "example": {
+                "phone": "053518256",
+                "amount": 150,
+                "mode": "airtel",
+                "reference": "ORDER_123"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/spaark-pay/status/{paymentId}": {
+      "get": {
+        "summary": "Get payment status (getPaymentStatus)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/spaark_pays_controller.ts_ - **getPaymentStatus**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paymentId",
+            "description": "ID du paiement",
+            "schema": {
+              "example": null,
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "tags": [
+          "PAYMENTS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": "completed",
+                    "amount": 150,
+                    "phone": "053518256",
+                    "mode": "airtel",
+                    "reference": "PAY_REF_123",
+                    "externalStatus": "SUCCESSFUL",
+                    "autoVerified": false
+                  }
+                },
+                "example": {
+                  "status": "completed",
+                  "amount": 150,
+                  "phone": "053518256",
+                  "mode": "airtel",
+                  "reference": "PAY_REF_123",
+                  "externalStatus": "SUCCESSFUL",
+                  "autoVerified": false
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Paiement non trouvé"
+                  }
+                },
+                "example": {
+                  "error": "Paiement non trouvé"
+                }
+              }
+            },
+            "description": "Returns **404** (Not Found) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/spaark-pay/verify": {
+      "post": {
+        "summary": "Verify payment by token (verifyPayment)",
+        "description": "Force external verification of payment by token\n\n _app/controllers/spaark_pays_controller.ts_ - **verifyPayment**",
+        "parameters": [],
+        "tags": [
+          "PAYMENTS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "paymentId": 123,
+                    "status": "completed",
+                    "externalStatus": "SUCCESSFUL",
+                    "verifiedExternally": true
+                  }
+                },
+                "example": {
+                  "paymentId": 123,
+                  "status": "completed",
+                  "externalStatus": "SUCCESSFUL",
+                  "verifiedExternally": true
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Paramètres manquants"
+                  }
+                },
+                "example": {
+                  "error": "Paramètres manquants"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la vérification",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la vérification",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": "414754bb67b811f08f9bac1f6be4442c",
+                  "mode": "airtel"
+                }
+              },
+              "example": {
+                "token": "414754bb67b811f08f9bac1f6be4442c",
+                "mode": "airtel"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/spaark-pay/verify-by-id": {
+      "post": {
+        "summary": "Verify payment by ID (verifyPaymentById)",
+        "description": "Force external verification of payment by ID\n\n _app/controllers/spaark_pays_controller.ts_ - **verifyPaymentById**",
+        "parameters": [],
+        "tags": [
+          "PAYMENTS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "paymentId": 123,
+                    "status": "completed",
+                    "externalStatus": "SUCCESSFUL",
+                    "verifiedExternally": true
+                  }
+                },
+                "example": {
+                  "paymentId": 123,
+                  "status": "completed",
+                  "externalStatus": "SUCCESSFUL",
+                  "verifiedExternally": true
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "ID manquant"
+                  }
+                },
+                "example": {
+                  "error": "ID manquant"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la vérification",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la vérification",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "paymentId": 123
+                }
+              },
+              "example": {
+                "paymentId": 123
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/spaark-pay/webhook": {
+      "post": {
+        "summary": "Process payment webhook (processWebhook)",
+        "description": "Process payment notifications from Spaark Pay\n\n _app/controllers/spaark_pays_controller.ts_ - **processWebhook**",
+        "parameters": [],
+        "tags": [
+          "PAYMENTS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received": true
+                  }
+                },
+                "example": {
+                  "received": true
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Données webhook invalides"
+                  }
+                },
+                "example": {
+                  "error": "Données webhook invalides"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reference": "PAY_REF_123",
+                  "status": "COMPLETED",
+                  "transactionId": "TXN_123456"
+                }
+              },
+              "example": {
+                "reference": "PAY_REF_123",
+                "status": "COMPLETED",
+                "transactionId": "TXN_123456"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/spaark-pay/transactions": {
+      "get": {
+        "summary": "Get transaction history (getTransactionHistory)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/spaark_pays_controller.ts_ - **getTransactionHistory**",
+        "parameters": [],
+        "tags": [
+          "PAYMENTS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transactions": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "id": 1,
+                            "amount": 150,
+                            "phone": "053518256",
+                            "mode": "airtel",
+                            "status": "COMPLETED"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "transactions": [
+                    {
+                      "id": 1,
+                      "amount": 150,
+                      "phone": "053518256",
+                      "mode": "airtel",
+                      "status": "COMPLETED"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/spaark-pay/domains": {
+      "get": {
+        "summary": "Get domains list (getDomains)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/spaark_pays_controller.ts_ - **getDomains**",
+        "parameters": [],
+        "tags": [
+          "DOMAINS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "domains": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "id": 1,
+                            "domain": "example.com",
+                            "status": "APPROVED"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "domains": [
+                    {
+                      "id": 1,
+                      "domain": "example.com",
+                      "status": "APPROVED"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Add new domain (addDomain)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/spaark_pays_controller.ts_ - **addDomain**",
+        "parameters": [],
+        "tags": [
+          "DOMAINS"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "domain": {
+                      "type": "object",
+                      "properties": {
+                        "id": 1,
+                        "domain": "example.com",
+                        "status": "PENDING"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "domain": {
+                    "id": 1,
+                    "domain": "example.com",
+                    "status": "PENDING"
+                  }
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Domaine manquant"
+                  }
+                },
+                "example": {
+                  "error": "Domaine manquant"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de l'ajout",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de l'ajout",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "domain": "example.com"
+                }
+              },
+              "example": {
+                "domain": "example.com"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/spaark-pay/domains/{domainId}/validate": {
+      "patch": {
+        "summary": "Validate or reject domain (validateDomain)",
+        "description": "Validate or reject domain (ADMIN only)\n\n _app/controllers/spaark_pays_controller.ts_ - **validateDomain**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "domainId",
+            "description": "ID du domaine",
+            "schema": {
+              "example": null,
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "tags": [
+          "DOMAINS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "domain": {
+                      "type": "object",
+                      "properties": {
+                        "id": 1,
+                        "domain": "example.com",
+                        "status": "APPROVED"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "domain": {
+                    "id": 1,
+                    "domain": "example.com",
+                    "status": "APPROVED"
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Statut invalide"
+                  }
+                },
+                "example": {
+                  "error": "Statut invalide"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la validation",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la validation",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": "APPROVED",
+                  "reason": "Domaine valide"
+                }
+              },
+              "example": {
+                "status": "APPROVED",
+                "reason": "Domaine valide"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/spaark-pay/domains/stats": {
+      "get": {
+        "summary": "Get domain statistics (getDomainStats)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/spaark_pays_controller.ts_ - **getDomainStats**",
+        "parameters": [],
+        "tags": [
+          "DOMAINS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total": 10,
+                    "active": 8,
+                    "pending": 1,
+                    "rejected": 1
+                  }
+                },
+                "example": {
+                  "total": 10,
+                  "active": 8,
+                  "pending": 1,
+                  "rejected": 1
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/spaark-pay/api-key/{type}": {
+      "post": {
+        "summary": "Generate new API key (generateApiKey)",
+        "description": "Generate new API key (test or production)\n\n _app/controllers/spaark_pays_controller.ts_ - **generateApiKey**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "type",
+            "description": "Type de clé (test ou live)",
+            "schema": {
+              "example": null,
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "tags": [
+          "USERS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "example": "{\"testApiKey\": \"tk_test_...\"} ou {\"liveApiKey\": \"tk_live_...\"}"
+              }
+            },
+            "description": "Returns **200** (OK) as **text/plain**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Type invalide"
+                  }
+                },
+                "example": {
+                  "error": "Type invalide"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la génération",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la génération",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/sms/health": {
+      "get": {
+        "summary": "SMS connection health check (health)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **health**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": "healthy",
+                    "message": "Connexion à SMS API établie"
+                  }
+                },
+                "example": {
+                  "status": "healthy",
+                  "message": "Connexion à SMS API établie"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": "unhealthy",
+                    "message": "Erreur de connexion"
+                  }
+                },
+                "example": {
+                  "status": "unhealthy",
+                  "message": "Erreur de connexion"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/sms/test": {
+      "get": {
+        "summary": "Test SMS integration (test)",
+        "description": "Returns **200** (OK) as **text/plain**\n\n _app/controllers/sms_controller.ts_ - **test**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "example": "{\"status\": \"ok\", \"message\": \"Intégration SMS fonctionnelle\", \"config\": {...}}"
+              }
+            },
+            "description": "Returns **200** (OK) as **text/plain**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/sms/send": {
+      "post": {
+        "summary": "Send SMS (sendSms)",
+        "description": "Send SMS to phone number\n\n _app/controllers/sms_controller.ts_ - **sendSms**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "messageId": "msg_123",
+                    "status": "sent",
+                    "to": "053518256",
+                    "cost": 25
+                  }
+                },
+                "example": {
+                  "messageId": "msg_123",
+                  "status": "sent",
+                  "to": "053518256",
+                  "cost": 25
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Paramètres invalides",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Paramètres invalides",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de l'envoi",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de l'envoi",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "to": "053518256",
+                  "message": "Votre code de vérification est 123456",
+                  "from": "Fournisseur",
+                  "reference": "VERIFY_001"
+                }
+              },
+              "example": {
+                "to": "053518256",
+                "message": "Votre code de vérification est 123456",
+                "from": "Fournisseur",
+                "reference": "VERIFY_001"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/sms/status/{messageId}": {
+      "get": {
+        "summary": "Get SMS status (getSmsStatus)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **getSmsStatus**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "messageId",
+            "description": "ID du message SMS",
+            "schema": {
+              "example": null,
+              "type": "string"
+            },
+            "required": false
+          }
+        ],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "messageId": "msg_123",
+                    "status": "delivered",
+                    "to": "053518256",
+                    "deliveredAt": "2025-08-02T15:30:00Z"
+                  }
+                },
+                "example": {
+                  "messageId": "msg_123",
+                  "status": "delivered",
+                  "to": "053518256",
+                  "deliveredAt": "2025-08-02T15:30:00Z"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "SMS non trouvé"
+                  }
+                },
+                "example": {
+                  "error": "SMS non trouvé"
+                }
+              }
+            },
+            "description": "Returns **404** (Not Found) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/sms/history": {
+      "get": {
+        "summary": "Get SMS history (getSmsHistory)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **getSmsHistory**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "messages": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "id": "msg_123",
+                            "to": "053518256",
+                            "status": "delivered"
+                          }
+                        }
+                      }
+                    },
+                    "total": 100
+                  }
+                },
+                "example": {
+                  "messages": [
+                    {
+                      "id": "msg_123",
+                      "to": "053518256",
+                      "status": "delivered"
+                    }
+                  ],
+                  "total": 100
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/sms/stats": {
+      "get": {
+        "summary": "Get SMS statistics (getSmsStats)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **getSmsStats**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total": 1000,
+                    "sent": 950,
+                    "delivered": 900,
+                    "failed": 50,
+                    "totalCost": 25000
+                  }
+                },
+                "example": {
+                  "total": 1000,
+                  "sent": 950,
+                  "delivered": 900,
+                  "failed": 50,
+                  "totalCost": 25000
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/sms/send/test": {
+      "post": {
+        "summary": "Send test SMS (sendTestSms)",
+        "description": "Send test SMS to verify connection\n\n _app/controllers/sms_controller.ts_ - **sendTestSms**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "messageId": "msg_123",
+                    "status": "sent",
+                    "to": "053518256"
+                  }
+                },
+                "example": {
+                  "messageId": "msg_123",
+                  "status": "sent",
+                  "to": "053518256"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Numéro invalide"
+                  }
+                },
+                "example": {
+                  "error": "Numéro invalide"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de l'envoi",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de l'envoi",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "to": "053518256"
+                }
+              },
+              "example": {
+                "to": "053518256"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/sms/send/otp": {
+      "post": {
+        "summary": "Send OTP SMS (sendOtpSms)",
+        "description": "Send SMS with verification code\n\n _app/controllers/sms_controller.ts_ - **sendOtpSms**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "messageId": "msg_123",
+                    "status": "sent",
+                    "to": "053518256"
+                  }
+                },
+                "example": {
+                  "messageId": "msg_123",
+                  "status": "sent",
+                  "to": "053518256"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Paramètres invalides"
+                  }
+                },
+                "example": {
+                  "error": "Paramètres invalides"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de l'envoi",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de l'envoi",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "to": "053518256",
+                  "code": "123456",
+                  "expiresIn": 5
+                }
+              },
+              "example": {
+                "to": "053518256",
+                "code": "123456",
+                "expiresIn": 5
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/sms/send/notification": {
+      "post": {
+        "summary": "Send notification SMS (sendNotificationSms)",
+        "description": "Send notification SMS with title and message\n\n _app/controllers/sms_controller.ts_ - **sendNotificationSms**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "messageId": "msg_123",
+                    "status": "sent",
+                    "to": "053518256"
+                  }
+                },
+                "example": {
+                  "messageId": "msg_123",
+                  "status": "sent",
+                  "to": "053518256"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Paramètres invalides"
+                  }
+                },
+                "example": {
+                  "error": "Paramètres invalides"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de l'envoi",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de l'envoi",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "to": "053518256",
+                  "title": "Commande",
+                  "message": "Votre commande a été confirmée"
+                }
+              },
+              "example": {
+                "to": "053518256",
+                "title": "Commande",
+                "message": "Votre commande a été confirmée"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/sms/balance": {
+      "get": {
+        "summary": "Check SMS balance (checkBalance)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **checkBalance**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "balance": 1000,
+                    "currency": "XAF"
+                  }
+                },
+                "example": {
+                  "balance": 1000,
+                  "currency": "XAF"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la vérification",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la vérification",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/sms/calculate-cost": {
+      "post": {
+        "summary": "Calculate SMS cost (calculateSmsCost)",
+        "description": "Calculate SMS cost based on message length\n\n _app/controllers/sms_controller.ts_ - **calculateSmsCost**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cost": 25,
+                    "length": 45,
+                    "smsCount": 1
+                  }
+                },
+                "example": {
+                  "cost": 25,
+                  "length": 45,
+                  "smsCount": 1
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Message requis"
+                  }
+                },
+                "example": {
+                  "error": "Message requis"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": "Votre code de vérification est 123456"
+                }
+              },
+              "example": {
+                "message": "Votre code de vérification est 123456"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/sms/api-info": {
+      "get": {
+        "summary": "Get SMS API info (getApiInfo)",
+        "description": "Returns **200** (OK) as **text/plain**\n\n _app/controllers/sms_controller.ts_ - **getApiInfo**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "example": "{\"version\": \"1.0.0\", \"features\": [\"sms\", \"webhook\"], \"limits\": {...}}"
+              }
+            },
+            "description": "Returns **200** (OK) as **text/plain**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la récupération",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la récupération",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/sms/webhook": {
+      "post": {
+        "summary": "Process SMS webhook (processWebhook)",
+        "description": "Process SMS status notifications\n\n _app/controllers/sms_controller.ts_ - **processWebhook**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received": true,
+                    "processed": true
+                  }
+                },
+                "example": {
+                  "received": true,
+                  "processed": true
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Données webhook invalides"
+                  }
+                },
+                "example": {
+                  "error": "Données webhook invalides"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messageId": "msg_123",
+                  "status": "delivered",
+                  "to": "053518256",
+                  "timestamp": "2025-08-02T15:30:00Z"
+                }
+              },
+              "example": {
+                "messageId": "msg_123",
+                "status": "delivered",
+                "to": "053518256",
+                "timestamp": "2025-08-02T15:30:00Z"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/sms/webhook/config": {
+      "post": {
+        "summary": "Configure SMS webhook (configureWebhook)",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **configureWebhook**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": "webhook_123",
+                    "url": "https://api.fournisseur.cg/webhook/sms",
+                    "isActive": true
+                  }
+                },
+                "example": {
+                  "id": "webhook_123",
+                  "url": "https://api.fournisseur.cg/webhook/sms",
+                  "isActive": true
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Configuration invalide"
+                  }
+                },
+                "example": {
+                  "error": "Configuration invalide"
+                }
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": "Erreur lors de la configuration",
+                    "details": "string"
+                  }
+                },
+                "example": {
+                  "error": "Erreur lors de la configuration",
+                  "details": "string"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": "https://api.fournisseur.cg/webhook/sms",
+                  "events": {
+                    "type": "object",
+                    "properties": {
+                      "0": "delivered",
+                      "1": "failed"
+                    }
+                  },
+                  "secret": "webhook_secret"
+                }
+              },
+              "example": {
+                "url": "https://api.fournisseur.cg/webhook/sms",
+                "events": [
+                  "delivered",
+                  "failed"
+                ],
+                "secret": "webhook_secret"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "components": {
     "schemas": {},
     "securitySchemes": {
