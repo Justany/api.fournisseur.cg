@@ -3,12 +3,14 @@
 ## 📋 Configurations Disponibles
 
 ### 🔴 **Production** (Port 3333)
+
 - **Domaine** : `https://api.arkelys.cloud`
 - **Port** : `3333`
 - **PM2 Name** : `api-fournisseur-prod`
 - **Configuration** : `env.production.example`
 
 ### 🟡 **Staging** (Port 3334)
+
 - **Domaine** : `https://staging-api.arkelys.cloud`
 - **Port** : `3334`
 - **PM2 Name** : `api-fournisseur-staging`
@@ -141,10 +143,10 @@ api-fournisseur-prod-nginx:
   labels:
     - traefik.enable=true
     - traefik.docker.network=traefik_spaarkcloud
-    - "traefik.http.routers.api-fournisseur-prod.rule=Host(`api.arkelys.cloud`)"
-    - "traefik.http.routers.api-fournisseur-prod.entrypoints=websecure"
-    - "traefik.http.routers.api-fournisseur-prod.tls=true"
-    - "traefik.http.services.api-fournisseur-prod.loadbalancer.server.port=8080"
+    - 'traefik.http.routers.api-fournisseur-prod.rule=Host(`api.arkelys.cloud`)'
+    - 'traefik.http.routers.api-fournisseur-prod.entrypoints=websecure'
+    - 'traefik.http.routers.api-fournisseur-prod.tls=true'
+    - 'traefik.http.services.api-fournisseur-prod.loadbalancer.server.port=8080'
 ```
 
 ### Staging Container
@@ -162,10 +164,10 @@ api-fournisseur-staging-nginx:
   labels:
     - traefik.enable=true
     - traefik.docker.network=traefik_spaarkcloud
-    - "traefik.http.routers.api-fournisseur-staging.rule=Host(`staging-api.arkelys.cloud`)"
-    - "traefik.http.routers.api-fournisseur-staging.entrypoints=websecure"
-    - "traefik.http.routers.api-fournisseur-staging.tls=true"
-    - "traefik.http.services.api-fournisseur-staging.loadbalancer.server.port=8081"
+    - 'traefik.http.routers.api-fournisseur-staging.rule=Host(`staging-api.arkelys.cloud`)'
+    - 'traefik.http.routers.api-fournisseur-staging.entrypoints=websecure'
+    - 'traefik.http.routers.api-fournisseur-staging.tls=true'
+    - 'traefik.http.services.api-fournisseur-staging.loadbalancer.server.port=8081'
 ```
 
 ## 🔍 Monitoring et Debug
@@ -231,12 +233,14 @@ docker compose logs -f traefik
 ## 🔄 Workflow de Déploiement Recommandé
 
 ### 1. Développement Local
+
 ```bash
 # Tests en local
 pnpm run dev
 ```
 
 ### 2. Déploiement Staging
+
 ```bash
 # Déployer en staging pour tests
 ./deploy.sh staging
@@ -246,6 +250,7 @@ curl https://staging-api.arkelys.cloud/v3
 ```
 
 ### 3. Déploiement Production
+
 ```bash
 # Une fois validé en staging
 ./deploy.sh production
@@ -257,6 +262,7 @@ curl https://api.arkelys.cloud/v3
 ## 🆘 Dépannage
 
 ### Application ne démarre pas
+
 ```bash
 # Vérifier les logs PM2
 pm2 logs api-fournisseur-prod
@@ -269,6 +275,7 @@ pm2 restart api-fournisseur-prod
 ```
 
 ### Erreur 502 Bad Gateway
+
 ```bash
 # Vérifier que l'app tourne
 pm2 status api-fournisseur-prod
@@ -281,6 +288,7 @@ sudo systemctl restart nginx
 ```
 
 ### SSL/Domaine ne fonctionne pas
+
 ```bash
 # Vérifier Traefik
 cd /home/itoua/spaarkcloud

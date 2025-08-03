@@ -35,7 +35,6 @@ application/json.
 
 Voici un exemple qui inclut les conditions préalables requises :
 
-
 **Champs d'en-tête (header fields)**
 
 ## Message :
@@ -46,7 +45,7 @@ Voici un exemple qui inclut les conditions préalables requises :
 
 ## que les caractères suivants en ASCII pour être traité comme GSM : a-z A-Z 0 - 9
 
-## ~!@#$%^&*()-_=+][?<>,'.":/{} (Espace blanc)
+## ~!@#$%^&\*()-\_=+][?<>,'.":/{} (Espace blanc)
 
 Tous les autres caractères seront traités comme Unicode.
 
@@ -83,6 +82,7 @@ limite de 160 caractères.
 ```
 CONTENT-TYPE application/json
 ```
+
 ```
 AUTHORIZATION Token EJQ15pg5cEYsotgQaGyCHRxnPvmAemamOh6w7YRDif
 ```
@@ -106,42 +106,54 @@ AUTHORIZATION Token EJQ15pg5cEYsotgQaGyCHRxnPvmAemamOh6w7YRDif
 ```
 key type description obligatoire
 ```
+
 ```
 msg text Contenu du message SMS oui
 ```
+
 ```
 msg_mail text Contenu du mail non
 ```
+
 ```
 objet_mail text L’objet du mail non
 ```
+
 ```
 email text Email destinataire(s) (séparé avec des virgules, 1000
 emails au max)
 ```
+
 ```
 non
 ```
+
 ```
 sender Char(11) Nom expéditeur enregistré sur la plateforme TINDA oui
 ```
+
 ```
 receivers text Numéro destinataire(s) (séparé par des virgules :
 242050010101, 242068463499) 1000 numéros au max.
 ```
+
 ```
 oui
 ```
+
 ```
 date_envois text Format Json YYYY-MM-DDTHH:MM:SS (20 21 - 07 -
 22T06:17:32.500132) d’envoi différé
 ```
+
 ```
 non
 ```
+
 ```
 externalId int Identifiant externe du client pour vérification de statut non
 ```
+
 ```
 callback_url text Url client de réception des réponses de l’API non
 ```
@@ -162,7 +174,6 @@ callback_url text Url client de réception des réponses de l’API non
 
 **}**
 
-
 ## Envoi SMS et mails Personnalisés
 
 ## Tableau de mots-clés possibles :
@@ -172,6 +183,7 @@ callback_url text Url client de réception des réponses de l’API non
 ```
 Key Type Description Obligatoire
 ```
+
 ### msg text Contenu du message Oui
 
 ### msg_mail text^ Contenu du mail^ Non^
@@ -187,9 +199,11 @@ Valeur déterminant si l’envoi de mail doit être pris en
 compte ou non (soit 1 pour oui ou 0 pour non) (valeur
 par défaut : 0)
 ```
+
 ```
 Non
 ```
+
 ### sender Char(11)^ Nom expéditeur enregistré sur la plateforme TINDA^ Oui^
 
 ### params text^
@@ -199,9 +213,11 @@ Clé de renseignement d’infos des destinataires par ligne
 de façon personnalisée (infos séparées par des virgules
 pour un destinataire et \r\n par destinataire (CSV))
 ```
+
 ```
 Oui
 ```
+
 ### date_envois text^ Format Json YYYY22T06:17:32.500132) d’envoi différé-MM-DDTHH:MM:SS (2021 -^07 - Non^
 
 ### externalId int Identifiant externe du client pour vérification de statut Non
@@ -211,9 +227,9 @@ Oui
 Lors de l’envoi de la requête, le paramètre **isemail** est renseigné à 1 :
 
 - Si le **msg_mail** n’est pas renseigné ; l’API prendra automatiquement le message du paramètre **msg**
-    pour le contenu du mail.
+  pour le contenu du mail.
 - Si **l’objet_mail** n’est pas renseigné ; l’API prendra automatiquement le contenu du **sender** pour
-    l’objet du mail.
+  l’objet du mail.
 
 Lors du renseignement des infos de personnalisation du paramètre params :
 
@@ -223,20 +239,19 @@ Les éléments de substitution sont remplacés par :P1 pour le premier élément
 élément, :P3 pour le troisième élément, :P4 pour le quatrième élément et :P5 pour le cinquième élément.
 
 2. Dans la personnalisation (paramètre **params** )
-    Les emails doivent toujours être placés en avant dernière place sur la ligne d’infos d’un destinataire
-    juste avant le numéro de téléphone.
-
+   Les emails doivent toujours être placés en avant dernière place sur la ligne d’infos d’un destinataire
+   juste avant le numéro de téléphone.
 
 ```
 Le nombre de paramètres possible pour un destinataire est de cinq (5).
 ```
+
 ## Résumé :
 
 Le paramètre **params** est considéré comme un fichier CSV dont le séparateur colonne est point-virgule ‘’;’’
 et le séparateur ligne est ‘’\r\n’’.
 
 ## Exemple :
-
 
 **Réponse :**
 
@@ -263,25 +278,30 @@ Exemple de réponse avec une erreur :
 403 FORBIDDEN Refus d’autorisation d’accès.
 404 Not Found
 ```
+
 ```
 L'URI ne correspond à aucune des ressources reconnues, ou, si vous
 demandez une ressource spécifique avec un ID, cette ressource n'existe
 pas
 405 Method Allowed Not La méthode de requête HTTP que vous essayez d'utiliser n'est pas autorisée. Faire une requête OPTIONS pour voir les méthodes autorisées
 ```
+
 ```
 406 Not Acceptable Le type de contenu Accepter que vous demandez n'est pas pris en charge par l'API REST
 415 Unsupported Media Type L'en-tête Content-Type n'est pas pris en charge par l'API REST
 ```
+
 **Statut Réponse :**
 
 ```
 Key Description
 Id Identifiant unique serveur
 ```
+
 ```
 Statut Code réponse
 ```
+
 ```
 Résultat Message du résultat avec le coût du sms
 ```
@@ -301,7 +321,6 @@ suit :
 ## }
 
 ## Exemple :
-
 
 ## Réponse :
 
@@ -339,9 +358,7 @@ suit :
 
 ### 16 rejet^ smsc^
 
-
 ---
-
 
 # GUIDE D’UTILISATION API SMS MTN
 
@@ -366,7 +383,6 @@ data {
     # Informations à inclure dans le message SMS
 }
 ```
-
 
 ## Envoie SMS et mails Non personnalisé
 
@@ -415,7 +431,6 @@ data {
 }
 ```
 
-
 ## Codes et vérification status réponses
 
 ```python
@@ -431,4 +446,3 @@ data {
     "id": "26"
 }
 ```
-

@@ -32,7 +32,7 @@ export class SpaarkPayService {
     console.log('🚀 SpaarkPayService constructor called ' + options)
     // Options are used locally for configuration but not stored
     const serviceOptions = {
-      environment: 'development',
+      environment: (env.get('NODE_ENV') as 'development' | 'production') || 'development',
       timeout: 30000,
       retries: 3,
       ...options,

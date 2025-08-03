@@ -23,7 +23,7 @@ components:
       type: apiKey
       in: header
       name: x-api-key
-      description: "Clé API (préfixe tk_test_ pour test, tk_live_ pour production)"
+      description: 'Clé API (préfixe tk_test_ pour test, tk_live_ pour production)'
 
   schemas:
     User:
@@ -41,10 +41,10 @@ components:
           type: string
         testApiKey:
           type: string
-          description: "Clé API de test (préfixe tk_test_)"
+          description: 'Clé API de test (préfixe tk_test_)'
         liveApiKey:
           type: string
-          description: "Clé API de production (préfixe tk_live_)"
+          description: 'Clé API de production (préfixe tk_live_)'
         role:
           type: string
           enum: [USER, ADMIN]
@@ -60,62 +60,62 @@ components:
         id:
           type: integer
           format: int64
-          description: "ID unique du paiement dans votre base de données"
+          description: 'ID unique du paiement dans votre base de données'
           example: 123
         amount:
           type: number
-          description: "Montant de la transaction"
+          description: 'Montant de la transaction'
           example: 150.0
         phone:
           type: string
-          description: "Numéro de téléphone (04/05 pour Airtel, 06 pour MTN Mobile Money)"
-          example: "053518256"
+          description: 'Numéro de téléphone (04/05 pour Airtel, 06 pour MTN Mobile Money)'
+          example: '053518256'
         status:
           type: string
           enum: [pending, completed, failed]
-          description: "Statut interne du paiement"
-          example: "completed"
+          description: 'Statut interne du paiement'
+          example: 'completed'
         reference:
           type: string
-          description: "Référence interne du paiement"
-          example: "PAY_REF_123"
+          description: 'Référence interne du paiement'
+          example: 'PAY_REF_123'
         externalReference:
           type: string
-          description: "Token de référence externe (reçu de upay.t-innov.cg)"
-          example: "414754bb67b811f08f9bac1f6be4442c"
+          description: 'Token de référence externe (reçu de upay.t-innov.cg)'
+          example: '414754bb67b811f08f9bac1f6be4442c'
         externalStatus:
           type: string
           enum: [SUCCESSFUL, FAILED, PENDING]
           description: "Statut exact retourné par l'API upay.t-innov.cg"
-          example: "SUCCESSFUL"
+          example: 'SUCCESSFUL'
         transactionId:
           type: string
-          description: "ID de transaction externe (si disponible)"
-          example: "TXN_123456789"
+          description: 'ID de transaction externe (si disponible)'
+          example: 'TXN_123456789'
         financial:
           type: string
-          description: "ID financier de la transaction (si disponible)"
-          example: "FIN_987654321"
+          description: 'ID financier de la transaction (si disponible)'
+          example: 'FIN_987654321'
         mode:
           type: string
           enum: [airtel, momo]
-          description: "Mode de paiement utilisé"
-          example: "airtel"
+          description: 'Mode de paiement utilisé'
+          example: 'airtel'
         createdAt:
           type: string
           format: date-time
-          description: "Date de création du paiement"
+          description: 'Date de création du paiement'
         completedAt:
           type: string
           format: date-time
-          description: "Date de finalisation du paiement (si complété)"
+          description: 'Date de finalisation du paiement (si complété)'
         verifiedExternally:
           type: boolean
-          description: "Indique si une vérification externe a été effectuée"
+          description: 'Indique si une vérification externe a été effectuée'
           example: true
         autoVerified:
           type: boolean
-          description: "Indique si la vérification était automatique"
+          description: 'Indique si la vérification était automatique'
           example: false
 
     Error:
@@ -232,7 +232,7 @@ paths:
                 phone:
                   type: string
       responses:
-        "201":
+        '201':
           description: Utilisateur créé avec succès
           content:
             application/json:
@@ -246,15 +246,15 @@ paths:
                     type: object
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
                       token:
                         type: string
-        "400":
+        '400':
           description: Données invalides
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 
   /auth/login:
     post:
@@ -278,7 +278,7 @@ paths:
                   type: string
                   format: password
       responses:
-        "200":
+        '200':
           description: Connexion réussie
           content:
             application/json:
@@ -292,15 +292,15 @@ paths:
                     type: object
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
                       token:
                         type: string
-        "401":
+        '401':
           description: Authentification échouée
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 
   /users/me:
     get:
@@ -310,7 +310,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Profil récupéré avec succès
           content:
             application/json:
@@ -324,7 +324,7 @@ paths:
                     type: object
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
     put:
       tags:
         - Users
@@ -347,7 +347,7 @@ paths:
                 newPassword:
                   type: string
       responses:
-        "200":
+        '200':
           description: Profil mis à jour avec succès
           content:
             application/json:
@@ -361,7 +361,7 @@ paths:
                     type: object
                     properties:
                       user:
-                        $ref: "#/components/schemas/User"
+                        $ref: '#/components/schemas/User'
 
   /users/api-key/{type}:
     post:
@@ -379,7 +379,7 @@ paths:
             enum: [test, live]
           description: Type de clé API à générer
       responses:
-        "200":
+        '200':
           description: Clé API générée avec succès
           content:
             application/json:
@@ -394,10 +394,10 @@ paths:
                     properties:
                       testApiKey:
                         type: string
-                        description: "Retourné si type=test"
+                        description: 'Retourné si type=test'
                       liveApiKey:
                         type: string
-                        description: "Retourné si type=live"
+                        description: 'Retourné si type=live'
 
   /payment/initiate:
     post:
@@ -421,7 +421,7 @@ paths:
                 phone:
                   type: string
                   description: Numéro de téléphone du client
-                  example: "053518256"
+                  example: '053518256'
                 amount:
                   type: number
                   description: Montant de la transaction
@@ -429,13 +429,13 @@ paths:
                 mode:
                   type: string
                   description: Mode de paiement (airtel, mtn)
-                  example: "airtel"
+                  example: 'airtel'
                 reference:
                   type: string
                   description: Référence optionnelle du paiement. Si non fournie, une référence unique sera générée automatiquement (format PAY_REF_timestamp)
-                  example: "ORDER_123456"
+                  example: 'ORDER_123456'
       responses:
-        "200":
+        '200':
           description: Paiement initié avec succès
           content:
             application/json:
@@ -454,19 +454,19 @@ paths:
                         example: 200
                       message:
                         type: string
-                        example: "Paiement initié avec succès"
+                        example: 'Paiement initié avec succès'
                       paymentId:
                         type: number
                         example: 28
                       token:
                         type: string
-                        example: "28257ddbaf7a11ef86feac1f6be4442c"
+                        example: '28257ddbaf7a11ef86feac1f6be4442c'
                       composition:
                         type: string
-                        example: "*128*128*1159*PIN#"
+                        example: '*128*128*1159*PIN#'
                       transID:
                         type: string
-                        example: "JKUCJDFLIKDGDGD-328"
+                        example: 'JKUCJDFLIKDGDGD-328'
 
   /payment/status/{paymentId}:
     get:
@@ -494,7 +494,7 @@ paths:
             type: integer
           description: ID du paiement (doit appartenir à l'utilisateur connecté)
       responses:
-        "200":
+        '200':
           description: Statut du paiement récupéré avec succès
           content:
             application/json:
@@ -511,7 +511,7 @@ paths:
                         type: string
                         enum: [pending, completed, failed]
                         description: Statut interne du paiement
-                        example: "completed"
+                        example: 'completed'
                       amount:
                         type: number
                         description: Montant de la transaction
@@ -519,32 +519,32 @@ paths:
                       phone:
                         type: string
                         description: Numéro de téléphone utilisé
-                        example: "053518256"
+                        example: '053518256'
                       mode:
                         type: string
                         description: Mode de paiement utilisé
-                        example: "airtel"
+                        example: 'airtel'
                       reference:
                         type: string
                         description: Référence interne du paiement
-                        example: "PAY_REF_123"
+                        example: 'PAY_REF_123'
                       externalReference:
                         type: string
                         description: Token de référence externe
-                        example: "414754bb67b811f08f9bac1f6be4442c"
+                        example: '414754bb67b811f08f9bac1f6be4442c'
                       externalStatus:
                         type: string
                         enum: [SUCCESSFUL, FAILED, PENDING]
                         description: Statut exact de l'API externe (si vérifié)
-                        example: "SUCCESSFUL"
+                        example: 'SUCCESSFUL'
                       transactionId:
                         type: string
                         description: ID de transaction externe (si disponible)
-                        example: "TXN_123456789"
+                        example: 'TXN_123456789'
                       financial:
                         type: string
                         description: ID financier (si vérifié récemment)
-                        example: "FIN_987654321"
+                        example: 'FIN_987654321'
                       responseData:
                         type: object
                         description: Données complètes de la dernière réponse externe
@@ -560,18 +560,18 @@ paths:
                         type: boolean
                         description: Indique si une vérification automatique a eu lieu lors de cet appel
                         example: false
-        "401":
+        '401':
           description: Non authentifié
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "404":
+                $ref: '#/components/schemas/Error'
+        '404':
           description: Paiement non trouvé
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 
   /payment/verify:
     post:
@@ -601,14 +601,14 @@ paths:
                 token:
                   type: string
                   description: Token du paiement à vérifier (reçu lors de l'initiation)
-                  example: "414754bb67b811f08f9bac1f6be4442c"
+                  example: '414754bb67b811f08f9bac1f6be4442c'
                 mode:
                   type: string
                   description: Mode de paiement (airtel, momo)
                   enum: [airtel, momo]
-                  example: "airtel"
+                  example: 'airtel'
       responses:
-        "200":
+        '200':
           description: Vérification effectuée avec succès (données synchronisées avec l'API externe)
           content:
             application/json:
@@ -629,16 +629,16 @@ paths:
                         type: string
                         enum: [pending, completed, failed]
                         description: Statut interne du paiement
-                        example: "completed"
+                        example: 'completed'
                       externalStatus:
                         type: string
                         enum: [SUCCESSFUL, FAILED, PENDING]
                         description: Statut exact retourné par l'API upay.t-innov.cg
-                        example: "SUCCESSFUL"
+                        example: 'SUCCESSFUL'
                       transactionId:
                         type: string
                         description: ID de transaction externe (si disponible)
-                        example: "TXN_123456789"
+                        example: 'TXN_123456789'
                       amount:
                         type: number
                         description: Montant de la transaction
@@ -646,23 +646,23 @@ paths:
                       financial:
                         type: string
                         description: ID financier de la transaction (si disponible)
-                        example: "FIN_987654321"
+                        example: 'FIN_987654321'
                       phone:
                         type: string
                         description: Numéro de téléphone utilisé
-                        example: "053518256"
+                        example: '053518256'
                       mode:
                         type: string
                         description: Mode de paiement utilisé
-                        example: "airtel"
+                        example: 'airtel'
                       reference:
                         type: string
                         description: Référence interne du paiement
-                        example: "PAY_REF_123"
+                        example: 'PAY_REF_123'
                       externalReference:
                         type: string
                         description: Token de référence externe
-                        example: "414754bb67b811f08f9bac1f6be4442c"
+                        example: '414754bb67b811f08f9bac1f6be4442c'
                       createdAt:
                         type: string
                         format: date-time
@@ -675,24 +675,24 @@ paths:
                         type: boolean
                         description: Indique qu'une vérification externe a été effectuée
                         example: true
-        "400":
+        '400':
           description: Paramètres manquants ou invalides
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "404":
+                $ref: '#/components/schemas/Error'
+        '404':
           description: Paiement non trouvé
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "500":
+                $ref: '#/components/schemas/Error'
+        '500':
           description: Erreur lors de la vérification externe
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 
   /payment/verify-by-id:
     post:
@@ -729,7 +729,7 @@ paths:
                   description: ID du paiement à vérifier (doit appartenir à l'utilisateur connecté)
                   example: 123
       responses:
-        "200":
+        '200':
           description: Vérification effectuée avec succès (données synchronisées avec l'API externe)
           content:
             application/json:
@@ -750,16 +750,16 @@ paths:
                         type: string
                         enum: [pending, completed, failed]
                         description: Statut interne du paiement (mis à jour)
-                        example: "completed"
+                        example: 'completed'
                       externalStatus:
                         type: string
                         enum: [SUCCESSFUL, FAILED, PENDING]
                         description: Statut exact retourné par l'API upay.t-innov.cg
-                        example: "SUCCESSFUL"
+                        example: 'SUCCESSFUL'
                       transactionId:
                         type: string
                         description: ID de transaction externe (si disponible)
-                        example: "TXN_123456789"
+                        example: 'TXN_123456789'
                       amount:
                         type: number
                         description: Montant de la transaction (peut être mis à jour)
@@ -767,23 +767,23 @@ paths:
                       financial:
                         type: string
                         description: ID financier de la transaction (si disponible)
-                        example: "FIN_987654321"
+                        example: 'FIN_987654321'
                       phone:
                         type: string
                         description: Numéro de téléphone utilisé
-                        example: "053518256"
+                        example: '053518256'
                       mode:
                         type: string
                         description: Mode de paiement utilisé
-                        example: "airtel"
+                        example: 'airtel'
                       reference:
                         type: string
                         description: Référence interne du paiement
-                        example: "PAY_REF_123"
+                        example: 'PAY_REF_123'
                       externalReference:
                         type: string
                         description: Token de référence externe utilisé pour la vérification
-                        example: "414754bb67b811f08f9bac1f6be4442c"
+                        example: '414754bb67b811f08f9bac1f6be4442c'
                       createdAt:
                         type: string
                         format: date-time
@@ -796,30 +796,30 @@ paths:
                         type: boolean
                         description: Indique qu'une vérification externe a été effectuée
                         example: true
-        "400":
+        '400':
           description: Paramètres manquants ou invalides
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "401":
+                $ref: '#/components/schemas/Error'
+        '401':
           description: Non authentifié
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "404":
+                $ref: '#/components/schemas/Error'
+        '404':
           description: Paiement non trouvé ou token externe manquant
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "500":
+                $ref: '#/components/schemas/Error'
+        '500':
           description: Erreur lors de la vérification externe
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 
   /payment/webhook:
     post:
@@ -845,7 +845,7 @@ paths:
                 transactionId:
                   type: string
       responses:
-        "200":
+        '200':
           description: Notification traitée avec succès
           content:
             application/json:
@@ -863,7 +863,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Liste des transactions récupérée avec succès
           content:
             application/json:
@@ -876,13 +876,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/TransactionHistory"
-        "401":
+                      $ref: '#/components/schemas/TransactionHistory'
+        '401':
           description: Non authentifié
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 
   /domains:
     get:
@@ -892,7 +892,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Liste des domaines
           content:
             application/json:
@@ -908,7 +908,7 @@ paths:
                       domains:
                         type: array
                         items:
-                          $ref: "#/components/schemas/WhitelistedDomain"
+                          $ref: '#/components/schemas/WhitelistedDomain'
 
   /domains/new:
     post:
@@ -930,7 +930,7 @@ paths:
                   type: string
                   description: Nom de domaine à whitelister
       responses:
-        "201":
+        '201':
           description: Domaine ajouté avec succès
           content:
             application/json:
@@ -944,10 +944,10 @@ paths:
                     type: object
                     properties:
                       domain:
-                        $ref: "#/components/schemas/WhitelistedDomain"
+                        $ref: '#/components/schemas/WhitelistedDomain'
                       message:
                         type: string
-                        example: "Domaine ajouté avec succès. En attente de validation par un administrateur."
+                        example: 'Domaine ajouté avec succès. En attente de validation par un administrateur.'
 
   /domains/{domainId}/validate:
     patch:
@@ -980,7 +980,7 @@ paths:
                   type: string
                   description: Raison du rejet (requis si status=REJECTED)
       responses:
-        "200":
+        '200':
           description: Domaine validé/rejeté avec succès
           content:
             application/json:
@@ -994,7 +994,7 @@ paths:
                     type: object
                     properties:
                       domain:
-                        $ref: "#/components/schemas/WhitelistedDomain"
+                        $ref: '#/components/schemas/WhitelistedDomain'
 
   /domains/{domainId}:
     put:
@@ -1023,7 +1023,7 @@ paths:
                   type: string
                   description: Nouveau nom de domaine
       responses:
-        "200":
+        '200':
           description: Domaine mis à jour avec succès
           content:
             application/json:
@@ -1037,7 +1037,7 @@ paths:
                     type: object
                     properties:
                       domain:
-                        $ref: "#/components/schemas/WhitelistedDomain"
+                        $ref: '#/components/schemas/WhitelistedDomain'
     delete:
       tags:
         - Domains
@@ -1052,7 +1052,7 @@ paths:
             type: integer
           description: ID du domaine à supprimer
       responses:
-        "200":
+        '200':
           description: Domaine supprimé avec succès
           content:
             application/json:
@@ -1073,7 +1073,7 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        "200":
+        '200':
           description: Statistiques des domaines
           content:
             application/json:
@@ -1084,4 +1084,4 @@ paths:
                     type: string
                     enum: [success]
                   data:
-                    $ref: "#/components/schemas/DomainStats"
+                    $ref: '#/components/schemas/DomainStats'

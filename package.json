@@ -18,7 +18,8 @@
     "collections:update": "node ace appwrite:init update",
     "spaark:test": "node ace spaark:test health",
     "spaark:config": "node ace spaark:test config",
-    "spaark:domains": "node ace spaark:test domains"
+    "spaark:domains": "node ace spaark:test domains",
+    "docs:generate": "node ace docs:generate"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
@@ -37,7 +38,8 @@
     "#database/*": "./database/*.js",
     "#start/*": "./start/*.js",
     "#tests/*": "./tests/*.js",
-    "#config/*": "./config/*.js"
+    "#config/*": "./config/*.js",
+    "#interfaces/*": "./interfaces/*.js"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",

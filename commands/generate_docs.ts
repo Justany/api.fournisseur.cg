@@ -350,7 +350,7 @@ ${yamlContent}`
 
       // Essayer d'abord de récupérer depuis l'endpoint /swagger si le serveur est lancé
       try {
-        const response = await fetch('http://localhost:3333/swagger')
+        const response = await fetch(`http://localhost:3333/swagger`)
         if (response.ok) {
           const yamlContent = await response.text()
           // Parser le YAML pour extraire les paths

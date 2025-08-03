@@ -321,7 +321,6 @@ router.get('/docs', async () => {
               <a href="https://fournisseur.cg">Fournisseur CG</a>
               <a href="https://fournisseur.cg/docs">Documentation</a>
             </nav>
-
           </header>
           <script
             id="api-reference"
@@ -333,7 +332,6 @@ router.get('/docs', async () => {
         </body>
       </html>
     `
-
     return html
   } catch (error) {
     // Fallback 1: Essayer le fichier OpenAPI YAML simple -
