@@ -1,84 +1,17 @@
 {
-  "generatedAt": "2025-08-03T09:43:49.549Z",
+  "generatedAt": "2025-08-03T09:58:30.186Z",
   "apiInfo": {
     "title": "API Fournisseur CG - Orchestrateur Logistique",
     "version": "3.0.0",
     "description": "API REST centrale servant de wrapper pour l'écosystème Fournisseur Congo. Orchestrateur entre applications clientes (web Vue.js, mobile) et services backend (Appwrite, MailerSend, SMTP, Spark Pay)."
   },
   "statistics": {
-    "totalEndpoints": 11,
+    "totalEndpoints": 0,
     "totalTags": 9,
     "totalSecuritySchemes": 3,
     "totalServers": 3
   },
-  "endpoints": [
-    {
-      "path": "/v3",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/auth/register",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/auth/login",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/auth/get-token",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/health",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/health",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/test",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/health",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/test",
-      "methods": [
-        "get"
-      ]
-    }
-  ],
+  "endpoints": [],
   "tags": [
     {
       "name": "Authentication",
