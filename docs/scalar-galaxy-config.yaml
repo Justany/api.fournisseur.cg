@@ -1,5 +1,5 @@
 # Configuration Scalar Galaxy pour API Fournisseur CG
-# Généré automatiquement le 2025-08-03T18:24:32.800Z
+# Généré automatiquement le 2025-08-03T18:38:52.189Z
 # Combine AutoSwagger (routes) + Configuration Scalar (UI/UX)
 
 openapi: 3.0.0
@@ -2851,4 +2851,4 @@ x-scalar:
     showLastModified: true
     showGeneratedBy: true
     generatedBy: API Fournisseur CG - AutoSwagger + Scalar
-    generatedAt: '2025-08-03T18:24:32.790Z'
+    generatedAt: '2025-08-03T18:38:52.180Z'
