@@ -3000,13 +3000,13 @@
                 "properties": {
                   "to": "242053518256",
                   "message": "Votre code de vérification est 534444",
-                  "from": "Fournisseur"
+                  "from": "Fourniseur"
                 }
               },
               "example": {
                 "to": "242053518256",
                 "message": "Votre code de vérification est 534444",
-                "from": "Fournisseur"
+                "from": "Fourniseur"
               }
             }
           }
@@ -3016,7 +3016,7 @@
     "/v3/sms/status/{messageId}": {
       "get": {
         "summary": "Get SMS status (MTN Official API) (getSmsStatus)",
-        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **getSmsStatus**",
+        "description": "Returns **200** (OK) as **text/plain**\n\n _app/controllers/sms_controller.ts_ - **getSmsStatus**",
         "parameters": [
           {
             "in": "path",
@@ -3035,23 +3035,11 @@
         "responses": {
           "200": {
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "messageId": "msg_123",
-                    "status": "delivered",
-                    "to": "242053518256"
-                  }
-                },
-                "example": {
-                  "messageId": "msg_123",
-                  "status": "delivered",
-                  "to": "242053518256"
-                }
+              "text/plain": {
+                "example": "{\"messageId\": \"msg_123\", \"status\": \"delivered\", \"to\": \"242053518256\", \"statusDetails\": {...}}"
               }
             },
-            "description": "Returns **200** (OK) as **application/json**"
+            "description": "Returns **200** (OK) as **text/plain**"
           },
           "404": {
             "content": {
@@ -3086,6 +3074,53 @@
               }
             },
             "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/sms/status-codes": {
+      "get": {
+        "summary": "Get MTN status codes (getStatusCodes)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **getStatusCodes**",
+        "parameters": [],
+        "tags": [
+          "SMS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCodes": {
+                      "type": "object",
+                      "properties": {
+                        "0": {
+                          "type": "object",
+                          "properties": {
+                            "code": "1",
+                            "description": "Livré au téléphone",
+                            "category": "success"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "statusCodes": [
+                    {
+                      "code": "1",
+                      "description": "Livré au téléphone",
+                      "category": "success"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
           }
         },
         "security": []

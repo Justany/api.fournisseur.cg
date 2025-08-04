@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-08-04T21:51:21.345Z",
+  "generatedAt": "2025-08-04T23:10:06.752Z",
   "generator": "API Fournisseur CG - AutoSwagger + Scalar Generator",
   "version": "3.0.0",
   "apiInfo": {
@@ -81,7 +81,7 @@
     ]
   },
   "statistics": {
-    "totalEndpoints": 39,
+    "totalEndpoints": 40,
     "totalTags": 9,
     "totalSecuritySchemes": 3,
     "totalServers": 3,
@@ -326,6 +326,12 @@
     },
     {
       "path": "/v3/sms/status/{messageId}",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/sms/status-codes",
       "methods": [
         "get"
       ]

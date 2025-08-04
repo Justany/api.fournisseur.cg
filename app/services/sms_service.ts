@@ -1,6 +1,7 @@
 import env from '#start/env'
 import https from 'node:https'
 import fetch from 'node-fetch'
+import { NetworkLoggerService } from '#services/network_logger_service'
 import type {
   SmsConfig,
   SmsServiceOptions,
@@ -21,6 +22,7 @@ export class SmsService {
   private config: SmsConfig
   private options: SmsServiceOptions
   private authToken?: string
+  private networkLogger: NetworkLoggerService
 
   constructor(options: SmsServiceOptions = {}) {
     this.options = {
@@ -38,6 +40,9 @@ export class SmsService {
 
     // Initialiser le token d'authentification directement depuis la config
     this.authToken = this.config.authToken
+
+    // Initialiser le logger réseau
+    this.networkLogger = new NetworkLoggerService()
   }
 
   /**
@@ -48,7 +53,7 @@ export class SmsService {
     // Préparer les données selon le format MTN exact
     const mtnRequest = {
       msg: request.message,
-      sender: (request.from || 'Fournisseur').substring(0, 11), // Limité à 11 caractères selon la doc MTN
+      sender: (request.from || 'Fourniseur').substring(0, 11), // Limité à 11 caractères selon la doc MTN
       receivers: this.formatPhoneNumberForMTN(request.to),
       externalId: request.reference ? Number.parseInt(request.reference) : undefined,
       callback_url: env.get('SMS_CALLBACK_URL'),
@@ -59,27 +64,52 @@ export class SmsService {
       body: mtnRequest,
     })
 
-    // Traiter la réponse MTN selon la doc : {"resultat": "envoyé (coût: 46 crédits)", "status": "200", "id": "10"}
+    // Traiter la réponse MTN selon la doc officielle
+    // Codes de succès HTTP : 200/201 selon la documentation MTN
     if (response.status === '200' || response.status === '201') {
-      return {
-        messageId: response.id,
-        status: 'sent',
-        to: request.to,
-        from: request.from || 'Fournisseur',
-        message: request.message,
-        cost: this.extractCostFromResult(response.resultat),
-        balance: 1000, // Non fourni par l'API MTN
-        timestamp: new Date().toISOString(),
+      // Vérifier si l'envoi a réussi selon le message de l'API MTN
+      const isSuccess = response.resultat && response.resultat.toLowerCase().includes('envoyé')
+
+      if (isSuccess) {
+        return {
+          messageId: response.id || `sms_${Date.now()}`,
+          status: 'sent',
+          to: request.to,
+          from: request.from || 'Fourniseur',
+          message: request.message,
+          cost: this.extractCostFromResult(response.resultat),
+          balance: 1000, // Non fourni par l'API MTN
+          timestamp: new Date().toISOString(),
+        }
       }
     }
 
-    throw new Error(`Échec de l'envoi du SMS: ${response.resultat || response.message}`)
+    // Gestion des erreurs selon les codes de statut MTN
+    const errorMessages: Record<string, string> = {
+      '400': 'Demande invalide - données manquantes ou invalides',
+      '401': 'Authentification échouée - vérifiez votre token',
+      '403': 'Accès refusé - permissions insuffisantes',
+      '404': 'Ressource non trouvée',
+      '405': 'Méthode non autorisée',
+      '406': 'Type de contenu non accepté',
+      '415': 'Type de média non supporté - utilisez application/json',
+    }
+
+    const statusCode = String(response.status)
+    const errorMessage = errorMessages[statusCode] || `Erreur ${statusCode}`
+    throw new Error(`${errorMessage}: ${response.resultat || response.detail || response.message}`)
   }
 
   /**
    * Vérifier le statut d'un SMS selon la documentation MTN
    * POST https://sms.mtncongo.net/api/sms/
    * { "op": "status", "id": "26" }
+   *
+   * Réponse exemple: {
+   *   "resultat": ["242056753822, 1, Livré au téléphone", "242068463499, 2, Non remis au téléphone"],
+   *   "status": "200",
+   *   "externalId": 15
+   * }
    */
   async getSmsStatus(messageId: string): Promise<SmsStatusResponse> {
     const response = await this.makeRequest<any>('/', {
@@ -90,61 +120,84 @@ export class SmsService {
       },
     })
 
-    if (response.status === '200') {
-      // Traiter la réponse MTN selon la doc
-      const statusResults = Array.isArray(response.resultat)
-        ? response.resultat
-        : [response.resultat]
-      const statusData = statusResults[0] // Premier destinataire
+    // Vérifier le succès de la requête selon les codes MTN
+    if (response.status === '200' || response.status === '201') {
+      // Traiter la réponse MTN selon la documentation officielle
+      if (!response.resultat || !Array.isArray(response.resultat)) {
+        throw new Error('Format de réponse de statut invalide')
+      }
+
+      // Prendre le premier destinataire (format: "242056753822, 1, Livré au téléphone")
+      const statusData = response.resultat[0]
       const [phone, statusCode, statusMessage] = statusData.split(', ')
+
+      // Valider les données
+      if (!phone || !statusCode || !statusMessage) {
+        throw new Error(`Format de statut invalide: ${statusData}`)
+      }
 
       return {
         messageId: messageId,
-        status: this.mapMtnStatusToStandard(statusCode),
-        to: phone,
-        from: 'Fournisseur',
-        message: '', // Pas disponible dans la réponse de statut
-        cost: 25,
-        deliveredAt: statusCode === '1' ? new Date().toISOString() : undefined,
-        failedAt: statusCode === '2' || statusCode === '16' ? new Date().toISOString() : undefined,
-        failureReason: statusCode === '2' || statusCode === '16' ? statusMessage : undefined,
+        status: this.mapMtnStatusToStandard(statusCode.trim()),
+        to: phone.trim(),
+        from: 'Fourniseur',
+        message: '', // Pas disponible dans la réponse de statut MTN
+        cost: 25, // Coût estimé
+        deliveredAt: statusCode.trim() === '1' ? new Date().toISOString() : undefined,
+        failedAt: ['2', '16'].includes(statusCode.trim()) ? new Date().toISOString() : undefined,
+        failureReason: ['2', '16'].includes(statusCode.trim()) ? statusMessage.trim() : undefined,
         timestamp: new Date().toISOString(),
         externalId: response.externalId,
       }
     }
 
-    throw new Error(`Échec de la récupération du statut: ${response.resultat || response.message}`)
+    // Gestion des erreurs selon les codes de statut MTN
+    const errorMessages: Record<string, string> = {
+      '400': 'Demande de statut invalide - vérifiez les paramètres',
+      '401': 'Authentification échouée pour la vérification de statut',
+      '404': 'SMS non trouvé - ID invalide ou SMS expiré',
+    }
+
+    const statusCode = String(response.status)
+    const errorMessage = errorMessages[statusCode] || `Erreur de statut ${statusCode}`
+    throw new Error(`${errorMessage}: ${response.resultat || response.detail || response.message}`)
   }
 
   /**
-   * Extraire le coût depuis le résultat MTN : "envoyé (coût: 46 crédits)"
+   * Extraire le coût depuis le résultat MTN : "envoyé (coût: 46 crédits)" ou "envoyé (coût: 11 crédit)"
    */
   private extractCostFromResult(resultat: string): number {
-    const costMatch = resultat.match(/coût:\s*(\d+)/i)
+    const costMatch = resultat.match(/coût:\s*(\d+)\s*crédits?/i)
     return costMatch ? Number.parseInt(costMatch[1], 10) : 25
   }
 
   /**
-   * Mapper les codes de statut MTN vers les standards
-   * Selon la doc MTN :
-   * 0: En attente, 1: Livré au téléphone, 2: Non remis au téléphone
-   * 4: Mis en file d'attente sur SMSC, 8: Livré au SMSC, 16: Rejet SMSC
+   * Mapper les codes de statut MTN vers les standards selon la documentation officielle
+   *
+   * Codes MTN officiels :
+   * 0: En attente
+   * 1: Livré au téléphone
+   * 2: Non remis au téléphone
+   * 4: Mis en file d'attente sur SMSC
+   * 8: Livré au SMSC
+   * 16: rejet smsc
    */
   private mapMtnStatusToStandard(mtnCode: string): 'sent' | 'delivered' | 'failed' | 'pending' {
     switch (mtnCode) {
       case '0':
         return 'pending' // En attente
       case '1':
-        return 'delivered' // Livré au téléphone
+        return 'delivered' // Livré au téléphone ✅ SUCCÈS FINAL
       case '2':
-        return 'failed' // Non remis au téléphone
+        return 'failed' // Non remis au téléphone ❌ ÉCHEC
       case '4':
-        return 'pending' // Mis en file d'attente sur SMSC
+        return 'pending' // Mis en file d'attente sur SMSC ⏳ EN COURS
       case '8':
-        return 'sent' // Livré au SMSC
+        return 'sent' // Livré au SMSC ✅ ENVOYÉ AU RÉSEAU
       case '16':
-        return 'failed' // Rejet SMSC
+        return 'failed' // Rejet SMSC ❌ REJETÉ
       default:
+        console.warn(`Code de statut MTN inconnu: ${mtnCode}`)
         return 'pending'
     }
   }
@@ -214,21 +267,43 @@ export class SmsService {
     // Logique de retry
     let lastError: Error
     for (let attempt = 1; attempt <= (this.options?.retries || 3); attempt++) {
+      const requestStartTime = Date.now()
+
       try {
-        console.log(
-          `📱 SMS MTN API Request (tentative ${attempt}/${this.options.retries}): ${options.method} ${url}`
-        )
-        console.log(`🔑 Authorization: ${headers['Authorization'].substring(0, 25)}...`)
+        // Logger la requête sortante
+        this.networkLogger.logOutgoingRequest({
+          method: options.method,
+          url,
+          headers,
+          body: options.body,
+          service: 'SMS MTN API',
+        })
 
         const response = await makeRequestWithTimeout()
+        const duration = Date.now() - requestStartTime
 
-        console.log(`📡 Statut de la réponse: ${response.status} ${response.statusText}`)
+        // Logger la réponse reçue
+        this.networkLogger.logIncomingResponse({
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          duration,
+          service: 'SMS MTN API',
+          url,
+        })
 
         if (!response.ok) {
           let errorMessage = `Erreur HTTP ${response.status}: ${response.statusText}`
           try {
             const errorData = await response.text()
-            console.log(`❌ Error Response Body:`, errorData.substring(0, 500))
+            this.networkLogger.logRequestError({
+              error: new Error(errorMessage),
+              method: options.method,
+              url,
+              service: 'SMS MTN API',
+              attempt,
+              maxAttempts: this.options.retries || 3,
+            })
             try {
               const jsonError = JSON.parse(errorData)
               errorMessage = jsonError.message || jsonError.error || errorMessage
@@ -245,7 +320,16 @@ export class SmsService {
         const contentType = response.headers.get('content-type')
         if (contentType && contentType.includes('application/json')) {
           const data = await response.json()
-          console.log(`✅ Response JSON:`, JSON.stringify(data, null, 2).substring(0, 500))
+
+          // Logger le succès
+          this.networkLogger.logRequestSuccess({
+            method: options.method,
+            url,
+            status: response.status,
+            duration,
+            service: 'SMS MTN API',
+          })
+
           return data as T
         } else {
           const textData = await response.text()
@@ -254,10 +338,16 @@ export class SmsService {
         }
       } catch (error) {
         lastError = error
-        console.error(
-          `❌ Erreur SMS MTN API (tentative ${attempt}/${this.options.retries}):`,
-          error
-        )
+
+        // Logger l'erreur
+        this.networkLogger.logRequestError({
+          error: error as Error,
+          method: options.method,
+          url,
+          service: 'SMS MTN API',
+          attempt,
+          maxAttempts: this.options.retries,
+        })
 
         if (attempt === this.options.retries) {
           throw error
@@ -265,7 +355,17 @@ export class SmsService {
 
         // Attendre avant de retry (backoff exponentiel)
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000)
-        console.log(`⏳ Retry dans ${delay}ms...`)
+
+        // Logger la tentative de retry
+        this.networkLogger.logRetryAttempt({
+          method: options.method,
+          url,
+          attempt,
+          maxAttempts: this.options.retries || 3,
+          delay,
+          service: 'SMS MTN API',
+        })
+
         await new Promise((resolve) => setTimeout(resolve, delay))
       }
     }
@@ -418,5 +518,51 @@ export class SmsService {
       type: 'Unicode',
       invalidChars: [...new Set(invalidChars)],
     }
+  }
+
+  /**
+   * Obtenir la description d'un code de statut MTN
+   */
+  getMtnStatusDescription(code: string): {
+    code: string
+    description: string
+    category: 'success' | 'pending' | 'failed'
+  } {
+    const statusMap: Record<
+      string,
+      { description: string; category: 'success' | 'pending' | 'failed' }
+    > = {
+      '0': { description: 'En attente', category: 'pending' },
+      '1': { description: 'Livré au téléphone', category: 'success' },
+      '2': { description: 'Non remis au téléphone', category: 'failed' },
+      '4': { description: "Mis en file d'attente sur SMSC", category: 'pending' },
+      '8': { description: 'Livré au SMSC', category: 'success' },
+      '16': { description: 'Rejet SMSC', category: 'failed' },
+    }
+
+    const statusInfo = statusMap[code] || {
+      description: 'Code de statut inconnu',
+      category: 'pending' as const,
+    }
+
+    return {
+      code,
+      description: statusInfo.description,
+      category: statusInfo.category,
+    }
+  }
+
+  /**
+   * Obtenir tous les codes de statut MTN disponibles
+   */
+  getAllMtnStatusCodes(): Array<{ code: string; description: string; category: string }> {
+    return [
+      { code: '0', description: 'En attente', category: 'pending' },
+      { code: '1', description: 'Livré au téléphone', category: 'success' },
+      { code: '2', description: 'Non remis au téléphone', category: 'failed' },
+      { code: '4', description: "Mis en file d'attente sur SMSC", category: 'pending' },
+      { code: '8', description: 'Livré au SMSC', category: 'success' },
+      { code: '16', description: 'Rejet SMSC', category: 'failed' },
+    ]
   }
 }

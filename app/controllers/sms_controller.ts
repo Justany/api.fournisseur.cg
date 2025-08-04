@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import { SmsService } from '#services/sms_service'
+import env from '#start/env'
 
 @inject()
 export default class SmsController {
@@ -63,7 +64,7 @@ export default class SmsController {
    * @summary Send SMS (MTN Official API)
    * @description Send SMS using official MTN API endpoint
    * @tag SMS
-   * @requestBody {"to": "242053518256", "message": "Votre code de vérification est 534444", "from": "Fournisseur"}
+   * @requestBody {"to": "242053518256", "message": "Votre code de vérification est 534444", "from": "Fourniseur"}
    * @responseBody 200 - {"messageId": "msg_123", "status": "sent", "to": "242053518256", "cost": 25}
    * @responseBody 400 - {"error": "Paramètres invalides", "details": "string"}
    * @responseBody 500 - {"error": "Erreur lors de l'envoi", "details": "string"}
@@ -118,7 +119,7 @@ export default class SmsController {
       const result = await this.sms.sendSms({
         to: data.to,
         message: data.message,
-        from: data.from || 'Fournisseur',
+        from: data.from || env.get('SMS_SENDER_NAME') || 'Fourniseur',
         reference: data.reference,
         priority: 'normal',
       })
@@ -148,10 +149,10 @@ export default class SmsController {
   /**
    * @getSmsStatus
    * @summary Get SMS status (MTN Official API)
-   * @description Get SMS status using official MTN API endpoint
+   * @description Get SMS status using official MTN API endpoint with detailed status information
    * @tag SMS
    * @paramPath messageId - ID du message SMS retourné lors de l'envoi
-   * @responseBody 200 - {"messageId": "msg_123", "status": "delivered", "to": "242053518256"}
+   * @responseBody 200 - {"messageId": "msg_123", "status": "delivered", "to": "242053518256", "statusDetails": {...}}
    * @responseBody 404 - {"error": "SMS non trouvé"}
    * @responseBody 500 - {"error": "Erreur lors de la récupération", "details": "string"}
    */
@@ -166,18 +167,98 @@ export default class SmsController {
         })
       }
 
+      // Vérifier si l'utilisateur a utilisé {messageId} au lieu d'un vrai ID
+      if (messageId === '{messageId}' || messageId === '%7BmessageId%7D') {
+        return response.badRequest({
+          error: 'ID de message invalide',
+          details:
+            'Vous devez remplacer {messageId} par un vrai ID de message. Exemple: /v3/sms/status/26',
+          example: {
+            correct: '/v3/sms/status/26',
+            incorrect: '/v3/sms/status/{messageId}',
+          },
+        })
+      }
+
+      // Vérifier que l'ID est un nombre valide selon la documentation MTN
+      const messageIdNumber = Number.parseInt(messageId, 10)
+      if (Number.isNaN(messageIdNumber) || messageIdNumber <= 0) {
+        return response.badRequest({
+          error: 'ID de message invalide',
+          details: "L'ID du message doit être un nombre positif. Exemple: 26",
+          received: messageId,
+          example: {
+            correct: '/v3/sms/status/26',
+            incorrect: '/v3/sms/status/abc',
+          },
+        })
+      }
+
       const result = await this.sms.getSmsStatus(messageId)
+
+      // Ajouter des informations détaillées sur le statut
+      const statusDetails = {
+        isFinal: ['delivered', 'failed'].includes(result.status),
+        isSuccess: result.status === 'delivered',
+        needsRetry: result.status === 'failed',
+        description: result.failureReason || 'Statut en cours de traitement',
+      }
 
       return response.ok({
         success: true,
-        message: 'Statut SMS récupéré avec succès',
-        data: result,
+        message: "Statut SMS récupéré avec succès via l'API MTN",
+        data: {
+          ...result,
+          statusDetails,
+        },
       })
     } catch (error) {
       console.error('Erreur lors de la récupération du statut:', error)
+
+      // Gestion spécifique des erreurs de statut
+      if (error.message.includes('404')) {
+        return response.notFound({
+          success: false,
+          error: 'SMS non trouvé',
+          details: `Le SMS avec l'ID ${params.messageId} n'existe pas ou a expiré`,
+        })
+      }
+
       return response.internalServerError({
         success: false,
         error: 'Erreur lors de la récupération du statut',
+        details: error.message,
+      })
+    }
+  }
+
+  /**
+   * @getStatusCodes
+   * @summary Get MTN status codes
+   * @description Get all available MTN SMS status codes and their descriptions
+   * @tag SMS
+   * @responseBody 200 - {"statusCodes": [{"code": "1", "description": "Livré au téléphone", "category": "success"}]}
+   */
+  async getStatusCodes({ response }: HttpContext) {
+    try {
+      const statusCodes = this.sms.getAllMtnStatusCodes()
+
+      return response.ok({
+        success: true,
+        message: 'Codes de statut MTN récupérés avec succès',
+        data: {
+          statusCodes,
+          documentation: {
+            success: statusCodes.filter((s) => s.category === 'success'),
+            pending: statusCodes.filter((s) => s.category === 'pending'),
+            failed: statusCodes.filter((s) => s.category === 'failed'),
+          },
+        },
+      })
+    } catch (error) {
+      return response.internalServerError({
+        success: false,
+        error: 'Erreur lors de la récupération des codes de statut',
         details: error.message,
       })
     }

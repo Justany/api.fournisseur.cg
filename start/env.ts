@@ -111,9 +111,9 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   SMS_BASE_URL: Env.schema.string.optional(),
-  SMS_API_KEY: Env.schema.string.optional(),
   SMS_AUTH_TOKEN: Env.schema.string.optional(),
   SMS_CALLBACK_URL: Env.schema.string.optional(),
+  SMS_SENDER_NAME: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------

@@ -579,6 +579,8 @@ router.get('/docs', async () => {
 // =====================================
 router
   .group(() => {
+    // Middleware de logging réseau en mode développement
+    router.use([() => import('#middleware/network_logging_middleware')])
     // Health check route for Dokploy/Traefik
     router.get('/health', async () => {
       return {
@@ -792,6 +794,9 @@ router
 
           // Vérification de statut selon l'API MTN : POST avec { "op": "status", "id": "26" }
           router.get('/status/:messageId', [SmsController, 'getSmsStatus'])
+
+          // Codes de statut MTN officiels
+          router.get('/status-codes', [SmsController, 'getStatusCodes'])
 
           // Utilitaire de calcul de coût selon les règles MTN
           router.post('/calculate-cost', [SmsController, 'calculateSmsCost'])

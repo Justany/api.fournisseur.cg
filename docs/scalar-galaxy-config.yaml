@@ -1,5 +1,5 @@
 # Configuration Scalar Galaxy pour API Fournisseur CG
-# Généré automatiquement le 2025-08-04T21:51:21.344Z
+# Généré automatiquement le 2025-08-04T23:10:06.751Z
 # Combine AutoSwagger (routes) + Configuration Scalar (UI/UX)
 
 openapi: 3.0.0
@@ -2240,16 +2240,16 @@ paths:
               properties:
                 to: '242053518256'
                 message: Votre code de vérification est 534444
-                from: Fournisseur
+                from: Fourniseur
             example:
               to: '242053518256'
               message: Votre code de vérification est 534444
-              from: Fournisseur
+              from: Fourniseur
   /v3/sms/status/{messageId}:
     get:
       summary: Get SMS status (MTN Official API) (getSmsStatus)
       description: |-
-        Returns **200** (OK) as **application/json**
+        Returns **200** (OK) as **text/plain**
 
          _app/controllers/sms_controller.ts_ - **getSmsStatus**
       parameters:
@@ -2265,18 +2265,9 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  messageId: msg_123
-                  status: delivered
-                  to: '242053518256'
-              example:
-                messageId: msg_123
-                status: delivered
-                to: '242053518256'
-          description: Returns **200** (OK) as **application/json**
+            text/plain:
+              example: '{"messageId": "msg_123", "status": "delivered", "to": "242053518256", "statusDetails": {...}}'
+          description: Returns **200** (OK) as **text/plain**
         '404':
           content:
             application/json:
@@ -2299,6 +2290,39 @@ paths:
                 error: Erreur lors de la récupération
                 details: string
           description: Returns **500** (Internal Server Error) as **application/json**
+      security: []
+  /v3/sms/status-codes:
+    get:
+      summary: Get MTN status codes (getStatusCodes)
+      description: |-
+        Returns **200** (OK) as **application/json**
+
+         _app/controllers/sms_controller.ts_ - **getStatusCodes**
+      parameters: []
+      tags:
+        - SMS
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCodes:
+                    type: object
+                    properties:
+                      '0':
+                        type: object
+                        properties:
+                          code: '1'
+                          description: Livré au téléphone
+                          category: success
+              example:
+                statusCodes:
+                  - code: '1'
+                    description: Livré au téléphone
+                    category: success
+          description: Returns **200** (OK) as **application/json**
       security: []
   /v3/sms/calculate-cost:
     post:
@@ -2415,4 +2439,4 @@ x-scalar:
     showLastModified: true
     showGeneratedBy: true
     generatedBy: API Fournisseur CG - AutoSwagger + Scalar
-    generatedAt: '2025-08-04T21:51:21.335Z'
+    generatedAt: '2025-08-04T23:10:06.742Z'
