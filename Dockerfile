@@ -45,9 +45,9 @@ RUN pnpm install --frozen-lockfile --prod && \
     pnpm store prune
 
 # Copier l'application buildée depuis le stage builder
-COPY --from=builder --chown=adonisjs:nodejs /app/build ./build
+COPY --from=builder --chown=adonisjs:nodejs /app/build ./
 
-# Copier les node_modules pour la production
+# Copier les node_modules nécessaires depuis le builder (pour éviter les problèmes de dépendances)
 COPY --from=builder --chown=adonisjs:nodejs /app/node_modules ./node_modules
 
 # Définir les variables d'environnement de production
@@ -61,5 +61,5 @@ USER adonisjs
 # Exposer le port
 EXPOSE 3333
 
-# Démarrer l'application (chemin correct après build)
-CMD ["node", "./build/bin/server.js"]
+# Démarrer l'application (utilise le script start du package.json)
+CMD ["node", "./bin/server.js"]
