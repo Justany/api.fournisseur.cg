@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-08-03T18:38:52.190Z",
+  "generatedAt": "2025-08-04T21:51:21.345Z",
   "generator": "API Fournisseur CG - AutoSwagger + Scalar Generator",
   "version": "3.0.0",
   "apiInfo": {
@@ -81,7 +81,7 @@
     ]
   },
   "statistics": {
-    "totalEndpoints": 47,
+    "totalEndpoints": 39,
     "totalTags": 9,
     "totalSecuritySchemes": 3,
     "totalServers": 3,
@@ -97,6 +97,12 @@
     "mainVersion": "v3"
   },
   "endpoints": [
+    {
+      "path": "/v3/health",
+      "methods": [
+        "get"
+      ]
+    },
     {
       "path": "/v3",
       "methods": [
@@ -325,61 +331,7 @@
       ]
     },
     {
-      "path": "/v3/sms/history",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/stats",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/send/test",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/send/otp",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/send/notification",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/balance",
-      "methods": [
-        "get"
-      ]
-    },
-    {
       "path": "/v3/sms/calculate-cost",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/api-info",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/webhook",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/webhook/config",
       "methods": [
         "post"
       ]

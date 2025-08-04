@@ -1,11 +1,11 @@
 /**
- * Types pour l'API SMS
- * Basés sur la documentation SMS fournie
+ * Types pour l'API SMS MTN simplifiée
+ * Basés sur la documentation officielle MTN :
+ * https://github.com/hkfmz/code_api_mtn_doc/blob/main/DESCRIPTION.md
  */
 
 export interface SmsConfig {
   baseUrl: string
-  apiKey: string
   authToken: string
   environment: 'development' | 'production'
 }
@@ -23,12 +23,12 @@ export interface SmsResponse<T = any> {
   code?: string
 }
 
-// Types pour l'envoi de SMS
+// Types pour l'envoi de SMS selon la documentation MTN
 export interface SendSmsRequest {
-  to: string
-  message: string
-  from?: string
-  reference?: string
+  to: string // Numéro destinataire format MTN : 242XXXXXXXX
+  message: string // Contenu du message SMS
+  from?: string // Nom expéditeur (max 11 caractères)
+  reference?: string // Référence externe pour le suivi
   priority?: 'low' | 'normal' | 'high'
 }
 
@@ -43,7 +43,7 @@ export interface SendSmsResponse {
   timestamp: string
 }
 
-// Types pour la vérification de statut
+// Types pour la vérification de statut selon la documentation MTN
 export interface SmsStatusRequest {
   messageId: string
 }
@@ -59,70 +59,50 @@ export interface SmsStatusResponse {
   failedAt?: string
   failureReason?: string
   timestamp: string
+  externalId?: string | number
 }
 
-// Types pour l'historique des SMS
-export interface SmsHistoryResponse {
-  messages: SmsMessage[]
-  total: number
-  page: number
-  limit: number
+// Types de réponse MTN selon la documentation officielle
+export interface MTNSmsResponse {
+  resultat: string // "envoyé (coût: 46 crédits)" ou message d'erreur
+  status: string // "200", "404", etc.
+  id?: string // Identifiant unique serveur
+  detail?: string // Détails de l'erreur si applicable
+  externalId?: number // Identifiant externe du client
 }
 
-export interface SmsMessage {
-  id: string
-  to: string
-  from: string
-  message: string
-  status: 'sent' | 'delivered' | 'failed' | 'pending'
-  cost: number
-  createdAt: string
-  deliveredAt?: string
-  failedAt?: string
-  failureReason?: string
-  reference?: string
+// Types pour la vérification de statut MTN
+export interface MTNStatusRequest {
+  op: 'status'
+  id: string // ID du message
 }
 
-// Types pour les statistiques
-export interface SmsStatsResponse {
-  total: number
-  sent: number
-  delivered: number
-  failed: number
-  pending: number
-  totalCost: number
-  balance: number
-  period: {
-    start: string
-    end: string
-  }
+export interface MTNStatusResponse {
+  resultat: string[] // ["242056753822, 1, Livré au téléphone", "242068463499, 2, Non remis au téléphone"]
+  status: string // "200"
+  externalId?: number
 }
 
-// Types pour l'authentification
-export interface SmsAuthResponse {
-  token: string
-  expiresAt: string
-  user: {
-    id: string
-    username: string
-    balance: number
-    status: 'active' | 'inactive'
-  }
+// Codes de statut MTN selon la documentation
+export type MTNStatusCode = '0' | '1' | '2' | '4' | '8' | '16'
+
+export interface MTNStatusMapping {
+  '0': 'En attente'
+  '1': 'Livré au téléphone'
+  '2': 'Non remis au téléphone'
+  '4': "Mis en file d'attente sur SMSC"
+  '8': 'Livré au SMSC'
+  '16': 'Rejet SMSC'
 }
 
-// Types pour les webhooks
-export interface SmsWebhookRequest {
-  messageId: string
-  status: 'delivered' | 'failed'
-  to: string
-  from: string
-  timestamp: string
-  failureReason?: string
-}
-
-export interface SmsWebhookResponse {
-  received: boolean
-  processed: boolean
+// Types pour la validation des messages selon la doc MTN
+export interface MessageValidation {
+  isValid: boolean
+  type: 'GSM' | 'Unicode'
+  invalidChars?: string[]
+  length: number
+  smsCount: number
+  estimatedCost: number
 }
 
 // Types pour les erreurs
@@ -132,17 +112,15 @@ export interface SmsError {
   details?: string
 }
 
-// Types pour la configuration des webhooks
-export interface SmsWebhookConfig {
-  url: string
-  events: ('delivered' | 'failed')[]
-  secret?: string
-}
-
-export interface SmsWebhookConfigResponse {
-  id: string
-  url: string
-  events: string[]
-  isActive: boolean
-  createdAt: string
+// Limites selon la documentation MTN
+export interface SMSLimits {
+  maxMessageLength: 1071 // 7 SMS maximum
+  maxSenderLength: 11 // Nom expéditeur
+  maxRecipients: 1000 // Numéros max par envoi
+  smsCharacterLimits: {
+    single: 160 // 1 SMS
+    multiple: 153 // SMS multiples (153 chars chacun après le premier)
+  }
+  supportedFormats: ['GSM', 'Unicode']
+  costPerSms: 25 // Coût standard par SMS
 }

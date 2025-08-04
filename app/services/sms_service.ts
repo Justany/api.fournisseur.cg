@@ -4,22 +4,18 @@ import fetch from 'node-fetch'
 import type {
   SmsConfig,
   SmsServiceOptions,
-  SmsResponse,
   SendSmsRequest,
   SendSmsResponse,
   SmsStatusResponse,
-  SmsHistoryResponse,
-  SmsStatsResponse,
-  SmsAuthResponse,
-  SmsWebhookRequest,
-  SmsWebhookResponse,
-  SmsWebhookConfig,
-  SmsWebhookConfigResponse,
 } from '#types/sms_types'
 
 /**
- * Service pour l'API SMS
- * Encapsule toutes les fonctionnalités d'envoi et de gestion des SMS
+ * Service SMS MTN simplifié selon la documentation officielle
+ * https://github.com/hkfmz/code_api_mtn_doc/blob/main/DESCRIPTION.md
+ *
+ * API MTN : POST https://sms.mtncongo.net/api/sms/
+ * - Envoi SMS : { msg, sender, receivers, ... }
+ * - Vérification statut : { op: "status", id: "26" }
  */
 export class SmsService {
   private config: SmsConfig
@@ -36,8 +32,7 @@ export class SmsService {
 
     this.config = {
       baseUrl: env.get('SMS_BASE_URL') || 'https://sms.mtncongo.net/api/sms',
-      apiKey: env.get('SMS_API_KEY') || 'sms_api_key_here',
-      authToken: env.get('SMS_AUTH_TOKEN') || 'Token EJQ15pg5cEYsotgQaGyCHRxnPvmAemamOh6w7YRDif',
+      authToken: env.get('SMS_AUTH_TOKEN') || 'ac6b69b90482d286cbeec099b1f6359205b2533c',
       environment: (env.get('NODE_ENV') as 'development' | 'production') || 'development',
     }
 
@@ -46,54 +41,34 @@ export class SmsService {
   }
 
   /**
-   * Authentification avec l'API SMS MTN
-   * L'API MTN utilise un token statique fourni dans les headers
-   */
-  async authenticate(): Promise<SmsAuthResponse> {
-    // L'API MTN utilise un token statique, pas d'authentification dynamique
-    this.authToken = this.config.authToken
-
-    return {
-      token: this.authToken,
-      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 an
-      user: {
-        id: 'mtn_user',
-        username: 'mtn_api_user',
-        balance: 1000,
-        status: 'active',
-      },
-    }
-  }
-
-  /**
-   * Envoyer un SMS selon la documentation MTN
+   * Envoyer un SMS selon la documentation MTN officielle
+   * POST https://sms.mtncongo.net/api/sms/
    */
   async sendSms(request: SendSmsRequest): Promise<SendSmsResponse> {
-    // Préparer les données selon le format MTN
+    // Préparer les données selon le format MTN exact
     const mtnRequest = {
       msg: request.message,
-      sender: request.from || 'Fourniseur',
-      receivers: request.to,
+      sender: (request.from || 'Fournisseur').substring(0, 11), // Limité à 11 caractères selon la doc MTN
+      receivers: this.formatPhoneNumberForMTN(request.to),
       externalId: request.reference ? Number.parseInt(request.reference) : undefined,
       callback_url: env.get('SMS_CALLBACK_URL'),
     }
 
-    const response = await this.makeRequest<any>('/send', {
+    const response = await this.makeRequest<any>('/', {
       method: 'POST',
       body: mtnRequest,
-      requiresAuth: true,
     })
 
-    // Traiter la réponse MTN
+    // Traiter la réponse MTN selon la doc : {"resultat": "envoyé (coût: 46 crédits)", "status": "200", "id": "10"}
     if (response.status === '200' || response.status === '201') {
       return {
         messageId: response.id,
         status: 'sent',
         to: request.to,
-        from: request.from || 'Fourniseur',
+        from: request.from || 'Fournisseur',
         message: request.message,
         cost: this.extractCostFromResult(response.resultat),
-        balance: 1000, // À récupérer via une API séparée
+        balance: 1000, // Non fourni par l'API MTN
         timestamp: new Date().toISOString(),
       }
     }
@@ -102,42 +77,39 @@ export class SmsService {
   }
 
   /**
-   * Extraire le coût depuis le résultat MTN
-   */
-  private extractCostFromResult(resultat: string): number {
-    const costMatch = resultat.match(/coût:\s*(\d+)/i)
-    return costMatch ? Number.parseInt(costMatch[1], 10) : 25
-  }
-
-  /**
    * Vérifier le statut d'un SMS selon la documentation MTN
+   * POST https://sms.mtncongo.net/api/sms/
+   * { "op": "status", "id": "26" }
    */
   async getSmsStatus(messageId: string): Promise<SmsStatusResponse> {
-    const response = await this.makeRequest<any>('/send', {
+    const response = await this.makeRequest<any>('/', {
       method: 'POST',
       body: {
         op: 'status',
         id: messageId,
       },
-      requiresAuth: true,
     })
 
     if (response.status === '200') {
-      // Traiter la réponse MTN qui contient un tableau de statuts
-      const statusData = response.resultat[0] // Premier destinataire
+      // Traiter la réponse MTN selon la doc
+      const statusResults = Array.isArray(response.resultat)
+        ? response.resultat
+        : [response.resultat]
+      const statusData = statusResults[0] // Premier destinataire
       const [phone, statusCode, statusMessage] = statusData.split(', ')
 
       return {
         messageId: messageId,
         status: this.mapMtnStatusToStandard(statusCode),
         to: phone,
-        from: 'Fourniseur',
+        from: 'Fournisseur',
         message: '', // Pas disponible dans la réponse de statut
         cost: 25,
         deliveredAt: statusCode === '1' ? new Date().toISOString() : undefined,
-        failedAt: statusCode === '2' ? new Date().toISOString() : undefined,
-        failureReason: statusCode === '2' ? statusMessage : undefined,
+        failedAt: statusCode === '2' || statusCode === '16' ? new Date().toISOString() : undefined,
+        failureReason: statusCode === '2' || statusCode === '16' ? statusMessage : undefined,
         timestamp: new Date().toISOString(),
+        externalId: response.externalId,
       }
     }
 
@@ -145,7 +117,18 @@ export class SmsService {
   }
 
   /**
+   * Extraire le coût depuis le résultat MTN : "envoyé (coût: 46 crédits)"
+   */
+  private extractCostFromResult(resultat: string): number {
+    const costMatch = resultat.match(/coût:\s*(\d+)/i)
+    return costMatch ? Number.parseInt(costMatch[1], 10) : 25
+  }
+
+  /**
    * Mapper les codes de statut MTN vers les standards
+   * Selon la doc MTN :
+   * 0: En attente, 1: Livré au téléphone, 2: Non remis au téléphone
+   * 4: Mis en file d'attente sur SMSC, 8: Livré au SMSC, 16: Rejet SMSC
    */
   private mapMtnStatusToStandard(mtnCode: string): 'sent' | 'delivered' | 'failed' | 'pending' {
     switch (mtnCode) {
@@ -167,112 +150,23 @@ export class SmsService {
   }
 
   /**
-   * Récupérer l'historique des SMS
-   */
-  async getSmsHistory(page: number = 1, limit: number = 50): Promise<SmsHistoryResponse> {
-    const response = await this.makeRequest<SmsResponse<SmsHistoryResponse>>(
-      `/sms/history?page=${page}&limit=${limit}`,
-      {
-        method: 'GET',
-        requiresAuth: true,
-      }
-    )
-
-    if (response.status === 'success' && response.data) {
-      return response.data
-    }
-
-    throw new Error(`Échec de la récupération de l'historique: ${response.message}`)
-  }
-
-  /**
-   * Récupérer les statistiques des SMS
-   */
-  async getSmsStats(startDate?: string, endDate?: string): Promise<SmsStatsResponse> {
-    const params = new URLSearchParams()
-    if (startDate) params.append('startDate', startDate)
-    if (endDate) params.append('endDate', endDate)
-
-    const response = await this.makeRequest<SmsResponse<SmsStatsResponse>>(
-      `/sms/stats?${params.toString()}`,
-      {
-        method: 'GET',
-        requiresAuth: true,
-      }
-    )
-
-    if (response.status === 'success' && response.data) {
-      return response.data
-    }
-
-    throw new Error(`Échec de la récupération des statistiques: ${response.message}`)
-  }
-
-  /**
-   * Traiter un webhook SMS
-   */
-  async processWebhook(webhook: SmsWebhookRequest): Promise<SmsWebhookResponse> {
-    const response = await this.makeRequest<SmsResponse<SmsWebhookResponse>>('/sms/webhook', {
-      method: 'POST',
-      body: webhook,
-    })
-
-    if (response.status === 'success' && response.data) {
-      return response.data
-    }
-
-    throw new Error(`Échec du traitement du webhook: ${response.message}`)
-  }
-
-  /**
-   * Configurer un webhook SMS
-   */
-  async configureWebhook(config: SmsWebhookConfig): Promise<SmsWebhookConfigResponse> {
-    const response = await this.makeRequest<SmsResponse<SmsWebhookConfigResponse>>(
-      '/sms/webhook/config',
-      {
-        method: 'POST',
-        body: config,
-        requiresAuth: true,
-      }
-    )
-
-    if (response.status === 'success' && response.data) {
-      return response.data
-    }
-
-    throw new Error(`Échec de la configuration du webhook: ${response.message}`)
-  }
-
-  /**
-   * Effectuer une requête HTTP vers l'API SMS avec retry et timeout
+   * Effectuer une requête HTTP vers l'API SMS MTN
+   * Endpoint unique : POST https://sms.mtncongo.net/api/sms/
    */
   private async makeRequest<T>(
     endpoint: string,
     options: {
-      method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+      method: 'POST'
       body?: any
-      requiresAuth?: boolean
     }
   ): Promise<T> {
     const url = `${this.config.baseUrl}${endpoint}`
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    }
 
-    if (options.requiresAuth) {
-      if (!this.authToken) {
-        await this.ensureAuthenticated()
-      }
-      // Format MTN : Token-xxxxxxxxxxxxxxxx
-      headers['Authorization'] =
-        this.authToken && this.authToken.startsWith('Token ')
-          ? this.authToken
-          : `Token ${this.authToken || ''}`
-    } else {
-      // Utiliser la clé API
-      headers['x-api-key'] = this.config.apiKey
+    // Headers selon la documentation MTN
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Accept': 'application/json',
+      'Authorization': this.formatAuthToken(),
     }
 
     const requestOptions: RequestInit = {
@@ -284,20 +178,16 @@ export class SmsService {
       requestOptions.body = JSON.stringify(options.body)
     }
 
-    // En mode développement, désactiver la vérification SSL pour éviter les erreurs de certificat
+    // En mode développement, désactiver la vérification SSL
     if (this.config.environment === 'development') {
-      // Configurer l'agent HTTPS pour ignorer les erreurs de certificat
       const agent = new https.Agent({
         rejectUnauthorized: false,
         checkServerIdentity: () => undefined,
       })
-
-      // Utiliser node-fetch avec l'agent HTTPS
       // @ts-ignore
       requestOptions.agent = agent
     }
 
-    // Appliquer le timeout depuis les options du service
     const timeout = this.options?.timeout || 30000
 
     // Fonction pour effectuer la requête avec timeout
@@ -326,71 +216,49 @@ export class SmsService {
     for (let attempt = 1; attempt <= (this.options?.retries || 3); attempt++) {
       try {
         console.log(
-          `📱 SMS API Request (tentative ${attempt}/${this.options.retries}): ${options.method} ${url}`
+          `📱 SMS MTN API Request (tentative ${attempt}/${this.options.retries}): ${options.method} ${url}`
         )
-        console.log(`🔑 Auth Token: ${this.authToken ? 'Présent' : 'Absent'}`)
-        console.log(`🔑 Clé API: ${headers['x-api-key'] ? 'Présente' : 'Absente'}`)
+        console.log(`🔑 Authorization: ${headers['Authorization'].substring(0, 25)}...`)
 
         const response = await makeRequestWithTimeout()
 
         console.log(`📡 Statut de la réponse: ${response.status} ${response.statusText}`)
-        console.log(`📡 En-têtes de la réponse:`, Object.fromEntries(response.headers.entries()))
-
-        // Vérifier le type de contenu
-        const contentType = response.headers.get('content-type')
-        console.log(`📄 Content-Type: ${contentType}`)
 
         if (!response.ok) {
           let errorMessage = `Erreur HTTP ${response.status}: ${response.statusText}`
-
           try {
             const errorData = await response.text()
             console.log(`❌ Error Response Body:`, errorData.substring(0, 500))
-
-            // Essayer de parser comme JSON
             try {
               const jsonError = JSON.parse(errorData)
               errorMessage = jsonError.message || jsonError.error || errorMessage
             } catch {
-              // Si ce n'est pas du JSON, utiliser le texte brut
               errorMessage = `${errorMessage}\nBody: ${errorData.substring(0, 200)}`
             }
           } catch (parseError) {
             console.log(`❌ Impossible de lire le body de l'erreur:`, parseError)
           }
-
           throw new Error(errorMessage)
         }
 
         // Vérifier si la réponse est du JSON
+        const contentType = response.headers.get('content-type')
         if (contentType && contentType.includes('application/json')) {
           const data = await response.json()
           console.log(`✅ Response JSON:`, JSON.stringify(data, null, 2).substring(0, 500))
           return data as T
         } else {
-          // Si ce n'est pas du JSON, lire comme texte
           const textData = await response.text()
           console.log(`⚠️ Response non-JSON:`, textData.substring(0, 500))
-
-          // Si c'est du HTML, c'est probablement une page d'erreur
-          if (contentType && contentType.includes('text/html')) {
-            throw new Error(
-              `Page HTML reçue au lieu de JSON. L'endpoint ${endpoint} n'existe probablement pas sur l'API MTN.`
-            )
-          }
-
-          throw new Error(
-            `Réponse non-JSON reçue. Content-Type: ${contentType}. Body: ${textData.substring(0, 200)}`
-          )
+          throw new Error(`Réponse non-JSON reçue. Content-Type: ${contentType}`)
         }
       } catch (error) {
         lastError = error
         console.error(
-          `❌ Erreur SMS API (tentative ${attempt}/${this.options.retries}) (${endpoint}):`,
+          `❌ Erreur SMS MTN API (tentative ${attempt}/${this.options.retries}):`,
           error
         )
 
-        // Si c'est la dernière tentative, ne pas retry
         if (attempt === this.options.retries) {
           throw error
         }
@@ -406,15 +274,20 @@ export class SmsService {
   }
 
   /**
-   * S'assurer d'être authentifié avec l'API SMS
+   * Formater le token d'authentification selon la doc MTN : "Token xxxxxxxxxxxxxxxxxxxxxxx"
    */
-  private async ensureAuthenticated(): Promise<void> {
-    if (this.authToken) {
-      return // Déjà authentifié
+  private formatAuthToken(): string {
+    if (!this.authToken) {
+      throw new Error("Token d'authentification SMS non configuré")
     }
 
-    // Utiliser le token configuré
-    this.authToken = this.config.authToken
+    // Si le token commence déjà par "Token ", l'utiliser tel quel
+    if (this.authToken.startsWith('Token ')) {
+      return this.authToken
+    }
+
+    // Sinon, ajouter le préfixe "Token "
+    return `Token ${this.authToken}`
   }
 
   /**
@@ -422,15 +295,20 @@ export class SmsService {
    */
   async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; message: string }> {
     try {
-      // L'API MTN n'a pas d'endpoint de health check public
-      // On vérifie juste que la configuration est correcte
-      if (
-        !this.config.authToken ||
-        this.config.authToken === 'Token EJQ15pg5cEYsotgQaGyCHRxnPvmAemamOh6w7YRDif'
-      ) {
+      const expectedToken = 'ac6b69b90482d286cbeec099b1f6359205b2533c'
+
+      if (!this.config.authToken) {
         return {
           status: 'unhealthy',
-          message: "Token d'authentification MTN non configuré",
+          message: "Token d'authentification MTN manquant dans SMS_AUTH_TOKEN",
+        }
+      }
+
+      // Vérifier que le token contient le bon token attendu
+      if (!this.config.authToken.includes(expectedToken)) {
+        return {
+          status: 'unhealthy',
+          message: `Token d'authentification incorrect. Token actuel: ${this.config.authToken?.substring(0, 20)}...`,
         }
       }
 
@@ -442,11 +320,10 @@ export class SmsService {
         }
       }
 
-      // Pour l'instant, on considère que la configuration est correcte
-      // La vraie vérification se fera lors de l'envoi du premier SMS
+      // Configuration validée avec le bon token
       return {
         status: 'healthy',
-        message: 'Configuration SMS MTN correcte (vérification lors du premier envoi)',
+        message: `✅ Configuration SMS MTN validée avec le token d'authentification correct (${expectedToken.substring(0, 10)}...)`,
       }
     } catch (error) {
       return {
@@ -464,214 +341,82 @@ export class SmsService {
   }
 
   /**
-   * Obtenir les options du service
-   */
-  getOptions(): SmsServiceOptions {
-    return { ...this.options }
-  }
-
-  /**
-   * Définir le token d'authentification
-   */
-  setAuthToken(token: string): void {
-    this.authToken = token
-  }
-
-  /**
-   * Effacer le token d'authentification
-   */
-  clearAuthToken(): void {
-    this.authToken = undefined
-  }
-
-  /**
-   * Valider un numéro de téléphone congolais
+   * Valider un numéro de téléphone congolais (format MTN : 242XXXXXXXX)
    */
   validatePhoneNumber(phoneNumber: string): boolean {
-    const phoneRegex = /^0[5-7][0-9]{7}$/
-    return phoneRegex.test(phoneNumber)
-  }
-
-  /**
-   * Calculer le coût d'un SMS basé sur sa longueur
-   */
-  calculateSmsCost(message: string): number {
-    const length = message.length
-    if (length <= 160) {
-      return 25 // Coût standard pour 1 SMS
-    } else {
-      const smsCount = Math.ceil(length / 160)
-      return smsCount * 25
-    }
-  }
-
-  /**
-   * Formater un numéro de téléphone pour l'envoi
-   */
-  formatPhoneNumber(phoneNumber: string): string {
-    // Supprimer les espaces et caractères spéciaux
     const cleaned = phoneNumber.replace(/[\s\-\(\)]/g, '')
 
-    // S'assurer qu'il commence par 0
-    if (cleaned.startsWith('242')) {
-      return cleaned.replace('242', '0')
+    // Format MTN international : 242XXXXXXXX (04, 05, 06)
+    const numberFormat = /^242(04|05|06)[0-9]{7}$/
+
+    return numberFormat.test(cleaned)
+  }
+
+  /**
+   * Formater un numéro de téléphone au format MTN (242XXXXXXXX)
+   */
+  formatPhoneNumberForMTN(phoneNumber: string): string {
+    const cleaned = phoneNumber.replace(/[\s\-\(\)]/g, '')
+
+    // Si déjà au format MTN (242XXXXXXXX), retourner tel quel
+    if (cleaned.startsWith('242') && cleaned.length === 12) {
+      return cleaned
     }
 
     return cleaned
   }
 
   /**
-   * Vérifier le solde du compte SMS
+   * Calculer le coût d'un SMS selon la documentation MTN
    */
-  async checkBalance(): Promise<{ balance: number; currency: string }> {
-    const response = await this.makeRequest<SmsResponse<{ balance: number; currency: string }>>(
-      '/account/balance',
-      {
-        method: 'GET',
-        requiresAuth: true,
-      }
-    )
+  calculateSmsCost(message: string): number {
+    const length = message.length
+    const costPerSms = 25 // Coût standard par SMS
 
-    if (response.status === 'success' && response.data) {
-      return response.data
-    }
-
-    throw new Error(`Échec de la récupération du solde: ${response.message}`)
-  }
-
-  /**
-   * Envoyer un SMS de test
-   */
-  async sendTestSms(to: string): Promise<SendSmsResponse> {
-    const testMessage = 'Test SMS - API Fournisseur CG - ' + new Date().toISOString()
-
-    return this.sendSms({
-      to: this.formatPhoneNumber(to),
-      message: testMessage,
-      from: 'Fourniseur',
-      reference: 'TEST_' + Date.now(),
-      priority: 'normal',
-    })
-  }
-
-  /**
-   * Envoyer un SMS de vérification avec code OTP
-   */
-  async sendOtpSms(to: string, code: string, expiresIn: number = 5): Promise<SendSmsResponse> {
-    const message = `Votre code de vérification est ${code}. Valide ${expiresIn} minutes. Ne partagez pas ce code.`
-
-    return this.sendSms({
-      to: this.formatPhoneNumber(to),
-      message,
-      from: 'Fourniseur',
-      reference: 'OTP_' + Date.now(),
-      priority: 'high',
-    })
-  }
-
-  /**
-   * Envoyer un SMS de notification
-   */
-  async sendNotificationSms(to: string, title: string, message: string): Promise<SendSmsResponse> {
-    const fullMessage = `${title}: ${message}`
-
-    return this.sendSms({
-      to: this.formatPhoneNumber(to),
-      message: fullMessage,
-      from: 'Fourniseur',
-      reference: 'NOTIF_' + Date.now(),
-      priority: 'normal',
-    })
-  }
-
-  /**
-   * Récupérer les logs détaillés des SMS
-   */
-  async getDetailedLogs(
-    startDate?: string,
-    endDate?: string,
-    status?: string
-  ): Promise<{
-    logs: Array<{
-      id: string
-      messageId: string
-      to: string
-      from: string
-      message: string
-      status: string
-      cost: number
-      createdAt: string
-      deliveredAt?: string
-      failedAt?: string
-      failureReason?: string
-      gatewayResponse?: string
-    }>
-    total: number
-  }> {
-    const params = new URLSearchParams()
-    if (startDate) params.append('startDate', startDate)
-    if (endDate) params.append('endDate', endDate)
-    if (status) params.append('status', status)
-
-    const response = await this.makeRequest<
-      SmsResponse<{
-        logs: any[]
-        total: number
-      }>
-    >(`/sms/logs?${params.toString()}`, {
-      method: 'GET',
-      requiresAuth: true,
-    })
-
-    if (response.status === 'success' && response.data) {
-      return response.data
-    }
-
-    throw new Error(`Échec de la récupération des logs: ${response.message}`)
-  }
-
-  /**
-   * Vérifier si l'API SMS est disponible
-   */
-  async isAvailable(): Promise<boolean> {
-    try {
-      const health = await this.healthCheck()
-      return health.status === 'healthy'
-    } catch {
-      return false
+    // Selon la documentation MTN :
+    if (length <= 160) {
+      return costPerSms // 1 message = 160 caractères
+    } else if (length <= 306) {
+      return costPerSms * 2 // 2 messages = 306 caractères (153 + 153)
+    } else if (length <= 459) {
+      return costPerSms * 3 // 3 messages = 459 caractères (153 + 153 + 153)
+    } else if (length <= 612) {
+      return costPerSms * 4 // 4 messages = 612 caractères
+    } else if (length <= 765) {
+      return costPerSms * 5 // 5 messages = 765 caractères (153*5)
+    } else if (length <= 918) {
+      return costPerSms * 6 // 6 messages = 918 caractères
+    } else if (length <= 1071) {
+      return costPerSms * 7 // 7 messages = 1071 caractères
+    } else {
+      // Pour les messages plus longs, calculer dynamiquement
+      const smsCount = Math.ceil((length - 160) / 153) + 1
+      return costPerSms * smsCount
     }
   }
 
   /**
-   * Obtenir les informations de l'API SMS
+   * Valider les caractères du message selon la documentation MTN
    */
-  async getApiInfo(): Promise<{
-    version: string
-    features: string[]
-    limits: {
-      maxMessageLength: number
-      maxRecipients: number
-      rateLimit: number
-    }
-  }> {
-    const response = await this.makeRequest<
-      SmsResponse<{
-        version: string
-        features: string[]
-        limits: {
-          maxMessageLength: number
-          maxRecipients: number
-          rateLimit: number
-        }
-      }>
-    >('/api/info', {
-      method: 'GET',
-    })
+  validateMessageCharacters(message: string): {
+    isValid: boolean
+    type: 'GSM' | 'Unicode'
+    invalidChars?: string[]
+  } {
+    // Caractères GSM autorisés selon la documentation MTN
+    const gsmChars = /^[a-zA-Z0-9~!@#$%^&*()_\-=+\[\]?<>,.':"/{}| ]*$/
 
-    if (response.status === 'success' && response.data) {
-      return response.data
+    if (gsmChars.test(message)) {
+      return { isValid: true, type: 'GSM' }
     }
 
-    throw new Error(`Échec de la récupération des informations API: ${response.message}`)
+    // Si le message contient d'autres caractères, il sera traité comme Unicode
+    const invalidChars = message.match(/[^\x20-\x7E]/g) || []
+
+    return {
+      isValid: true, // Unicode est autorisé
+      type: 'Unicode',
+      invalidChars: [...new Set(invalidChars)],
+    }
   }
 }

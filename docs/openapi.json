@@ -79,6 +79,23 @@
     }
   ],
   "paths": {
+    "/v3/health": {
+      "get": {
+        "summary": "route",
+        "description": "\n\n __ - ****",
+        "parameters": [],
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": []
+      }
+    },
     "/v3": {
       "get": {
         "summary": "route",
@@ -2852,12 +2869,12 @@
                   "type": "object",
                   "properties": {
                     "status": "healthy",
-                    "message": "Connexion à SMS API établie"
+                    "message": "Configuration SMS MTN validée"
                   }
                 },
                 "example": {
                   "status": "healthy",
-                  "message": "Connexion à SMS API établie"
+                  "message": "Configuration SMS MTN validée"
                 }
               }
             },
@@ -2870,12 +2887,12 @@
                   "type": "object",
                   "properties": {
                     "status": "unhealthy",
-                    "message": "Erreur de connexion"
+                    "message": "Erreur de configuration"
                   }
                 },
                 "example": {
                   "status": "unhealthy",
-                  "message": "Erreur de connexion"
+                  "message": "Erreur de configuration"
                 }
               }
             },
@@ -2897,7 +2914,7 @@
           "200": {
             "content": {
               "text/plain": {
-                "example": "{\"status\": \"ok\", \"message\": \"Intégration SMS fonctionnelle\", \"config\": {...}}"
+                "example": "{\"status\": \"ok\", \"message\": \"Intégration SMS MTN fonctionnelle\", \"config\": {...}}"
               }
             },
             "description": "Returns **200** (OK) as **text/plain**"
@@ -2908,8 +2925,8 @@
     },
     "/v3/sms/send": {
       "post": {
-        "summary": "Send SMS (sendSms)",
-        "description": "Send SMS to phone number\n\n _app/controllers/sms_controller.ts_ - **sendSms**",
+        "summary": "Send SMS (MTN Official API) (sendSms)",
+        "description": "Send SMS using official MTN API endpoint\n\n _app/controllers/sms_controller.ts_ - **sendSms**",
         "parameters": [],
         "tags": [
           "SMS"
@@ -2923,14 +2940,14 @@
                   "properties": {
                     "messageId": "msg_123",
                     "status": "sent",
-                    "to": "053518256",
+                    "to": "242053518256",
                     "cost": 25
                   }
                 },
                 "example": {
                   "messageId": "msg_123",
                   "status": "sent",
-                  "to": "053518256",
+                  "to": "242053518256",
                   "cost": 25
                 }
               }
@@ -2981,17 +2998,15 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "to": "053518256",
-                  "message": "Votre code de vérification est 123456",
-                  "from": "Fournisseur",
-                  "reference": "VERIFY_001"
+                  "to": "242053518256",
+                  "message": "Votre code de vérification est 534444",
+                  "from": "Fournisseur"
                 }
               },
               "example": {
-                "to": "053518256",
-                "message": "Votre code de vérification est 123456",
-                "from": "Fournisseur",
-                "reference": "VERIFY_001"
+                "to": "242053518256",
+                "message": "Votre code de vérification est 534444",
+                "from": "Fournisseur"
               }
             }
           }
@@ -3000,13 +3015,13 @@
     },
     "/v3/sms/status/{messageId}": {
       "get": {
-        "summary": "Get SMS status (getSmsStatus)",
+        "summary": "Get SMS status (MTN Official API) (getSmsStatus)",
         "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **getSmsStatus**",
         "parameters": [
           {
             "in": "path",
             "name": "messageId",
-            "description": "ID du message SMS",
+            "description": "ID du message SMS retourné lors de l'envoi",
             "schema": {
               "example": null,
               "type": "string"
@@ -3026,15 +3041,13 @@
                   "properties": {
                     "messageId": "msg_123",
                     "status": "delivered",
-                    "to": "053518256",
-                    "deliveredAt": "2025-08-02T15:30:00Z"
+                    "to": "242053518256"
                   }
                 },
                 "example": {
                   "messageId": "msg_123",
                   "status": "delivered",
-                  "to": "053518256",
-                  "deliveredAt": "2025-08-02T15:30:00Z"
+                  "to": "242053518256"
                 }
               }
             },
@@ -3078,435 +3091,10 @@
         "security": []
       }
     },
-    "/v3/sms/history": {
-      "get": {
-        "summary": "Get SMS history (getSmsHistory)",
-        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **getSmsHistory**",
-        "parameters": [],
-        "tags": [
-          "SMS"
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "messages": {
-                      "type": "object",
-                      "properties": {
-                        "0": {
-                          "type": "object",
-                          "properties": {
-                            "id": "msg_123",
-                            "to": "053518256",
-                            "status": "delivered"
-                          }
-                        }
-                      }
-                    },
-                    "total": 100
-                  }
-                },
-                "example": {
-                  "messages": [
-                    {
-                      "id": "msg_123",
-                      "to": "053518256",
-                      "status": "delivered"
-                    }
-                  ],
-                  "total": 100
-                }
-              }
-            },
-            "description": "Returns **200** (OK) as **application/json**"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Erreur lors de la récupération",
-                    "details": "string"
-                  }
-                },
-                "example": {
-                  "error": "Erreur lors de la récupération",
-                  "details": "string"
-                }
-              }
-            },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
-          }
-        },
-        "security": []
-      }
-    },
-    "/v3/sms/stats": {
-      "get": {
-        "summary": "Get SMS statistics (getSmsStats)",
-        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **getSmsStats**",
-        "parameters": [],
-        "tags": [
-          "SMS"
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "total": 1000,
-                    "sent": 950,
-                    "delivered": 900,
-                    "failed": 50,
-                    "totalCost": 25000
-                  }
-                },
-                "example": {
-                  "total": 1000,
-                  "sent": 950,
-                  "delivered": 900,
-                  "failed": 50,
-                  "totalCost": 25000
-                }
-              }
-            },
-            "description": "Returns **200** (OK) as **application/json**"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Erreur lors de la récupération",
-                    "details": "string"
-                  }
-                },
-                "example": {
-                  "error": "Erreur lors de la récupération",
-                  "details": "string"
-                }
-              }
-            },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
-          }
-        },
-        "security": []
-      }
-    },
-    "/v3/sms/send/test": {
-      "post": {
-        "summary": "Send test SMS (sendTestSms)",
-        "description": "Send test SMS to verify connection\n\n _app/controllers/sms_controller.ts_ - **sendTestSms**",
-        "parameters": [],
-        "tags": [
-          "SMS"
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "messageId": "msg_123",
-                    "status": "sent",
-                    "to": "053518256"
-                  }
-                },
-                "example": {
-                  "messageId": "msg_123",
-                  "status": "sent",
-                  "to": "053518256"
-                }
-              }
-            },
-            "description": "Returns **200** (OK) as **application/json**"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Numéro invalide"
-                  }
-                },
-                "example": {
-                  "error": "Numéro invalide"
-                }
-              }
-            },
-            "description": "Returns **400** (Bad Request) as **application/json**"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Erreur lors de l'envoi",
-                    "details": "string"
-                  }
-                },
-                "example": {
-                  "error": "Erreur lors de l'envoi",
-                  "details": "string"
-                }
-              }
-            },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
-          }
-        },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "to": "053518256"
-                }
-              },
-              "example": {
-                "to": "053518256"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v3/sms/send/otp": {
-      "post": {
-        "summary": "Send OTP SMS (sendOtpSms)",
-        "description": "Send SMS with verification code\n\n _app/controllers/sms_controller.ts_ - **sendOtpSms**",
-        "parameters": [],
-        "tags": [
-          "SMS"
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "messageId": "msg_123",
-                    "status": "sent",
-                    "to": "053518256"
-                  }
-                },
-                "example": {
-                  "messageId": "msg_123",
-                  "status": "sent",
-                  "to": "053518256"
-                }
-              }
-            },
-            "description": "Returns **200** (OK) as **application/json**"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Paramètres invalides"
-                  }
-                },
-                "example": {
-                  "error": "Paramètres invalides"
-                }
-              }
-            },
-            "description": "Returns **400** (Bad Request) as **application/json**"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Erreur lors de l'envoi",
-                    "details": "string"
-                  }
-                },
-                "example": {
-                  "error": "Erreur lors de l'envoi",
-                  "details": "string"
-                }
-              }
-            },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
-          }
-        },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "to": "053518256",
-                  "code": "123456",
-                  "expiresIn": 5
-                }
-              },
-              "example": {
-                "to": "053518256",
-                "code": "123456",
-                "expiresIn": 5
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v3/sms/send/notification": {
-      "post": {
-        "summary": "Send notification SMS (sendNotificationSms)",
-        "description": "Send notification SMS with title and message\n\n _app/controllers/sms_controller.ts_ - **sendNotificationSms**",
-        "parameters": [],
-        "tags": [
-          "SMS"
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "messageId": "msg_123",
-                    "status": "sent",
-                    "to": "053518256"
-                  }
-                },
-                "example": {
-                  "messageId": "msg_123",
-                  "status": "sent",
-                  "to": "053518256"
-                }
-              }
-            },
-            "description": "Returns **200** (OK) as **application/json**"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Paramètres invalides"
-                  }
-                },
-                "example": {
-                  "error": "Paramètres invalides"
-                }
-              }
-            },
-            "description": "Returns **400** (Bad Request) as **application/json**"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Erreur lors de l'envoi",
-                    "details": "string"
-                  }
-                },
-                "example": {
-                  "error": "Erreur lors de l'envoi",
-                  "details": "string"
-                }
-              }
-            },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
-          }
-        },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "to": "053518256",
-                  "title": "Commande",
-                  "message": "Votre commande a été confirmée"
-                }
-              },
-              "example": {
-                "to": "053518256",
-                "title": "Commande",
-                "message": "Votre commande a été confirmée"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v3/sms/balance": {
-      "get": {
-        "summary": "Check SMS balance (checkBalance)",
-        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **checkBalance**",
-        "parameters": [],
-        "tags": [
-          "SMS"
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "balance": 1000,
-                    "currency": "XAF"
-                  }
-                },
-                "example": {
-                  "balance": 1000,
-                  "currency": "XAF"
-                }
-              }
-            },
-            "description": "Returns **200** (OK) as **application/json**"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Erreur lors de la vérification",
-                    "details": "string"
-                  }
-                },
-                "example": {
-                  "error": "Erreur lors de la vérification",
-                  "details": "string"
-                }
-              }
-            },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
-          }
-        },
-        "security": []
-      }
-    },
     "/v3/sms/calculate-cost": {
       "post": {
-        "summary": "Calculate SMS cost (calculateSmsCost)",
-        "description": "Calculate SMS cost based on message length\n\n _app/controllers/sms_controller.ts_ - **calculateSmsCost**",
+        "summary": "Calculate SMS cost (MTN Rules) (calculateSmsCost)",
+        "description": "Calculate SMS cost based on MTN pricing rules\n\n _app/controllers/sms_controller.ts_ - **calculateSmsCost**",
         "parameters": [],
         "tags": [
           "SMS"
@@ -3520,13 +3108,15 @@
                   "properties": {
                     "cost": 25,
                     "length": 45,
-                    "smsCount": 1
+                    "smsCount": 1,
+                    "type": "GSM"
                   }
                 },
                 "example": {
                   "cost": 25,
                   "length": 45,
-                  "smsCount": 1
+                  "smsCount": 1,
+                  "type": "GSM"
                 }
               }
             },
@@ -3561,208 +3151,6 @@
               },
               "example": {
                 "message": "Votre code de vérification est 123456"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v3/sms/api-info": {
-      "get": {
-        "summary": "Get SMS API info (getApiInfo)",
-        "description": "Returns **200** (OK) as **text/plain**\n\n _app/controllers/sms_controller.ts_ - **getApiInfo**",
-        "parameters": [],
-        "tags": [
-          "SMS"
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "text/plain": {
-                "example": "{\"version\": \"1.0.0\", \"features\": [\"sms\", \"webhook\"], \"limits\": {...}}"
-              }
-            },
-            "description": "Returns **200** (OK) as **text/plain**"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Erreur lors de la récupération",
-                    "details": "string"
-                  }
-                },
-                "example": {
-                  "error": "Erreur lors de la récupération",
-                  "details": "string"
-                }
-              }
-            },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
-          }
-        },
-        "security": []
-      }
-    },
-    "/v3/sms/webhook": {
-      "post": {
-        "summary": "Process SMS webhook (processWebhook)",
-        "description": "Process SMS status notifications\n\n _app/controllers/sms_controller.ts_ - **processWebhook**",
-        "parameters": [],
-        "tags": [
-          "SMS"
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "received": true,
-                    "processed": true
-                  }
-                },
-                "example": {
-                  "received": true,
-                  "processed": true
-                }
-              }
-            },
-            "description": "Returns **200** (OK) as **application/json**"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Données webhook invalides"
-                  }
-                },
-                "example": {
-                  "error": "Données webhook invalides"
-                }
-              }
-            },
-            "description": "Returns **400** (Bad Request) as **application/json**"
-          }
-        },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "messageId": "msg_123",
-                  "status": "delivered",
-                  "to": "053518256",
-                  "timestamp": "2025-08-02T15:30:00Z"
-                }
-              },
-              "example": {
-                "messageId": "msg_123",
-                "status": "delivered",
-                "to": "053518256",
-                "timestamp": "2025-08-02T15:30:00Z"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v3/sms/webhook/config": {
-      "post": {
-        "summary": "Configure SMS webhook (configureWebhook)",
-        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/sms_controller.ts_ - **configureWebhook**",
-        "parameters": [],
-        "tags": [
-          "SMS"
-        ],
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": "webhook_123",
-                    "url": "https://api.arkelys.cloud/webhook/sms",
-                    "isActive": true
-                  }
-                },
-                "example": {
-                  "id": "webhook_123",
-                  "url": "https://api.arkelys.cloud/webhook/sms",
-                  "isActive": true
-                }
-              }
-            },
-            "description": "Returns **201** (Created) as **application/json**"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Configuration invalide"
-                  }
-                },
-                "example": {
-                  "error": "Configuration invalide"
-                }
-              }
-            },
-            "description": "Returns **400** (Bad Request) as **application/json**"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": "Erreur lors de la configuration",
-                    "details": "string"
-                  }
-                },
-                "example": {
-                  "error": "Erreur lors de la configuration",
-                  "details": "string"
-                }
-              }
-            },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
-          }
-        },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "url": "https://api.arkelys.cloud/webhook/sms",
-                  "events": {
-                    "type": "object",
-                    "properties": {
-                      "0": "delivered",
-                      "1": "failed"
-                    }
-                  },
-                  "secret": "webhook_secret"
-                }
-              },
-              "example": {
-                "url": "https://api.arkelys.cloud/webhook/sms",
-                "events": [
-                  "delivered",
-                  "failed"
-                ],
-                "secret": "webhook_secret"
               }
             }
           }

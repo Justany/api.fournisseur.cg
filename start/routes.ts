@@ -773,7 +773,7 @@ router
       .prefix('/spaark-pay')
 
     // =====================================
-    // 5. SMS NOTIFICATIONS
+    // 5. SMS NOTIFICATIONS (MTN API)
     // =====================================
     router
       .group(() => {
@@ -787,23 +787,14 @@ router
 
         // Protected routes with authentication
         router.group(() => {
-          // SMS sending and management
+          // SMS selon l'API officielle MTN : POST https://sms.mtncongo.net/api/sms/
           router.post('/send', [SmsController, 'sendSms'])
+
+          // Vérification de statut selon l'API MTN : POST avec { "op": "status", "id": "26" }
           router.get('/status/:messageId', [SmsController, 'getSmsStatus'])
-          router.get('/history', [SmsController, 'getSmsHistory'])
-          router.get('/stats', [SmsController, 'getSmsStats'])
 
-          // New SMS features
-          router.post('/send/test', [SmsController, 'sendTestSms'])
-          router.post('/send/otp', [SmsController, 'sendOtpSms'])
-          router.post('/send/notification', [SmsController, 'sendNotificationSms'])
-          router.get('/balance', [SmsController, 'checkBalance'])
+          // Utilitaire de calcul de coût selon les règles MTN
           router.post('/calculate-cost', [SmsController, 'calculateSmsCost'])
-          router.get('/api-info', [SmsController, 'getApiInfo'])
-
-          // Webhooks
-          router.post('/webhook', [SmsController, 'processWebhook'])
-          router.post('/webhook/config', [SmsController, 'configureWebhook'])
         })
         // .middleware([() => import('#middleware/sms_auth_middleware')]) // DÉSACTIVÉ TEMPORAIREMENT
       })
