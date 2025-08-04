@@ -45,9 +45,9 @@ RUN pnpm install --frozen-lockfile --prod && \
     pnpm store prune
 
 # Copier l'application buildée depuis le stage builder
-COPY --from=builder --chown=adonisjs:nodejs /app/build ./
+COPY --from=builder --chown=adonisjs:nodejs /app/build ./build
 
-# Copier les node_modules nécessaires depuis le builder (pour éviter les problèmes de dépendances)
+# Copier les node_modules pour la production
 COPY --from=builder --chown=adonisjs:nodejs /app/node_modules ./node_modules
 
 # Définir les variables d'environnement de production
@@ -61,19 +61,5 @@ USER adonisjs
 # Exposer le port
 EXPOSE 3333
 
-# Health check amélioré pour AdonisJS
-# HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-#   CMD node -e "const http = require('http'); \
-#     const options = { host: '0.0.0.0', port: 3333, timeout: 5000 }; \
-#     const req = http.request(options, (res) => { \
-#       console.log('Health check status:', res.statusCode); \
-#       process.exit(res.statusCode === 200 ? 0 : 1); \
-#     }); \
-#     req.on('error', (err) => { \
-#       console.error('Health check failed:', err); \
-#       process.exit(1); \
-#     }); \
-#     req.end();"
-
-# Démarrer l'application (utilise le script start du package.json)
-CMD ["node", "./bin/server.js"]
+# Démarrer l'application (chemin correct après build)
+CMD ["node", "./build/bin/server.js"]

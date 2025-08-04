@@ -579,6 +579,16 @@ router.get('/docs', async () => {
 // =====================================
 router
   .group(() => {
+    // Health check route for Dokploy/Traefik
+    router.get('/health', async () => {
+      return {
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        environment: process.env.NODE_ENV || 'development',
+      }
+    })
+
     // Route de base pour vérifier que l'API fonctionne
     router.get('/', async () => {
       return {
