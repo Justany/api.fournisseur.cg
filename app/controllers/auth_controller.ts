@@ -105,6 +105,9 @@ export default class AuthController {
       // Générer un token d'accès
       const token = await User.accessTokens.create(user)
 
+      // ⚠️ FIX: Récupérer le token une seule fois pour éviter les erreurs
+      const tokenValue = token.value!.release()
+
       return response.ok({
         success: true,
         message: 'Connexion réussie',
@@ -115,8 +118,8 @@ export default class AuthController {
             email: user.email,
             createdAt: user.createdAt,
           },
-          token: token.value!.release(),
-          tokenBearer: `Bearer ${token.value!.release()}`,
+          token: tokenValue,
+          tokenBearer: `Bearer ${tokenValue}`,
         },
       })
     } catch (error) {
