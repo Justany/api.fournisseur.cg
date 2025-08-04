@@ -6,7 +6,12 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "node bin/server.js",
-    "build": "node ace build",
+    "build": "npm run clean && node ace build && npm run copy-docs",
+    "build:full": "npm run docs:generate && npm run build",
+    "build:docs": "npm run copy-docs",
+    "clean": "rm -rf build",
+    "copy-docs": "cp -r docs build/ && cp -r .docs build/ && npm run verify-docs",
+    "verify-docs": "echo '✅ Documentation copiée:' && ls -la build/docs/ && echo '📁 .docs copié:' && ls -la build/.docs/",
     "dev": "node ace serve --hmr",
     "test": "node ace test",
     "lint": "eslint .",
