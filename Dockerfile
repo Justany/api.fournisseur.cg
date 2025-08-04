@@ -64,5 +64,20 @@ EXPOSE 3333
 # Définir le répertoire de travail correct
 WORKDIR /app/build
 
-# Démarrer l'application (maintenant depuis le bon répertoire)
-CMD ["node", "bin/server.js"]
+# Script de démarrage avec migrations automatiques
+COPY --chown=adonisjs:nodejs <<EOF /app/start.sh
+#!/bin/sh
+echo "🔄 Exécution des migrations PostgreSQL..."
+node ace migration:run --force
+
+echo "🚀 Démarrage de l'application..."
+exec node bin/server.js
+EOF
+
+# Rendre le script exécutable
+RUN chmod +x /app/start.sh
+
+# Démarrer avec le script qui inclut les migrations
+CMD ["/app/start.sh"]
+
+# Commentaire : ./fix-api-labels.sh à exécuter sur le serveur KVM1
