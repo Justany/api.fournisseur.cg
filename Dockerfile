@@ -62,18 +62,18 @@ USER adonisjs
 EXPOSE 3333
 
 # Health check amélioré pour AdonisJS
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD node -e "const http = require('http'); \
-    const options = { host: '0.0.0.0', port: 3333, timeout: 5000 }; \
-    const req = http.request(options, (res) => { \
-      console.log('Health check status:', res.statusCode); \
-      process.exit(res.statusCode === 200 ? 0 : 1); \
-    }); \
-    req.on('error', (err) => { \
-      console.error('Health check failed:', err); \
-      process.exit(1); \
-    }); \
-    req.end();"
+# HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+#   CMD node -e "const http = require('http'); \
+#     const options = { host: '0.0.0.0', port: 3333, timeout: 5000 }; \
+#     const req = http.request(options, (res) => { \
+#       console.log('Health check status:', res.statusCode); \
+#       process.exit(res.statusCode === 200 ? 0 : 1); \
+#     }); \
+#     req.on('error', (err) => { \
+#       console.error('Health check failed:', err); \
+#       process.exit(1); \
+#     }); \
+#     req.end();"
 
 # Démarrer l'application (utilise le script start du package.json)
 CMD ["node", "./bin/server.js"]
