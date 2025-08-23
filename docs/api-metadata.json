@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-08-04T23:10:06.752Z",
+  "generatedAt": "2025-08-07T17:17:32.933Z",
   "generator": "API Fournisseur CG - AutoSwagger + Scalar Generator",
   "version": "3.0.0",
   "apiInfo": {
@@ -81,7 +81,7 @@
     ]
   },
   "statistics": {
-    "totalEndpoints": 40,
+    "totalEndpoints": 27,
     "totalTags": 9,
     "totalSecuritySchemes": 3,
     "totalServers": 3,
@@ -143,88 +143,6 @@
       "path": "/v3/auth/refresh-token",
       "methods": [
         "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/health",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections",
-      "methods": [
-        "get",
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/documents",
-      "methods": [
-        "get",
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/documents/{documentId}",
-      "methods": [
-        "get",
-        "patch",
-        "delete"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/string",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/integer",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/boolean",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/appwrite/databases/{databaseId}/collections/{collectionId}/attributes/datetime",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/collections/initialize",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/collections/actions",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/collections/status",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/collections/configuration",
-      "methods": [
-        "get"
       ]
     },
     {
