@@ -159,6 +159,68 @@ export const ATTRIBUTES: Record<string, Record<string, BaseAttribute>> = {
     created_at: { type: 'datetime', required: true },
     updated_at: { type: 'datetime', required: true },
   },
+
+  INSTALLATIONS: {
+    // Champs minimums requis
+    user_id: { type: 'string', size: 50, required: true },
+    platform: { type: 'enum', required: true, elements: ['ios', 'android', 'web'] },
+    timestamp: { type: 'datetime', required: true },
+
+    // Champs recommandés pour analytics
+    version: { type: 'string', size: 20, required: false },
+    source: { type: 'string', size: 50, required: false }, // 'ads', 'organic', 'referral', 'direct'
+    campaign: { type: 'string', size: 100, required: false },
+    referrer: { type: 'string', size: 500, required: false },
+
+    // Informations sur l'appareil (stockées comme JSON string)
+    device_info: { type: 'string', size: 16384, required: false }, // JSON: {osVersion, deviceModel, screenResolution, userAgent}
+
+    // Métadonnées
+    created_at: { type: 'datetime', required: false },
+    updated_at: { type: 'datetime', required: false },
+  },
+
+  EVENTS: {
+    // Champs minimums requis
+    timestamp: { type: 'datetime', required: true },
+    user_id: { type: 'string', size: 50, required: true },
+    installation_id: { type: 'string', size: 50, required: true },
+    duration: { type: 'integer', required: false }, // secondes
+    converted: { type: 'boolean', required: false },
+
+    // Champs recommandés
+    source: { type: 'string', size: 50, required: false },
+    conversion_goal: { type: 'string', size: 100, required: false }, // 'signup', 'purchase', etc.
+    type: { type: 'string', size: 50, required: false }, // 'first_open', 'session_start', 'session_end'
+
+    // Actions (stockées comme JSON string)
+    actions: { type: 'string', size: 16384, required: false }, // JSON array: [{type, target, timestamp, metadata}]
+
+    // Métadonnées
+    created_at: { type: 'datetime', required: false },
+    updated_at: { type: 'datetime', required: false },
+  },
+
+  USERS: {
+    // Champs de base
+    email: { type: 'email', required: true },
+    phone: { type: 'string', size: 20, required: false },
+    name: { type: 'string', size: 255, required: false },
+
+    // Démographie (stockée comme JSON string)
+    demographics: { type: 'string', size: 1024, required: false }, // JSON: {age, gender, country}
+
+    // Préférences (stockées comme JSON string)
+    preferences: { type: 'string', size: 1024, required: false }, // JSON: {language, notifications}
+
+    // Segmentation
+    segments: { type: 'string', array: true, size: 50, required: false }, // array de strings
+
+    // Timestamps
+    created_at: { type: 'datetime', required: false },
+    last_active_at: { type: 'datetime', required: false },
+    updated_at: { type: 'datetime', required: false },
+  },
 }
 
 // Configuration des index pour chaque collection
@@ -272,6 +334,90 @@ export const INDEXES: Record<string, IndexConfig[]> = {
       attributes: ['internal_status'],
     },
   ],
+
+  INSTALLATIONS: [
+    {
+      key: 'user_id_index',
+      type: 'key',
+      attributes: ['user_id'],
+    },
+    {
+      key: 'timestamp_index',
+      type: 'key',
+      attributes: ['timestamp'],
+    },
+    {
+      key: 'platform_index',
+      type: 'key',
+      attributes: ['platform'],
+    },
+    {
+      key: 'source_index',
+      type: 'key',
+      attributes: ['source'],
+    },
+    {
+      key: 'user_platform',
+      type: 'key',
+      attributes: ['user_id', 'platform'],
+    },
+  ],
+
+  EVENTS: [
+    {
+      key: 'user_id_index',
+      type: 'key',
+      attributes: ['user_id'],
+    },
+    {
+      key: 'installation_id_index',
+      type: 'key',
+      attributes: ['installation_id'],
+    },
+    {
+      key: 'timestamp_index',
+      type: 'key',
+      attributes: ['timestamp'],
+    },
+    {
+      key: 'converted_index',
+      type: 'key',
+      attributes: ['converted'],
+    },
+    {
+      key: 'user_installation',
+      type: 'key',
+      attributes: ['user_id', 'installation_id'],
+    },
+  ],
+
+  USERS: [
+    {
+      key: 'email_index',
+      type: 'unique',
+      attributes: ['email'],
+    },
+    {
+      key: 'phone_index',
+      type: 'key',
+      attributes: ['phone'],
+    },
+    {
+      key: 'segments_index',
+      type: 'key',
+      attributes: ['segments'],
+    },
+    {
+      key: 'created_at_index',
+      type: 'key',
+      attributes: ['created_at'],
+    },
+    {
+      key: 'last_active_index',
+      type: 'key',
+      attributes: ['last_active_at'],
+    },
+  ],
 }
 
 // Configuration des permissions pour chaque collection
@@ -279,13 +425,13 @@ export const PERMISSIONS: Record<string, CollectionPermissions> = {
   QUOTES: {
     create: [Permission.create(Role.any())],
     read: [Permission.read(Role.any())],
-    update: [Permission.update(Role.team('administrators'))],
+    update: [Permission.update(Role.any())],
     delete: [Permission.delete(Role.team('administrators'))],
   },
   CONTACTS: {
     create: [Permission.create(Role.any())],
     read: [Permission.read(Role.any())],
-    update: [Permission.update(Role.team('administrators'))],
+    update: [Permission.update(Role.any())],
     delete: [Permission.delete(Role.team('administrators'))],
   },
   PRODUCTS: {
@@ -306,6 +452,24 @@ export const PERMISSIONS: Record<string, CollectionPermissions> = {
     update: [Permission.update(Role.any())],
     delete: [Permission.delete(Role.team('administrators'))],
   },
+  INSTALLATIONS: {
+    create: [Permission.create(Role.any())],
+    read: [Permission.read(Role.any())],
+    update: [Permission.update(Role.any())],
+    delete: [Permission.delete(Role.team('administrators'))],
+  },
+  EVENTS: {
+    create: [Permission.create(Role.any())],
+    read: [Permission.read(Role.any())],
+    update: [Permission.update(Role.any())],
+    delete: [Permission.delete(Role.team('administrators'))],
+  },
+  USERS: {
+    create: [Permission.create(Role.any())],
+    read: [Permission.read(Role.any())],
+    update: [Permission.update(Role.any())],
+    delete: [Permission.delete(Role.team('administrators'))],
+  },
 }
 
 // IDs des collections (utilisés par Appwrite)
@@ -315,6 +479,9 @@ export const COLLECTIONS = {
   PRODUCTS: 'products',
   ORDERS: 'orders',
   PAYMENTS: 'payments',
+  INSTALLATIONS: 'installations',
+  EVENTS: 'events',
+  USERS: 'users',
 } as const
 
 // IDs des buckets de stockage
