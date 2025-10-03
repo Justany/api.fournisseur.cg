@@ -308,7 +308,7 @@ export default class PawaPayController {
    * @summary PawaPay deposit callback
    * @description Handle deposit callback from PawaPay
    * @tag PawaPay
-   * @responseBody 200 - {"received": true}
+   * @responseBody 200 - {"received": true, "id": docId, "depositId": depositId, "status": "COMPLETED" | "FAILED" | "PROCESSING"}
    * @responseBody 500 - {"success": false, "error": "Deposit callback failed", "details": "Unknown error"}
    */
   async depositCallback({ request, response }: HttpContext) {

@@ -1,5 +1,5 @@
 # Configuration Scalar Galaxy pour API Fournisseur CG
-# Généré automatiquement le 2025-10-03T21:39:07.421Z
+# Généré automatiquement le 2025-10-03T22:16:28.384Z
 # Combine AutoSwagger (routes) + Configuration Scalar (UI/UX)
 
 openapi: 3.0.0
@@ -1140,14 +1140,9 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  received: true
-              example:
-                received: true
-          description: Returns **200** (OK) as **application/json**
+            text/plain:
+              example: '{"received": true, "id": docId, "depositId": depositId, "status": "COMPLETED" | "FAILED" | "PROCESSING"}'
+          description: Returns **200** (OK) as **text/plain**
         '500':
           content:
             application/json:
@@ -1303,4 +1298,4 @@ x-scalar:
     showLastModified: true
     showGeneratedBy: true
     generatedBy: API Fournisseur CG - AutoSwagger + Scalar
-    generatedAt: '2025-10-03T21:39:07.414Z'
+    generatedAt: '2025-10-03T22:16:28.379Z'

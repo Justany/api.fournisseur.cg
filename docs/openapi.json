@@ -1451,19 +1451,11 @@
         "responses": {
           "200": {
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "received": true
-                  }
-                },
-                "example": {
-                  "received": true
-                }
+              "text/plain": {
+                "example": "{\"received\": true, \"id\": docId, \"depositId\": depositId, \"status\": \"COMPLETED\" | \"FAILED\" | \"PROCESSING\"}"
               }
             },
-            "description": "Returns **200** (OK) as **application/json**"
+            "description": "Returns **200** (OK) as **text/plain**"
           },
           "500": {
             "content": {
