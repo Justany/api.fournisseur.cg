@@ -1,5 +1,5 @@
 # Configuration Scalar Galaxy pour API Fournisseur CG
-# Généré automatiquement le 2025-10-03T12:47:44.154Z
+# Généré automatiquement le 2025-10-03T16:54:33.952Z
 # Combine AutoSwagger (routes) + Configuration Scalar (UI/UX)
 
 openapi: 3.0.0
@@ -142,7 +142,677 @@ tags:
     description: Endpoints pour webhooks entrants (Spark Pay, partenaires transport)
   - name: Analytics
     description: Métriques, rapports et données analytiques de la plateforme
-paths: {}
+paths:
+  /v3/health:
+    get:
+      summary: route
+      description: |2-
+
+
+         __ - ****
+      parameters: []
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: {}
+      security: []
+  /v3:
+    get:
+      summary: route
+      description: |2-
+
+
+         __ - ****
+      parameters: []
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: {}
+      security: []
+  /v3/auth/register:
+    post:
+      summary: Register new user (register)
+      description: |-
+        Returns **201** (Created) as **text/plain**
+
+         _app/controllers/auth_controller.ts_ - **register**
+      parameters: []
+      tags:
+        - AUTH
+      responses:
+        '201':
+          content:
+            text/plain:
+              example: '{"success": true, "message": "Compte créé avec succès", "data": {"user": {...}, "token": "..."}}'
+          description: Returns **201** (Created) as **text/plain**
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: Données invalides
+              example:
+                error: Données invalides
+          description: Returns **400** (Bad Request) as **application/json**
+        '409':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: Email déjà utilisé
+              example:
+                error: Email déjà utilisé
+          description: Returns **409** (Conflict) as **application/json**
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName: John Doe
+                email: test@example.com
+                password: password123
+            example:
+              fullName: John Doe
+              email: test@example.com
+              password: password123
+  /v3/auth/login:
+    post:
+      summary: User login (login)
+      description: |-
+        Authenticate user and generate token
+
+         _app/controllers/auth_controller.ts_ - **login**
+      parameters: []
+      tags:
+        - AUTH
+      responses:
+        '200':
+          content:
+            text/plain:
+              example: '{"success": true, "message": "Connexion réussie", "data": {"user": {...}, "token": "..."}}'
+          description: Returns **200** (OK) as **text/plain**
+        '401':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: Identifiants invalides
+              example:
+                error: Identifiants invalides
+          description: Returns **401** (Unauthorized) as **application/json**
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: test@example.com
+                password: password123
+            example:
+              email: test@example.com
+              password: password123
+  /v3/auth/get-token:
+    post:
+      summary: Get clear token (for testing) (getToken)
+      description: |-
+        Temporary route to get complete token
+
+         _app/controllers/auth_controller.ts_ - **getToken**
+      parameters: []
+      tags:
+        - AUTH
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: Bearer ...
+              example:
+                token: Bearer ...
+          description: Returns **200** (OK) as **application/json**
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: test@example.com
+                password: password123
+            example:
+              email: test@example.com
+              password: password123
+  /v3/auth/logout:
+    post:
+      summary: User logout (logout)
+      description: |-
+        Invalidate current access token
+
+         _app/controllers/auth_controller.ts_ - **logout**
+      parameters: []
+      tags:
+        - AUTH
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  message: Déconnexion réussie
+              example:
+                success: true
+                message: Déconnexion réussie
+          description: Returns **200** (OK) as **application/json**
+        '401':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: Token invalide
+              example:
+                error: Token invalide
+          description: Returns **401** (Unauthorized) as **application/json**
+      security: []
+  /v3/auth/profile:
+    get:
+      summary: User profile (profile)
+      description: |-
+        Returns **200** (OK) as **text/plain**
+
+         _app/controllers/auth_controller.ts_ - **profile**
+      parameters: []
+      tags:
+        - AUTH
+      responses:
+        '200':
+          content:
+            text/plain:
+              example: '{"success": true, "data": {"user": {...}}}'
+          description: Returns **200** (OK) as **text/plain**
+        '401':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: Non authentifié
+              example:
+                error: Non authentifié
+          description: Returns **401** (Unauthorized) as **application/json**
+      security: []
+  /v3/auth/refresh-token:
+    post:
+      summary: Refresh token (refreshToken)
+      description: |-
+        Generate new access token
+
+         _app/controllers/auth_controller.ts_ - **refreshToken**
+      parameters: []
+      tags:
+        - AUTH
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  data:
+                    type: object
+                    properties:
+                      token: ...
+              example:
+                success: true
+                data:
+                  token: ...
+          description: Returns **200** (OK) as **application/json**
+        '401':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: Token invalide
+              example:
+                error: Token invalide
+          description: Returns **401** (Unauthorized) as **application/json**
+      security: []
+  /v3/sms/health:
+    get:
+      summary: SMS connection health check (health)
+      description: |-
+        Returns **200** (OK) as **application/json**
+
+         _app/controllers/sms_controller.ts_ - **health**
+      parameters: []
+      tags:
+        - SMS
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: healthy
+                  message: Configuration SMS MTN validée
+              example:
+                status: healthy
+                message: Configuration SMS MTN validée
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: unhealthy
+                  message: Erreur de configuration
+              example:
+                status: unhealthy
+                message: Erreur de configuration
+          description: Returns **500** (Internal Server Error) as **application/json**
+      security: []
+  /v3/sms/send:
+    post:
+      summary: Send SMS (MTN Official API) (sendSms)
+      description: |-
+        Send SMS using official MTN API endpoint
+
+         _app/controllers/sms_controller.ts_ - **sendSms**
+      parameters: []
+      tags:
+        - SMS
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messageId: msg_123
+                  status: sent
+                  to: '242053518256'
+                  cost: 25
+              example:
+                messageId: msg_123
+                status: sent
+                to: '242053518256'
+                cost: 25
+          description: Returns **200** (OK) as **application/json**
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: Paramètres invalides
+                  details: string
+              example:
+                error: Paramètres invalides
+                details: string
+          description: Returns **400** (Bad Request) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: Erreur lors de l'envoi
+                  details: string
+              example:
+                error: Erreur lors de l'envoi
+                details: string
+          description: Returns **500** (Internal Server Error) as **application/json**
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to: '242053518256'
+                message: Votre code de vérification est 534444
+                from: Fourniseur
+            example:
+              to: '242053518256'
+              message: Votre code de vérification est 534444
+              from: Fourniseur
+  /v3/sms/status/{messageId}:
+    get:
+      summary: Get SMS status (MTN Official API) (getSmsStatus)
+      description: |-
+        Returns **200** (OK) as **text/plain**
+
+         _app/controllers/sms_controller.ts_ - **getSmsStatus**
+      parameters:
+        - in: path
+          name: messageId
+          description: ID du message SMS retourné lors de l'envoi
+          schema:
+            example: null
+            type: string
+          required: false
+      tags:
+        - SMS
+      responses:
+        '200':
+          content:
+            text/plain:
+              example: '{"messageId": "msg_123", "status": "delivered", "to": "242053518256", "statusDetails": {...}}'
+          description: Returns **200** (OK) as **text/plain**
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: SMS non trouvé
+              example:
+                error: SMS non trouvé
+          description: Returns **404** (Not Found) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: Erreur lors de la récupération
+                  details: string
+              example:
+                error: Erreur lors de la récupération
+                details: string
+          description: Returns **500** (Internal Server Error) as **application/json**
+      security: []
+  /v3/sms/status-codes:
+    get:
+      summary: Get MTN status codes (getStatusCodes)
+      description: |-
+        Returns **200** (OK) as **application/json**
+
+         _app/controllers/sms_controller.ts_ - **getStatusCodes**
+      parameters: []
+      tags:
+        - SMS
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCodes:
+                    type: object
+                    properties:
+                      '0':
+                        type: object
+                        properties:
+                          code: '1'
+                          description: Livré au téléphone
+                          category: success
+              example:
+                statusCodes:
+                  - code: '1'
+                    description: Livré au téléphone
+                    category: success
+          description: Returns **200** (OK) as **application/json**
+      security: []
+  /v3/sms/calculate-cost:
+    post:
+      summary: Calculate SMS cost (MTN Rules) (calculateSmsCost)
+      description: |-
+        Calculate SMS cost based on MTN pricing rules
+
+         _app/controllers/sms_controller.ts_ - **calculateSmsCost**
+      parameters: []
+      tags:
+        - SMS
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cost: 25
+                  length: 45
+                  smsCount: 1
+                  type: GSM
+              example:
+                cost: 25
+                length: 45
+                smsCount: 1
+                type: GSM
+          description: Returns **200** (OK) as **application/json**
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: Message requis
+              example:
+                error: Message requis
+          description: Returns **400** (Bad Request) as **application/json**
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: Votre code de vérification est 123456
+            example:
+              message: Votre code de vérification est 123456
+  /v3/pawapay/availability:
+    get:
+      summary: ' (availability)'
+      description: |2-
+
+
+         _app/controllers/pawapay_controller.ts_ - **availability**
+      parameters: []
+      tags:
+        - ''
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: {}
+      security: []
+  /v3/pawapay/deposits/request:
+    post:
+      summary: ' (requestDeposit)'
+      description: |2-
+
+
+         _app/controllers/pawapay_controller.ts_ - **requestDeposit**
+      parameters: []
+      tags:
+        - REQUEST
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /v3/pawapay/deposits/{depositId}/status:
+    get:
+      summary: ' (checkDepositStatus)'
+      description: |2-
+
+
+         _app/controllers/pawapay_controller.ts_ - **checkDepositStatus**
+      parameters:
+        - in: path
+          name: depositId
+          schema:
+            type: string
+          required: true
+      tags:
+        - ':DEPOSITID'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: {}
+      security: []
+  /v3/pawapay/payouts/request:
+    post:
+      summary: ' (requestPayout)'
+      description: |2-
+
+
+         _app/controllers/pawapay_controller.ts_ - **requestPayout**
+      parameters: []
+      tags:
+        - REQUEST
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /v3/pawapay/payouts/{payoutId}/status:
+    get:
+      summary: ' (checkPayoutStatus)'
+      description: |2-
+
+
+         _app/controllers/pawapay_controller.ts_ - **checkPayoutStatus**
+      parameters:
+        - in: path
+          name: payoutId
+          schema:
+            type: string
+          required: true
+      tags:
+        - ':PAYOUTID'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: {}
+      security: []
+  /v3/pawapay/refunds/request:
+    post:
+      summary: ' (requestRefund)'
+      description: |2-
+
+
+         _app/controllers/pawapay_controller.ts_ - **requestRefund**
+      parameters: []
+      tags:
+        - REQUEST
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /v3/pawapay/refunds/{refundId}/status:
+    get:
+      summary: ' (checkRefundStatus)'
+      description: |2-
+
+
+         _app/controllers/pawapay_controller.ts_ - **checkRefundStatus**
+      parameters:
+        - in: path
+          name: refundId
+          schema:
+            type: string
+          required: true
+      tags:
+        - ':REFUNDID'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: {}
+      security: []
+  /v3/pawapay/callbacks/deposits:
+    post:
+      summary: ' (depositCallback)'
+      description: |2-
+
+
+         _app/controllers/pawapay_controller.ts_ - **depositCallback**
+      parameters: []
+      tags:
+        - DEPOSITS
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /v3/pawapay/callbacks/payouts:
+    post:
+      summary: ' (payoutCallback)'
+      description: |2-
+
+
+         _app/controllers/pawapay_controller.ts_ - **payoutCallback**
+      parameters: []
+      tags:
+        - PAYOUTS
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /v3/pawapay/callbacks/refunds:
+    post:
+      summary: ' (refundCallback)'
+      description: |2-
+
+
+         _app/controllers/pawapay_controller.ts_ - **refundCallback**
+      parameters: []
+      tags:
+        - REFUNDS
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
 x-scalar:
   ui:
     theme:
@@ -211,4 +881,4 @@ x-scalar:
     showLastModified: true
     showGeneratedBy: true
     generatedBy: API Fournisseur CG - AutoSwagger + Scalar
-    generatedAt: '2025-10-03T12:47:44.151Z'
+    generatedAt: '2025-10-03T16:54:33.948Z'

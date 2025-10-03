@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-10-03T12:47:44.160Z",
+  "generatedAt": "2025-10-03T16:54:33.953Z",
   "generator": "API Fournisseur CG - AutoSwagger + Scalar Generator",
   "version": "3.0.0",
   "apiInfo": {
@@ -81,7 +81,7 @@
     ]
   },
   "statistics": {
-    "totalEndpoints": 0,
+    "totalEndpoints": 23,
     "totalTags": 9,
     "totalSecuritySchemes": 3,
     "totalServers": 3,
@@ -96,7 +96,146 @@
     ],
     "mainVersion": "v3"
   },
-  "endpoints": [],
+  "endpoints": [
+    {
+      "path": "/v3/health",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/auth/register",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/auth/login",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/auth/get-token",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/auth/logout",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/auth/profile",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/auth/refresh-token",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/sms/health",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/sms/send",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/sms/status/{messageId}",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/sms/status-codes",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/sms/calculate-cost",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/availability",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/deposits/request",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/deposits/{depositId}/status",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/payouts/request",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/payouts/{payoutId}/status",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/refunds/request",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/refunds/{refundId}/status",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/callbacks/deposits",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/callbacks/payouts",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/callbacks/refunds",
+      "methods": [
+        "post"
+      ]
+    }
+  ],
   "tags": [
     {
       "name": "Authentication",

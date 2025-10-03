@@ -682,6 +682,35 @@ router
         // .middleware([() => import('#middleware/sms_auth_middleware')]) // DÉSACTIVÉ TEMPORAIREMENT
       })
       .prefix('/sms')
+
+    // =====================================
+    // 6. PawaPay (Mobile Money)
+    // =====================================
+    router
+      .group(() => {
+        const PawaPayController = () => import('#controllers/pawapay_controller')
+
+        // Toolkit / health
+        router.get('/availability', [PawaPayController, 'availability'])
+
+        // Deposits
+        router.post('/deposits/request', [PawaPayController, 'requestDeposit'])
+        router.get('/deposits/:depositId/status', [PawaPayController, 'checkDepositStatus'])
+
+        // Payouts
+        router.post('/payouts/request', [PawaPayController, 'requestPayout'])
+        router.get('/payouts/:payoutId/status', [PawaPayController, 'checkPayoutStatus'])
+
+        // Refunds
+        router.post('/refunds/request', [PawaPayController, 'requestRefund'])
+        router.get('/refunds/:refundId/status', [PawaPayController, 'checkRefundStatus'])
+
+        // Callbacks
+        router.post('/callbacks/deposits', [PawaPayController, 'depositCallback'])
+        router.post('/callbacks/payouts', [PawaPayController, 'payoutCallback'])
+        router.post('/callbacks/refunds', [PawaPayController, 'refundCallback'])
+      })
+      .prefix('/pawapay')
   })
   .prefix('/v3')
 
