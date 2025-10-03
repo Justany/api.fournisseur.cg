@@ -1491,7 +1491,7 @@
     },
     "/v3/pawapay/callbacks/payouts": {
       "post": {
-        "summary": "PawaPay payout callback (payoutCallback)",
+        "summary": " (payoutCallback)",
         "description": "Handle payout callback from PawaPay\n\n _app/controllers/pawapay_controller.ts_ - **payoutCallback**",
         "parameters": [],
         "tags": [

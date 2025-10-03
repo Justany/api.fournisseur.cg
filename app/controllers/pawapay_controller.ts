@@ -1,10 +1,18 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import { PawaPayService } from '#services/pawapay_service'
+import { AppwriteService } from '#services/appwrite_service'
+import { COLLECTIONS } from '#config/collections'
+import { randomUUID } from 'node:crypto'
 
 @inject()
 export default class PawaPayController {
-  constructor(private pawapay: PawaPayService) {}
+  private appwrite: AppwriteService
+
+  constructor(private pawapay: PawaPayService) {
+    // Initialiser le service Appwrite pour persister les callbacks
+    this.appwrite = new AppwriteService()
+  }
 
   /**
    * @availability
@@ -306,18 +314,121 @@ export default class PawaPayController {
   async depositCallback({ request, response }: HttpContext) {
     try {
       const payload = request.body()
-      // TODO: verify signature if enabled, persist status change
+      const headers = request.headers()
+      const docId = randomUUID()
+      const now = new Date().toISOString()
 
-      console.log('PawaPay deposit callback:', payload)
-      return response.ok({ received: true })
+      // Validation minimale selon le schéma PawaPay v2
+      const depositId: string | undefined = payload?.depositId
+      const status: string | undefined = payload?.status
+      const amount: string | undefined = payload?.amount
+      const currency: string | undefined = payload?.currency
+      const country: string | undefined = payload?.country
+      const payer: any = payload?.payer
+      const customerMessage: string | undefined = payload?.customerMessage
+      const created: string | undefined = payload?.created
+      const providerTransactionId: string | undefined = payload?.providerTransactionId
+      const failureReason: any = payload?.failureReason
+      const metadata: any = payload?.metadata
+
+      if (!depositId || !status) {
+        return response.badRequest({
+          success: false,
+          error: 'Champs requis manquants dans le callback PawaPay',
+          details: { required: ['depositId', 'status'] },
+        })
+      }
+
+      // Normalisation simple du statut
+      const normalizedStatus = String(status).toUpperCase() as 'COMPLETED' | 'FAILED' | 'PROCESSING'
+
+      // Préparer les informations de sécurité si callbacks signés
+      const signatureInfo = {
+        signature: headers['signature'] ?? null,
+        signature_input: headers['signature-input'] ?? null,
+        signature_date: headers['signature-date'] ?? null,
+        content_digest: headers['content-digest'] ?? null,
+        accept_signature: headers['accept-signature'] ?? null,
+        accept_digest: headers['accept-digest'] ?? null,
+      }
+
+      // Persister un événement enrichi avec les champs clés du callback
+      await this.appwrite.createDocument(
+        process.env.APPWRITE_DATABASE_ID!,
+        COLLECTIONS.EVENTS,
+        docId,
+        {
+          timestamp: now,
+          user_id: '',
+          installation_id: '',
+          type: 'pawapay_deposit_callback',
+          duration: 0,
+          converted: normalizedStatus === 'COMPLETED',
+          source: 'pawapay',
+          conversion_goal: 'deposit',
+          actions: JSON.stringify({
+            path: request.url(),
+            headers,
+            query: request.qs(),
+            payload,
+            parsed: {
+              depositId,
+              status: normalizedStatus,
+              amount,
+              currency,
+              country,
+              payer,
+              customerMessage,
+              created,
+              providerTransactionId,
+              failureReason: failureReason ?? null,
+              metadata: metadata ?? null,
+            },
+            security: signatureInfo,
+          }),
+          created_at: now,
+          updated_at: now,
+        }
+      )
+
+      // Enregistrer également dans la collection dédiée aux callbacks de dépôts
+      try {
+        await this.appwrite.createDocument(
+          process.env.APPWRITE_DATABASE_ID!,
+          'pawapay_deposit_callbacks',
+          randomUUID(),
+          {
+            deposit_id: depositId,
+            status: normalizedStatus,
+            amount: amount ?? null,
+            currency: currency ?? null,
+            country: country ?? null,
+            customer_message: customerMessage ?? null,
+            provider_transaction_id: providerTransactionId ?? null,
+            created_at: created ?? null,
+            payer_type: payer?.type ?? null,
+            payer_provider: payer?.accountDetails?.provider ?? null,
+            payer_phone: payer?.accountDetails?.phoneNumber ?? null,
+            failure_reason: failureReason ? JSON.stringify(failureReason) : null,
+            metadata_json: metadata ? JSON.stringify(metadata) : null,
+            raw_payload: JSON.stringify(payload),
+            received_at: now,
+            source: 'pawapay',
+          }
+        )
+      } catch (persistErr: unknown) {
+        // Ne pas bloquer l'ACK si la collection dédiée échoue
+      }
+
+      // Réponse d'accusé de réception minimaliste
+      return response.ok({ received: true, id: docId, depositId, status: normalizedStatus })
     } catch (error) {
-      return response.internalServerError({ success: false, error: error.message })
+      return response.internalServerError({ success: false, error: (error as any).message })
     }
   }
 
   /**
    * @payoutCallback
-   * @summary PawaPay payout callback
    * @description Handle payout callback from PawaPay
    * @tag PawaPay
    * @responseBody 200 - {"received": true}
@@ -326,10 +437,79 @@ export default class PawaPayController {
   async payoutCallback({ request, response }: HttpContext) {
     try {
       const payload = request.body()
-      console.log('PawaPay payout callback:', payload)
-      return response.ok({ received: true })
+      const docId = randomUUID()
+      const now = new Date().toISOString()
+
+      await this.appwrite.createDocument(
+        process.env.APPWRITE_DATABASE_ID!,
+        COLLECTIONS.EVENTS,
+        docId,
+        {
+          timestamp: now,
+          user_id: '',
+          installation_id: '',
+          type: 'pawapay_payout_callback',
+          duration: 0,
+          converted: false,
+          source: 'pawapay',
+          conversion_goal: 'payout',
+          actions: JSON.stringify({
+            path: request.url(),
+            headers: request.headers(),
+            query: request.qs(),
+            payload,
+          }),
+          created_at: now,
+          updated_at: now,
+        }
+      )
+
+      // Enregistrer également dans la collection dédiée aux callbacks de paiements sortants
+      try {
+        const payoutId: string | undefined = payload?.payoutId
+        const status: string | undefined = payload?.status
+        const normalizedStatus = status ? String(status).toUpperCase() : undefined
+        const amount: string | undefined = payload?.amount
+        const currency: string | undefined = payload?.currency
+        const country: string | undefined = payload?.country
+        const recipient: any = payload?.recipient
+        const customerMessage: string | undefined = payload?.customerMessage
+        const created: string | undefined = payload?.created
+        const providerTransactionId: string | undefined = payload?.providerTransactionId
+        const failureReason: any = payload?.failureReason
+        const metadata: any = payload?.metadata
+
+        await this.appwrite.createDocument(
+          process.env.APPWRITE_DATABASE_ID!,
+          'pawapay_payout_callbacks',
+          randomUUID(),
+          {
+            payout_id: payoutId ?? null,
+            status: normalizedStatus ?? null,
+            amount: amount ?? null,
+            currency: currency ?? null,
+            country: country ?? null,
+            customer_message: customerMessage ?? null,
+            provider_transaction_id: providerTransactionId ?? null,
+            created_at: created ?? null,
+            recipient_type: recipient?.type ?? null,
+            recipient_provider: recipient?.accountDetails?.provider ?? null,
+            recipient_phone:
+              recipient?.accountDetails?.phoneNumber ?? recipient?.address?.value ?? null,
+            failure_reason: failureReason ? JSON.stringify(failureReason) : null,
+            metadata_json: metadata ? JSON.stringify(metadata) : null,
+            raw_payload: JSON.stringify(payload),
+            received_at: now,
+            source: 'pawapay',
+          }
+        )
+      } catch (persistErr: unknown) {
+        // Ignorer les erreurs de persistence dédiée
+      }
+
+      return response.ok({ received: true, id: docId })
     } catch (error) {
-      return response.internalServerError({ success: false, error: error.message })
+      return response.internalServerError({ success: false, error: (error as any).message })
     }
   }
 
@@ -344,10 +524,74 @@ export default class PawaPayController {
   async refundCallback({ request, response }: HttpContext) {
     try {
       const payload = request.body()
-      console.log('PawaPay refund callback:', payload)
-      return response.ok({ received: true })
+      const docId = randomUUID()
+      const now = new Date().toISOString()
+
+      await this.appwrite.createDocument(
+        process.env.APPWRITE_DATABASE_ID!,
+        COLLECTIONS.EVENTS,
+        docId,
+        {
+          timestamp: now,
+          user_id: '',
+          installation_id: '',
+          type: 'pawapay_refund_callback',
+          duration: 0,
+          converted: false,
+          source: 'pawapay',
+          conversion_goal: 'refund',
+          actions: JSON.stringify({
+            path: request.url(),
+            headers: request.headers(),
+            query: request.qs(),
+            payload,
+          }),
+          created_at: now,
+          updated_at: now,
+        }
+      )
+
+      // Enregistrer également dans la collection dédiée aux callbacks de remboursements
+      try {
+        const refundId: string | undefined = payload?.refundId
+        const originalDepositId: string | undefined = payload?.originalDepositId
+        const status: string | undefined = payload?.status
+        const normalizedStatus = status ? String(status).toUpperCase() : undefined
+        const amount: string | undefined = payload?.amount
+        const currency: string | undefined = payload?.currency
+        const customerMessage: string | undefined = payload?.customerMessage
+        const created: string | undefined = payload?.created
+        const providerTransactionId: string | undefined = payload?.providerTransactionId
+        const failureReason: any = payload?.failureReason
+        const metadata: any = payload?.metadata
+
+        await this.appwrite.createDocument(
+          process.env.APPWRITE_DATABASE_ID!,
+          'pawapay_payout_callbacks',
+          randomUUID(),
+          {
+            refund_id: refundId ?? null,
+            original_deposit_id: originalDepositId ?? null,
+            status: normalizedStatus ?? null,
+            amount: amount ?? null,
+            currency: currency ?? null,
+            customer_message: customerMessage ?? null,
+            provider_transaction_id: providerTransactionId ?? null,
+            created_at: created ?? null,
+            failure_reason: failureReason ? JSON.stringify(failureReason) : null,
+            metadata_json: metadata ? JSON.stringify(metadata) : null,
+            raw_payload: JSON.stringify(payload),
+            received_at: now,
+            source: 'pawapay',
+          }
+        )
+      } catch (persistErr) {
+        // Ignorer les erreurs de persistence dédiée
+      }
+
+      return response.ok({ received: true, id: docId })
     } catch (error) {
-      return response.internalServerError({ success: false, error: error.message })
+      return response.internalServerError({ success: false, error: (error as any).message })
     }
   }
 }

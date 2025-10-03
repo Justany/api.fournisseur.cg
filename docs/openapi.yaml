@@ -1306,7 +1306,7 @@ paths:
       security: []
   /v3/pawapay/callbacks/payouts:
     post:
-      summary: PawaPay payout callback (payoutCallback)
+      summary: ' (payoutCallback)'
       description: |-
         Handle payout callback from PawaPay
 
