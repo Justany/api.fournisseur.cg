@@ -1,0 +1,224 @@
+
+
+--------
+
+curl --location 'https://api.pawapay.io/v2/deposits' \
+--header 'Content-Digest: quis minim' \
+--header 'Signature: culpa Excepteur' \
+--header 'Signature-Input: aute adipisicing qui esse' \
+--header 'Accept-Signature: eu exercitation' \
+--header 'Accept-Digest: exercitation ea in laboris' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {{apiToken}}' \
+--header 'Cookie: JSESSIONID=4789872B5C611D998A4B362D57AFCF58' \
+--data-raw '{
+  "amount": "15",
+  "currency": "XAF",
+  "depositId": "{{generatedUUID}}",
+  "payer": {
+    "type": "MMO",
+    "accountDetails": {
+      "provider": "MTN_MOMO_COG",
+      "phoneNumber": "242068242912"
+    }
+  },
+  "preAuthorisationCode": "3c",
+  "clientReferenceId": "INV-123456",
+  "customerMessage": "Note of 4 to 22 chars",
+  "metadata": [
+    {
+      "orderId": "ORD-123456789"
+    },
+    {
+      "customerId": "customer@email.com",
+      "isPII": true
+    }
+  ]
+}'
+
+---
+
+curl --location 'https://api.pawapay.io/v2/deposits/c91f5f89-f4a9-4146-8982-1bbe5a6c7aa0' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {{apiToken}}' \
+--header 'Cookie: JSESSIONID=4789872B5C611D998A4B362D57AFCF58'
+
+----
+
+curl --location --request POST 'https://api.pawapay.io/v2/deposits/resend-callback/c91f5f89-f4a9-4146-8982-1bbe5a6c7aa0' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {{apiToken}}' \
+--header 'Cookie: JSESSIONID=4789872B5C611D998A4B362D57AFCF58'
+
+----
+
+curl --location 'https://api.pawapay.io/v2/paymentpage' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {{apiToken}}' \
+--header 'Cookie: JSESSIONID=4789872B5C611D998A4B362D57AFCF58' \
+--data-raw '{
+  "depositId": "{{generatedUUID}}",
+  "returnUrl": "https://merchant.com/paymentProcessed",
+  "customerMessage": "Note of 4 to 22 chars",
+  "amountDetails": {
+    "amount": "15",
+    "currency": "XAF"
+  },
+  "phoneNumber": "242068242912",
+  "language": "FR",
+  "country": "COG",
+  "reason": "Ticket to festival",
+  "metadata": [
+    {
+      "orderId": "ORD-123456789"
+    },
+    {
+      "customerId": "customer@email.com",
+      "isPII": true
+    }
+  ]
+}'
+
+---
+
+curl --location 'https://api.pawapay.io/v2/refunds' \
+--header 'Content-Digest: quis minim' \
+--header 'Signature: culpa Excepteur' \
+--header 'Signature-Input: aute adipisicing qui esse' \
+--header 'Accept-Signature: eu exercitation' \
+--header 'Accept-Digest: exercitation ea in laboris' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {{apiToken}}' \
+--header 'Cookie: JSESSIONID=4789872B5C611D998A4B362D57AFCF58' \
+--data-raw '{
+  "amount": "15",
+  "currency": "ZMW",
+  "depositId": "c91f5f89-f4a9-4146-8982-1bbe5a6c7aa0",
+  "refundId": "{{generatedUUID}}",
+  "metadata": [
+    {
+      "orderId": "ORD-123456789"
+    },
+    {
+      "customerId": "customer@email.com",
+      "isPII": true
+    }
+  ]
+}'
+
+---
+
+curl --location --globoff 'https://api.pawapay.io/v2/refunds/{{lastRefundId}}' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {{apiToken}}' \
+--header 'Cookie: JSESSIONID=4789872B5C611D998A4B362D57AFCF58'
+
+---
+
+curl --location --globoff --request POST 'https://api.pawapay.io/v2/refunds/resend-callback/{{lastRefundId}}' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {{apiToken}}' \
+--header 'Cookie: JSESSIONID=4789872B5C611D998A4B362D57AFCF58'
+
+---
+
+curl --location 'https://api.pawapay.io/v2/wallet-balances?country=COG' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {{apiToken}}' \
+--header 'Cookie: JSESSIONID=4789872B5C611D998A4B362D57AFCF58'
+
+---
+
+curl --location 'https://api.pawapay.io/v2/active-conf?country=COG&operationType=DEPOSIT' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer eyJraWQiOiIxIiwiYWxnIjoiRVMyNTYifQ.eyJ0dCI6IkFBVCIsInN1YiI6IjE3OTIiLCJtYXYiOiIxIiwiZXhwIjoyMDc1MDQ0OTE5LCJpYXQiOjE3NTk1MTIxMTksInBtIjoiREFGLFBBRiIsImp0aSI6IjBhNGZmYmZiLTQ1MDQtNGY3Zi05ODAwLWI1MzFlM2I1ODJmMiJ9.NmmObLggxbbLEQUknTl9okTa00JISnZJMH5gLERmNLGHJxOPckpxVGzASf9IZjxb3XjjSmTlEnehhbZsxYJauw' \
+--header 'Cookie: JSESSIONID=4789872B5C611D998A4B362D57AFCF58'
+
+----
+
+curl --location 'https://api.pawapay.io/v2/availability?country=COG&operationType=DEPOSIT' \
+--header 'Accept: application/json' \
+--header 'Authorization: Bearer {{apiToken}}' \
+--header 'Cookie: JSESSIONID=4789872B5C611D998A4B362D57AFCF58'
+
+---
+
+
+
+-------- provider
+
+You can find the list of all available providers, their currency, authorisation type and supported decimal places below.
+Benin
+
+MMO	Provider	Country	Currency	Authorisation	Decimals in amount
+MTN	MTN_MOMO_BEN	BEN	XOF	PROVIDER_AUTH	Not supported
+Moov	MOOV_BEN	BEN	XOF	PROVIDER_AUTH	Not supported
+Burkina Faso
+
+MMO	Provider	Country	Currency	Authorisation	Decimals in amount
+Moov	MOOV_BFA	BFA	XOF	PROVIDER_AUTH	Not supported
+Orange	ORANGE_BFA	BFA	XOF	PREAUTH	Not supported
+Cameroon
+
+MMO	Provider	Country	Currency	Authorisation	Decimals in amount
+MTN	MTN_MOMO_CMR	CMR	XAF	PROVIDER_AUTH	Not supported
+Orange	ORANGE_CMR	CMR	XAF	PROVIDER_AUTH	Not supported
+Côte d'Ivoire (Ivory Coast)
+
+MMO	Provider	Country	Currency	Authorisation	Decimals in amount
+MTN	MTN_MOMO_CIV	CIV	XOF	PROVIDER_AUTH	Not supported
+Orange	ORANGE_CIV	CIV	XOF	PROVIDER_AUTH	Not supported
+Wave	WAVE_CIV	CIV	XOF	REDIRECT_AUTH	Not supported
+Democratic Republic of the Congo (DRC)
+
+MMO	Provider	Country	Currency	Authorisation	Decimals in amount
+Vodacom	VODACOM_MPESA_COD	COD	CDF	PROVIDER_AUTH	Not supported
+USD	PROVIDER_AUTH	2 places
+Airtel	AIRTEL_COD	COD	CDF	PROVIDER_AUTH	2 places
+USD	PROVIDER_AUTH	2 places
+Orange	ORANGE_COD	COD	CDF	PROVIDER_AUTH	2 places
+USD	PROVIDER_AUTH	2 places
+Gabon
+
+MMO	Provider	Country	Currency	Authorisation	Decimals in amount
+Airtel	AIRTEL_GAB	GAB	XAF	PROVIDER_AUTH	2 places
+Ghana
+
+MMO	Provider	Country	Currency	Authorisation	Decimals in amount
+MTN	MTN_MOMO_GHA	GHA	GHS	PROVIDER_AUTH	2 places
+AT	AIRTELTIGO_GHA	GHA	GHS	PROVIDER_AUTH	2 places
+Vodafone	VODAFONE_GHA	GHA	GHS	PROVIDER_AUTH	2 places
+Kenya
+
+MMO	Provider	Country	Currency	Authorisation	Decimals in amount
+MPesa	MPESA_KEN	KEN	KES	PROVIDER_AUTH	Deposits: not supported; payouts: 2 places
+Malawi
+
+Mozambique
+
+Nigeria
+
+Republic of the Congo
+
+MMO	Provider	Country	Currency	Authorisation	Decimals in amount
+Airtel	AIRTEL_COG	COG	XAF	PROVIDER_AUTH	Not supported
+MTN	MTN_MOMO_COG	COG	XAF	PROVIDER_AUTH	Not supported
+Rwanda
+
+Senegal
+
+MMO	Provider	Country	Currency	Authorisation	Decimals in amount
+Free	FREE_SEN	SEN	XOF	PROVIDER_AUTH	Not supported
+Orange	ORANGE_SEN	SEN	XOF	PROVIDER_AUTH	Not supported
+Wave	WAVE_SEN	SEN	XOF	REDIRECT_AUTH	Not supported
+Sierra Leone
+
+Tanzania
+
+Uganda
+
+Zambia
+

@@ -1,5 +1,5 @@
 # Configuration Scalar Galaxy pour API Fournisseur CG
-# Généré automatiquement le 2025-10-03T17:09:53.638Z
+# Généré automatiquement le 2025-10-03T21:01:55.634Z
 # Combine AutoSwagger (routes) + Configuration Scalar (UI/UX)
 
 openapi: 3.0.0
@@ -622,44 +622,201 @@ paths:
               message: Votre code de vérification est 123456
   /v3/pawapay/availability:
     get:
-      summary: ' (availability)'
-      description: |2-
-
+      summary: PawaPay availability (availability)
+      description: |-
+        Returns **200** (OK) as **application/json**
 
          _app/controllers/pawapay_controller.ts_ - **availability**
       parameters: []
       tags:
-        - ''
+        - PAWAPAY
       responses:
         '200':
-          description: OK
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  data:
+                    type: object
+                    properties:
+                      country: COG
+                      available: true
+              example:
+                success: true
+                data:
+                  country: COG
+                  available: true
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Availability fetch failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Availability fetch failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
+      security: []
+  /v3/pawapay/providers:
+    get:
+      summary: PawaPay providers per country (listProviders)
+      description: |-
+        Returns **200** (OK) as **application/json**
+
+         _app/controllers/pawapay_controller.ts_ - **listProviders**
+      parameters: []
+      tags:
+        - PAWAPAY
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  data:
+                    type: object
+                    properties:
+                      country: COG
+                      available: true
+              example:
+                success: true
+                data:
+                  country: COG
+                  available: true
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Providers fetch failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Providers fetch failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
+      security: []
+  /v3/pawapay/active-conf:
+    get:
+      summary: PawaPay active configuration (getActiveConfiguration)
+      description: |-
+        Returns **200** (OK) as **application/json**
+
+         _app/controllers/pawapay_controller.ts_ - **getActiveConfiguration**
+      parameters: []
+      tags:
+        - PAWAPAY
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  data:
+                    type: object
+                    properties:
+                      country: COG
+                      available: true
+              example:
+                success: true
+                data:
+                  country: COG
+                  available: true
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Active configuration fetch failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Active configuration fetch failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
       security: []
   /v3/pawapay/deposits/request:
     post:
-      summary: ' (requestDeposit)'
-      description: |2-
-
+      summary: PawaPay request deposit (requestDeposit)
+      description: |-
+        Request a deposit using PawaPay v2 payload
 
          _app/controllers/pawapay_controller.ts_ - **requestDeposit**
       parameters: []
       tags:
-        - REQUEST
+        - PAWAPAY
       responses:
-        '201':
-          description: Created
+        '200':
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  data:
+                    type: object
+                    properties:
+                      depositId: uuid
+                      amount: '15'
+                      currency: XAF
+                      payer:
+                        type: object
+                        properties:
+                          type: MMO
+                          accountDetails:
+                            type: object
+                            properties:
+                              provider: MTN_MOMO_COG
+                              phoneNumber: 24206XXXXXX
+              example:
+                success: true
+                data:
+                  depositId: uuid
+                  amount: '15'
+                  currency: XAF
+                  payer:
+                    type: MMO
+                    accountDetails:
+                      provider: MTN_MOMO_COG
+                      phoneNumber: 24206XXXXXX
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Deposit request failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Deposit request failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-      requestBody:
-        content:
-          application/json: {}
   /v3/pawapay/deposits/{depositId}/status:
     get:
-      summary: ' (checkDepositStatus)'
-      description: |2-
-
+      summary: PawaPay check deposit status (checkDepositStatus)
+      description: |-
+        Returns **200** (OK) as **application/json**
 
          _app/controllers/pawapay_controller.ts_ - **checkDepositStatus**
       parameters:
@@ -669,37 +826,122 @@ paths:
             type: string
           required: true
       tags:
-        - ':DEPOSITID'
+        - PAWAPAY
       responses:
         '200':
-          description: OK
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  data:
+                    type: object
+                    properties:
+                      depositId: uuid
+                      amount: '15'
+                      currency: XAF
+                      payer:
+                        type: object
+                        properties:
+                          type: MMO
+                          accountDetails:
+                            type: object
+                            properties:
+                              provider: MTN_MOMO_COG
+                              phoneNumber: 24206XXXXXX
+              example:
+                success: true
+                data:
+                  depositId: uuid
+                  amount: '15'
+                  currency: XAF
+                  payer:
+                    type: MMO
+                    accountDetails:
+                      provider: MTN_MOMO_COG
+                      phoneNumber: 24206XXXXXX
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Deposit request failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Deposit request failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
       security: []
   /v3/pawapay/payouts/request:
     post:
-      summary: ' (requestPayout)'
-      description: |2-
-
+      summary: PawaPay request payout (requestPayout)
+      description: |-
+        Request a payout using PawaPay v2 payload
 
          _app/controllers/pawapay_controller.ts_ - **requestPayout**
       parameters: []
       tags:
-        - REQUEST
+        - PAWAPAY
       responses:
-        '201':
-          description: Created
+        '200':
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  data:
+                    type: object
+                    properties:
+                      payoutId: uuid
+                      amount: '15'
+                      currency: XAF
+                      recipient:
+                        type: object
+                        properties:
+                          type: MMO
+                          accountDetails:
+                            type: object
+                            properties:
+                              provider: MTN_MOMO_COG
+                              phoneNumber: 24206XXXXXX
+              example:
+                success: true
+                data:
+                  payoutId: uuid
+                  amount: '15'
+                  currency: XAF
+                  recipient:
+                    type: MMO
+                    accountDetails:
+                      provider: MTN_MOMO_COG
+                      phoneNumber: 24206XXXXXX
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Payout request failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Payout request failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-      requestBody:
-        content:
-          application/json: {}
   /v3/pawapay/payouts/{payoutId}/status:
     get:
-      summary: ' (checkPayoutStatus)'
-      description: |2-
-
+      summary: PawaPay check payout status (checkPayoutStatus)
+      description: |-
+        Returns **200** (OK) as **application/json**
 
          _app/controllers/pawapay_controller.ts_ - **checkPayoutStatus**
       parameters:
@@ -709,37 +951,122 @@ paths:
             type: string
           required: true
       tags:
-        - ':PAYOUTID'
+        - PAWAPAY
       responses:
         '200':
-          description: OK
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  data:
+                    type: object
+                    properties:
+                      payoutId: uuid
+                      amount: '15'
+                      currency: XAF
+                      recipient:
+                        type: object
+                        properties:
+                          type: MMO
+                          accountDetails:
+                            type: object
+                            properties:
+                              provider: MTN_MOMO_COG
+                              phoneNumber: 24206XXXXXX
+              example:
+                success: true
+                data:
+                  payoutId: uuid
+                  amount: '15'
+                  currency: XAF
+                  recipient:
+                    type: MMO
+                    accountDetails:
+                      provider: MTN_MOMO_COG
+                      phoneNumber: 24206XXXXXX
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Payout request failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Payout request failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
       security: []
   /v3/pawapay/refunds/request:
     post:
-      summary: ' (requestRefund)'
-      description: |2-
-
+      summary: PawaPay request refund (requestRefund)
+      description: |-
+        Request a refund using PawaPay v2 payload
 
          _app/controllers/pawapay_controller.ts_ - **requestRefund**
       parameters: []
       tags:
-        - REQUEST
+        - PAWAPAY
       responses:
-        '201':
-          description: Created
+        '200':
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  data:
+                    type: object
+                    properties:
+                      refundId: uuid
+                      amount: '15'
+                      currency: XAF
+                      recipient:
+                        type: object
+                        properties:
+                          type: MMO
+                          accountDetails:
+                            type: object
+                            properties:
+                              provider: MTN_MOMO_COG
+                              phoneNumber: 24206XXXXXX
+              example:
+                success: true
+                data:
+                  refundId: uuid
+                  amount: '15'
+                  currency: XAF
+                  recipient:
+                    type: MMO
+                    accountDetails:
+                      provider: MTN_MOMO_COG
+                      phoneNumber: 24206XXXXXX
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Refund request failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Refund request failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-      requestBody:
-        content:
-          application/json: {}
   /v3/pawapay/refunds/{refundId}/status:
     get:
-      summary: ' (checkRefundStatus)'
-      description: |2-
-
+      summary: PawaPay check refund status (checkRefundStatus)
+      description: |-
+        Returns **200** (OK) as **application/json**
 
          _app/controllers/pawapay_controller.ts_ - **checkRefundStatus**
       parameters:
@@ -749,70 +1076,165 @@ paths:
             type: string
           required: true
       tags:
-        - ':REFUNDID'
+        - PAWAPAY
       responses:
         '200':
-          description: OK
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  data:
+                    type: object
+                    properties:
+                      refundId: uuid
+                      amount: '15'
+                      currency: XAF
+                      recipient:
+                        type: object
+                        properties:
+                          type: MMO
+                          accountDetails:
+                            type: object
+                            properties:
+                              provider: MTN_MOMO_COG
+                              phoneNumber: 24206XXXXXX
+              example:
+                success: true
+                data:
+                  refundId: uuid
+                  amount: '15'
+                  currency: XAF
+                  recipient:
+                    type: MMO
+                    accountDetails:
+                      provider: MTN_MOMO_COG
+                      phoneNumber: 24206XXXXXX
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Refund request failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Refund request failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
       security: []
   /v3/pawapay/callbacks/deposits:
     post:
-      summary: ' (depositCallback)'
-      description: |2-
-
+      summary: PawaPay deposit callback (depositCallback)
+      description: |-
+        Handle deposit callback from PawaPay
 
          _app/controllers/pawapay_controller.ts_ - **depositCallback**
       parameters: []
       tags:
-        - DEPOSITS
+        - PAWAPAY
       responses:
-        '201':
-          description: Created
+        '200':
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received: true
+              example:
+                received: true
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Deposit callback failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Deposit callback failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-      requestBody:
-        content:
-          application/json: {}
   /v3/pawapay/callbacks/payouts:
     post:
-      summary: ' (payoutCallback)'
-      description: |2-
-
+      summary: PawaPay payout callback (payoutCallback)
+      description: |-
+        Handle payout callback from PawaPay
 
          _app/controllers/pawapay_controller.ts_ - **payoutCallback**
       parameters: []
       tags:
-        - PAYOUTS
+        - PAWAPAY
       responses:
-        '201':
-          description: Created
+        '200':
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received: true
+              example:
+                received: true
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Payout callback failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Payout callback failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-      requestBody:
-        content:
-          application/json: {}
   /v3/pawapay/callbacks/refunds:
     post:
-      summary: ' (refundCallback)'
-      description: |2-
-
+      summary: PawaPay refund callback (refundCallback)
+      description: |-
+        Handle refund callback from PawaPay
 
          _app/controllers/pawapay_controller.ts_ - **refundCallback**
       parameters: []
       tags:
-        - REFUNDS
+        - PAWAPAY
       responses:
-        '201':
-          description: Created
+        '200':
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received: true
+              example:
+                received: true
+          description: Returns **200** (OK) as **application/json**
+        '500':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: false
+                  error: Refund callback failed
+                  details: Unknown error
+              example:
+                success: false
+                error: Refund callback failed
+                details: Unknown error
+          description: Returns **500** (Internal Server Error) as **application/json**
       security: []
-      requestBody:
-        content:
-          application/json: {}
 x-scalar:
   ui:
     theme:
@@ -881,4 +1303,4 @@ x-scalar:
     showLastModified: true
     showGeneratedBy: true
     generatedBy: API Fournisseur CG - AutoSwagger + Scalar
-    generatedAt: '2025-10-03T17:09:53.634Z'
+    generatedAt: '2025-10-03T21:01:55.622Z'

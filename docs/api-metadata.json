@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-10-03T17:09:53.639Z",
+  "generatedAt": "2025-10-03T21:01:55.635Z",
   "generator": "API Fournisseur CG - AutoSwagger + Scalar Generator",
   "version": "3.0.0",
   "apiInfo": {
@@ -81,7 +81,7 @@
     ]
   },
   "statistics": {
-    "totalEndpoints": 23,
+    "totalEndpoints": 25,
     "totalTags": 9,
     "totalSecuritySchemes": 3,
     "totalServers": 3,
@@ -177,6 +177,18 @@
     },
     {
       "path": "/v3/pawapay/availability",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/providers",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "path": "/v3/pawapay/active-conf",
       "methods": [
         "get"
       ]

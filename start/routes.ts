@@ -581,6 +581,7 @@ router
   .group(() => {
     // Middleware de logging réseau en mode développement
     router.use([() => import('#middleware/network_logging_middleware')])
+
     // Health check route for Dokploy/Traefik
     router.get('/health', async () => {
       return {
@@ -624,7 +625,7 @@ router
           swagger: '/v3/swagger',
           auth: '/v3/auth',
           appwrite: '/v3/appwrite',
-          collections: '/v3/collections',
+
           spaarkpay: '/v3/spaark-pay',
           sms: '/v3/sms',
           health: '/v3/health',
@@ -692,6 +693,10 @@ router
 
         // Toolkit / health
         router.get('/availability', [PawaPayController, 'availability'])
+
+        // Providers and configuration
+        router.get('/providers', [PawaPayController, 'listProviders'])
+        router.get('/active-conf', [PawaPayController, 'getActiveConfiguration'])
 
         // Deposits
         router.post('/deposits/request', [PawaPayController, 'requestDeposit'])

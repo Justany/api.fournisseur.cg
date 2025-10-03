@@ -743,18 +743,179 @@
     },
     "/v3/pawapay/availability": {
       "get": {
-        "summary": " (availability)",
-        "description": "\n\n _app/controllers/pawapay_controller.ts_ - **availability**",
+        "summary": "PawaPay availability (availability)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **availability**",
         "parameters": [],
         "tags": [
-          ""
+          "PAWAPAY"
         ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "country": "COG",
+                        "available": true
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "country": "COG",
+                    "available": true
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Availability fetch failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Availability fetch failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/pawapay/providers": {
+      "get": {
+        "summary": "PawaPay providers per country (listProviders)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **listProviders**",
+        "parameters": [],
+        "tags": [
+          "PAWAPAY"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "country": "COG",
+                        "available": true
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "country": "COG",
+                    "available": true
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Providers fetch failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Providers fetch failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
+          }
+        },
+        "security": []
+      }
+    },
+    "/v3/pawapay/active-conf": {
+      "get": {
+        "summary": "PawaPay active configuration (getActiveConfiguration)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **getActiveConfiguration**",
+        "parameters": [],
+        "tags": [
+          "PAWAPAY"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "country": "COG",
+                        "available": true
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "country": "COG",
+                    "available": true
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Active configuration fetch failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Active configuration fetch failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
         "security": []
@@ -762,32 +923,90 @@
     },
     "/v3/pawapay/deposits/request": {
       "post": {
-        "summary": " (requestDeposit)",
-        "description": "\n\n _app/controllers/pawapay_controller.ts_ - **requestDeposit**",
+        "summary": "PawaPay request deposit (requestDeposit)",
+        "description": "Request a deposit using PawaPay v2 payload\n\n _app/controllers/pawapay_controller.ts_ - **requestDeposit**",
         "parameters": [],
         "tags": [
-          "REQUEST"
+          "PAWAPAY"
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "depositId": "uuid",
+                        "amount": "15",
+                        "currency": "XAF",
+                        "payer": {
+                          "type": "object",
+                          "properties": {
+                            "type": "MMO",
+                            "accountDetails": {
+                              "type": "object",
+                              "properties": {
+                                "provider": "MTN_MOMO_COG",
+                                "phoneNumber": "24206XXXXXX"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "depositId": "uuid",
+                    "amount": "15",
+                    "currency": "XAF",
+                    "payer": {
+                      "type": "MMO",
+                      "accountDetails": {
+                        "provider": "MTN_MOMO_COG",
+                        "phoneNumber": "24206XXXXXX"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Deposit request failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Deposit request failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {}
-          }
-        }
+        "security": []
       }
     },
     "/v3/pawapay/deposits/{depositId}/status": {
       "get": {
-        "summary": " (checkDepositStatus)",
-        "description": "\n\n _app/controllers/pawapay_controller.ts_ - **checkDepositStatus**",
+        "summary": "PawaPay check deposit status (checkDepositStatus)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **checkDepositStatus**",
         "parameters": [
           {
             "in": "path",
@@ -799,14 +1018,77 @@
           }
         ],
         "tags": [
-          ":DEPOSITID"
+          "PAWAPAY"
         ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "depositId": "uuid",
+                        "amount": "15",
+                        "currency": "XAF",
+                        "payer": {
+                          "type": "object",
+                          "properties": {
+                            "type": "MMO",
+                            "accountDetails": {
+                              "type": "object",
+                              "properties": {
+                                "provider": "MTN_MOMO_COG",
+                                "phoneNumber": "24206XXXXXX"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "depositId": "uuid",
+                    "amount": "15",
+                    "currency": "XAF",
+                    "payer": {
+                      "type": "MMO",
+                      "accountDetails": {
+                        "provider": "MTN_MOMO_COG",
+                        "phoneNumber": "24206XXXXXX"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Deposit request failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Deposit request failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
         "security": []
@@ -814,32 +1096,90 @@
     },
     "/v3/pawapay/payouts/request": {
       "post": {
-        "summary": " (requestPayout)",
-        "description": "\n\n _app/controllers/pawapay_controller.ts_ - **requestPayout**",
+        "summary": "PawaPay request payout (requestPayout)",
+        "description": "Request a payout using PawaPay v2 payload\n\n _app/controllers/pawapay_controller.ts_ - **requestPayout**",
         "parameters": [],
         "tags": [
-          "REQUEST"
+          "PAWAPAY"
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "payoutId": "uuid",
+                        "amount": "15",
+                        "currency": "XAF",
+                        "recipient": {
+                          "type": "object",
+                          "properties": {
+                            "type": "MMO",
+                            "accountDetails": {
+                              "type": "object",
+                              "properties": {
+                                "provider": "MTN_MOMO_COG",
+                                "phoneNumber": "24206XXXXXX"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "payoutId": "uuid",
+                    "amount": "15",
+                    "currency": "XAF",
+                    "recipient": {
+                      "type": "MMO",
+                      "accountDetails": {
+                        "provider": "MTN_MOMO_COG",
+                        "phoneNumber": "24206XXXXXX"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Payout request failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Payout request failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {}
-          }
-        }
+        "security": []
       }
     },
     "/v3/pawapay/payouts/{payoutId}/status": {
       "get": {
-        "summary": " (checkPayoutStatus)",
-        "description": "\n\n _app/controllers/pawapay_controller.ts_ - **checkPayoutStatus**",
+        "summary": "PawaPay check payout status (checkPayoutStatus)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **checkPayoutStatus**",
         "parameters": [
           {
             "in": "path",
@@ -851,14 +1191,77 @@
           }
         ],
         "tags": [
-          ":PAYOUTID"
+          "PAWAPAY"
         ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "payoutId": "uuid",
+                        "amount": "15",
+                        "currency": "XAF",
+                        "recipient": {
+                          "type": "object",
+                          "properties": {
+                            "type": "MMO",
+                            "accountDetails": {
+                              "type": "object",
+                              "properties": {
+                                "provider": "MTN_MOMO_COG",
+                                "phoneNumber": "24206XXXXXX"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "payoutId": "uuid",
+                    "amount": "15",
+                    "currency": "XAF",
+                    "recipient": {
+                      "type": "MMO",
+                      "accountDetails": {
+                        "provider": "MTN_MOMO_COG",
+                        "phoneNumber": "24206XXXXXX"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Payout request failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Payout request failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
         "security": []
@@ -866,32 +1269,90 @@
     },
     "/v3/pawapay/refunds/request": {
       "post": {
-        "summary": " (requestRefund)",
-        "description": "\n\n _app/controllers/pawapay_controller.ts_ - **requestRefund**",
+        "summary": "PawaPay request refund (requestRefund)",
+        "description": "Request a refund using PawaPay v2 payload\n\n _app/controllers/pawapay_controller.ts_ - **requestRefund**",
         "parameters": [],
         "tags": [
-          "REQUEST"
+          "PAWAPAY"
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "refundId": "uuid",
+                        "amount": "15",
+                        "currency": "XAF",
+                        "recipient": {
+                          "type": "object",
+                          "properties": {
+                            "type": "MMO",
+                            "accountDetails": {
+                              "type": "object",
+                              "properties": {
+                                "provider": "MTN_MOMO_COG",
+                                "phoneNumber": "24206XXXXXX"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "refundId": "uuid",
+                    "amount": "15",
+                    "currency": "XAF",
+                    "recipient": {
+                      "type": "MMO",
+                      "accountDetails": {
+                        "provider": "MTN_MOMO_COG",
+                        "phoneNumber": "24206XXXXXX"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Refund request failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Refund request failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {}
-          }
-        }
+        "security": []
       }
     },
     "/v3/pawapay/refunds/{refundId}/status": {
       "get": {
-        "summary": " (checkRefundStatus)",
-        "description": "\n\n _app/controllers/pawapay_controller.ts_ - **checkRefundStatus**",
+        "summary": "PawaPay check refund status (checkRefundStatus)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **checkRefundStatus**",
         "parameters": [
           {
             "in": "path",
@@ -903,14 +1364,77 @@
           }
         ],
         "tags": [
-          ":REFUNDID"
+          "PAWAPAY"
         ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": true,
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "refundId": "uuid",
+                        "amount": "15",
+                        "currency": "XAF",
+                        "recipient": {
+                          "type": "object",
+                          "properties": {
+                            "type": "MMO",
+                            "accountDetails": {
+                              "type": "object",
+                              "properties": {
+                                "provider": "MTN_MOMO_COG",
+                                "phoneNumber": "24206XXXXXX"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "refundId": "uuid",
+                    "amount": "15",
+                    "currency": "XAF",
+                    "recipient": {
+                      "type": "MMO",
+                      "accountDetails": {
+                        "provider": "MTN_MOMO_COG",
+                        "phoneNumber": "24206XXXXXX"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Refund request failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Refund request failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
         "security": []
@@ -918,74 +1442,149 @@
     },
     "/v3/pawapay/callbacks/deposits": {
       "post": {
-        "summary": " (depositCallback)",
-        "description": "\n\n _app/controllers/pawapay_controller.ts_ - **depositCallback**",
+        "summary": "PawaPay deposit callback (depositCallback)",
+        "description": "Handle deposit callback from PawaPay\n\n _app/controllers/pawapay_controller.ts_ - **depositCallback**",
         "parameters": [],
         "tags": [
-          "DEPOSITS"
+          "PAWAPAY"
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received": true
+                  }
+                },
+                "example": {
+                  "received": true
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Deposit callback failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Deposit callback failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {}
-          }
-        }
+        "security": []
       }
     },
     "/v3/pawapay/callbacks/payouts": {
       "post": {
-        "summary": " (payoutCallback)",
-        "description": "\n\n _app/controllers/pawapay_controller.ts_ - **payoutCallback**",
+        "summary": "PawaPay payout callback (payoutCallback)",
+        "description": "Handle payout callback from PawaPay\n\n _app/controllers/pawapay_controller.ts_ - **payoutCallback**",
         "parameters": [],
         "tags": [
-          "PAYOUTS"
+          "PAWAPAY"
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received": true
+                  }
+                },
+                "example": {
+                  "received": true
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Payout callback failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Payout callback failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {}
-          }
-        }
+        "security": []
       }
     },
     "/v3/pawapay/callbacks/refunds": {
       "post": {
-        "summary": " (refundCallback)",
-        "description": "\n\n _app/controllers/pawapay_controller.ts_ - **refundCallback**",
+        "summary": "PawaPay refund callback (refundCallback)",
+        "description": "Handle refund callback from PawaPay\n\n _app/controllers/pawapay_controller.ts_ - **refundCallback**",
         "parameters": [],
         "tags": [
-          "REFUNDS"
+          "PAWAPAY"
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received": true
+                  }
+                },
+                "example": {
+                  "received": true
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": false,
+                    "error": "Refund callback failed",
+                    "details": "Unknown error"
+                  }
+                },
+                "example": {
+                  "success": false,
+                  "error": "Refund callback failed",
+                  "details": "Unknown error"
+                }
+              }
+            },
+            "description": "Returns **500** (Internal Server Error) as **application/json**"
           }
         },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {}
-          }
-        }
+        "security": []
       }
     }
   },
