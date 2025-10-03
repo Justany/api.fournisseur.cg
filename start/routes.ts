@@ -656,43 +656,6 @@ router
       .prefix('/auth')
 
     // =====================================
-    // 4. PAYMENT PROCESSING
-    // =====================================
-    router
-      .group(() => {
-        const SpaarkPaysController = () => import('#controllers/spaark_pays_controller')
-
-        // Health check Spaark Pay (no authentication)
-        router.get('/health', [SpaarkPaysController, 'health'])
-
-        // Test simple (no authentication)
-        router.get('/test', [SpaarkPaysController, 'test'])
-        router.get('/test-external', [SpaarkPaysController, 'testExternal'])
-
-        // Protected routes with authentication
-        router.group(() => {
-          // Payments Spaark Pay APi
-          router.post('/initiate', [SpaarkPaysController, 'initiatePayment'])
-          router.get('/status/:paymentId', [SpaarkPaysController, 'getPaymentStatus'])
-          router.post('/verify', [SpaarkPaysController, 'verifyPayment'])
-          router.post('/verify-by-id', [SpaarkPaysController, 'verifyPaymentById'])
-          router.post('/webhook', [SpaarkPaysController, 'processWebhook'])
-          router.get('/transactions', [SpaarkPaysController, 'getTransactionHistory'])
-
-          // Domains
-          router.get('/domains', [SpaarkPaysController, 'getDomains'])
-          router.post('/domains', [SpaarkPaysController, 'addDomain'])
-          router.patch('/domains/:domainId/validate', [SpaarkPaysController, 'validateDomain'])
-          router.get('/domains/stats', [SpaarkPaysController, 'getDomainStats'])
-
-          // Users
-          router.post('/api-key/:type', [SpaarkPaysController, 'generateApiKey'])
-        })
-        // .middleware([() => import('#middleware/spaark_pay_auth_middleware')]) // DÉSACTIVÉ TEMPORAIREMENT
-      })
-      .prefix('/spaark-pay')
-
-    // =====================================
     // 5. SMS NOTIFICATIONS (MTN API)
     // =====================================
     router
@@ -701,9 +664,6 @@ router
 
         // Health check SMS (no authentication)
         router.get('/health', [SmsController, 'health'])
-
-        // Test simple (no authentication)
-        router.get('/test', [SmsController, 'test'])
 
         // Protected routes with authentication
         router.group(() => {

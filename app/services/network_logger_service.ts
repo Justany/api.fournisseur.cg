@@ -111,12 +111,7 @@ export class NetworkLoggerService {
   /**
    * Logger un timeout de requête
    */
-  logRequestTimeout(options: {
-    method: string
-    url: string
-    timeout: number
-    service?: string
-  }) {
+  logRequestTimeout(options: { method: string; url: string; timeout: number; service?: string }) {
     if (!this.isDevelopment) return
 
     console.log('\n⏰ === TIMEOUT REQUÊTE HTTP ===')
