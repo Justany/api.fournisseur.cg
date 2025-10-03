@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-08-07T17:17:32.933Z",
+  "generatedAt": "2025-10-03T12:47:44.160Z",
   "generator": "API Fournisseur CG - AutoSwagger + Scalar Generator",
   "version": "3.0.0",
   "apiInfo": {
@@ -81,7 +81,7 @@
     ]
   },
   "statistics": {
-    "totalEndpoints": 27,
+    "totalEndpoints": 0,
     "totalTags": 9,
     "totalSecuritySchemes": 3,
     "totalServers": 3,
@@ -96,171 +96,7 @@
     ],
     "mainVersion": "v3"
   },
-  "endpoints": [
-    {
-      "path": "/v3/health",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/auth/register",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/auth/login",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/auth/get-token",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/auth/logout",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/auth/profile",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/auth/refresh-token",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/health",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/test",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/test-external",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/initiate",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/status/{paymentId}",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/verify",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/verify-by-id",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/webhook",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/transactions",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/domains",
-      "methods": [
-        "get",
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/domains/{domainId}/validate",
-      "methods": [
-        "patch"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/domains/stats",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/spaark-pay/api-key/{type}",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/health",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/test",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/send",
-      "methods": [
-        "post"
-      ]
-    },
-    {
-      "path": "/v3/sms/status/{messageId}",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/status-codes",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "path": "/v3/sms/calculate-cost",
-      "methods": [
-        "post"
-      ]
-    }
-  ],
+  "endpoints": [],
   "tags": [
     {
       "name": "Authentication",
