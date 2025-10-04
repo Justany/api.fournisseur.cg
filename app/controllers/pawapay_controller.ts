@@ -314,7 +314,7 @@ export default class PawaPayController {
   async depositCallback({ request, response }: HttpContext) {
     try {
       const payload = request.body()
-      const headers = request.headers()
+      // const headers = request.headers()
       const docId = randomUUID()
       const now = new Date().toISOString()
 
