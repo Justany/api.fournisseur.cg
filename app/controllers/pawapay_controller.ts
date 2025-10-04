@@ -343,59 +343,20 @@ export default class PawaPayController {
       const normalizedStatus = String(status).toUpperCase() as 'COMPLETED' | 'FAILED' | 'PROCESSING'
 
       // Préparer les informations de sécurité si callbacks signés
-      const signatureInfo = {
-        signature: headers['signature'] ?? null,
-        signature_input: headers['signature-input'] ?? null,
-        signature_date: headers['signature-date'] ?? null,
-        content_digest: headers['content-digest'] ?? null,
-        accept_signature: headers['accept-signature'] ?? null,
-        accept_digest: headers['accept-digest'] ?? null,
-      }
-
-      // Persister un événement enrichi avec les champs clés du callback
-      await this.appwrite.createDocument(
-        process.env.APPWRITE_DATABASE_ID!,
-        COLLECTIONS.EVENTS,
-        docId,
-        {
-          timestamp: now,
-          user_id: '',
-          installation_id: '',
-          type: 'pawapay_deposit_callback',
-          duration: 0,
-          converted: normalizedStatus === 'COMPLETED',
-          source: 'pawapay',
-          conversion_goal: 'deposit',
-          actions: JSON.stringify({
-            path: request.url(),
-            headers,
-            query: request.qs(),
-            payload,
-            parsed: {
-              depositId,
-              status: normalizedStatus,
-              amount,
-              currency,
-              country,
-              payer,
-              customerMessage,
-              created,
-              providerTransactionId,
-              failureReason: failureReason ?? null,
-              metadata: metadata ?? null,
-            },
-            security: signatureInfo,
-          }),
-          created_at: now,
-          updated_at: now,
-        }
-      )
+      // const signatureInfo = {
+      //   signature: headers['signature'] ?? null,
+      //   signature_input: headers['signature-input'] ?? null,
+      //   signature_date: headers['signature-date'] ?? null,
+      //   content_digest: headers['content-digest'] ?? null,
+      //   accept_signature: headers['accept-signature'] ?? null,
+      //   accept_digest: headers['accept-digest'] ?? null,
+      // }
 
       // Enregistrer également dans la collection dédiée aux callbacks de dépôts
       try {
         await this.appwrite.createDocument(
           process.env.APPWRITE_DATABASE_ID!,
-          'pawapay_deposit_callbacks',
+          COLLECTIONS.PAWA_PAY_DEPOSIT_CALLBACKS,
           randomUUID(),
           {
             deposit_id: depositId,

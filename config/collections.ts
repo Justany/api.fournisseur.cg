@@ -482,6 +482,9 @@ export const COLLECTIONS = {
   INSTALLATIONS: 'installations',
   EVENTS: 'events',
   USERS: 'users',
+  PAWA_PAY_DEPOSIT_CALLBACKS: 'pawapay_deposit_callbacks',
+  PAWA_PAY_PAYOUT_CALLBACKS: 'pawapay_payout_callbacks',
+  PAWA_PAY_REFUND_CALLBACKS: 'pawapay_refund_callbacks',
 } as const
 
 // IDs des buckets de stockage
