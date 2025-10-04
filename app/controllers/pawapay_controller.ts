@@ -279,19 +279,87 @@ export default class PawaPayController {
   /**
    * @checkDepositStatus
    * @summary Check deposit status
-   * @description Check the status of a deposit using PawaPay v2 payload
+   * @description Get the current status of a deposit using pawaPay v2
    * @tag PawaPay
-   * @responseBody 200 - {"success": true, "data": {"depositId": "uuid", "amount": "15", "currency": "XAF", "payer": {"type": "MMO", "accountDetails": {"provider": "MTN_MOMO_COG", "phoneNumber": "24206XXXXXX"}}}}
-   * @responseBody 500 - {"success": false, "error": "Deposit request failed", "details": "Unknown error"}
+   * @responseBody 200 - {
+   *   "status": "FOUND",
+   *   "data": {
+   *     "depositId": "8917c345-4791-4285-a416-62f24b6982db",
+   *     "status": "COMPLETED",
+   *     "amount": "123.00",
+   *     "currency": "ZMW",
+   *     "country": "ZMB",
+   *     "payer": {
+   *       "type": "MMO",
+   *       "accountDetails": { "phoneNUmber": "260763456789", "provider": "MTN_MOMO_ZMB" }
+   *     },
+   *     "customerMessage": "To ACME company",
+   *     "clientReferenceId": "REF-987654321",
+   *     "created": "2020-10-19T08:17:01Z",
+   *     "providerTransactionId": "12356789",
+   *     "metadata": { "orderId": "ORD-123456789", "customerId": "customer@email.com" }
+   *   }
+   * }
+   * @responseBody 401 - {
+   *   "status": "REJECTED",
+   *   "failureReason": {
+   *     "failureCode": "AUTHENTICATION_ERROR",
+   *     "failureMessage": "The API token in the request is invalid."
+   *   }
+   * }
+   * @responseBody 403 - {
+   *   "status": "REJECTED",
+   *   "failureReason": {
+   *     "failureCode": "AUTHORISATION_ERROR",
+   *     "failureMessage": "The API token in the request is not authorised for this endpoint."
+   *   }
+   * }
+   * @responseBody 500 - {
+   *   "failureReason": {
+   *     "failureCode": "UNKNOWN_ERROR",
+   *     "failureMessage": "Unable to process request due to an unknown problem."
+   *   }
+   * }
    */
   async checkDepositStatus({ params, response }: HttpContext) {
     try {
       const { depositId } = params
-      if (!depositId) return response.badRequest({ success: false, error: 'depositId requis' })
+      if (!depositId) {
+        return response.badRequest({
+          failureReason: {
+            failureCode: 'VALIDATION_ERROR',
+            failureMessage: 'depositId requis',
+          },
+        })
+      }
       const result = await this.pawapay.checkDepositStatus(depositId)
-      return response.ok({ success: true, data: result })
-    } catch (error) {
-      return response.internalServerError({ success: false, error: error.message })
+      // Forward upstream body as-is (e.g., { status: 'FOUND' | 'NOT_FOUND', data?: {...} })
+      return response.ok(result)
+    } catch (error: any) {
+      const status = error?.response?.status ?? 500
+      const body = error?.response?.data
+
+      if (status === 401 || status === 403) {
+        return response.status(status).send(
+          body ?? {
+            status: 'REJECTED',
+            failureReason: {
+              failureCode: status === 401 ? 'AUTHENTICATION_ERROR' : 'AUTHORISATION_ERROR',
+              failureMessage:
+                status === 401
+                  ? 'The API token in the request is invalid.'
+                  : 'The API token in the request is not authorised for this endpoint.',
+            },
+          }
+        )
+      }
+
+      return response.status(500).send({
+        failureReason: {
+          failureCode: 'UNKNOWN_ERROR',
+          failureMessage: 'Unable to process request due to an unknown problem.',
+        },
+      })
     }
   }
 
