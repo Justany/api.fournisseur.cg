@@ -1,5 +1,5 @@
 # Configuration Scalar Galaxy pour API Fournisseur CG
-# Généré automatiquement le 2025-10-04T13:50:22.760Z
+# Généré automatiquement le 2025-10-04T23:54:22.621Z
 # Combine AutoSwagger (routes) + Configuration Scalar (UI/UX)
 
 openapi: 3.0.0
@@ -126,22 +126,12 @@ components:
 tags:
   - name: Authentication
     description: Authentification utilisateurs et gestion des tokens JWT
-  - name: Database Management
-    description: Wrapper pour les opérations Appwrite (collections, documents, utilisateurs)
-  - name: Collection Management
-    description: Gestion des collections et initialisation des structures de données
   - name: Payment Processing
     description: Intégration Spaark Pay - Paiements mobiles (MTN Money, Airtel Money)
   - name: SMS Notifications
     description: Envoi de SMS et notifications via API SMS
   - name: Email Services
     description: MailerSend (marketing) et SMTP (notifications système)
-  - name: User Management
-    description: Gestion des utilisateurs (visiteurs, clients, professionnels, admins)
-  - name: Webhooks
-    description: Endpoints pour webhooks entrants (Spark Pay, partenaires transport)
-  - name: Analytics
-    description: Métriques, rapports et données analytiques de la plateforme
 paths:
   /v3/health:
     get:
@@ -622,7 +612,7 @@ paths:
               message: Votre code de vérification est 123456
   /v3/pawapay/availability:
     get:
-      summary: PawaPay availability (availability)
+      summary: Availability (availability)
       description: |-
         Returns **200** (OK) as **application/json**
 
@@ -666,7 +656,7 @@ paths:
       security: []
   /v3/pawapay/providers:
     get:
-      summary: PawaPay providers per country (listProviders)
+      summary: Providers per country (listProviders)
       description: |-
         Returns **200** (OK) as **application/json**
 
@@ -710,9 +700,9 @@ paths:
       security: []
   /v3/pawapay/active-conf:
     get:
-      summary: PawaPay active configuration (getActiveConfiguration)
+      summary: Active configuration (getActiveConfiguration)
       description: |-
-        Returns **200** (OK) as **application/json**
+        Returns **200** (OK) as **text/plain**
 
          _app/controllers/pawapay_controller.ts_ - **getActiveConfiguration**
       parameters: []
@@ -721,40 +711,28 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success: true
-                  data:
-                    type: object
-                    properties:
-                      country: COG
-                      available: true
-              example:
-                success: true
-                data:
-                  country: COG
-                  available: true
-          description: Returns **200** (OK) as **application/json**
+            text/plain:
+              example: '{'
+          description: Returns **200** (OK) as **text/plain**
+        '401':
+          content:
+            text/plain:
+              example: '{'
+          description: Returns **401** (Unauthorized) as **text/plain**
+        '403':
+          content:
+            text/plain:
+              example: '{'
+          description: Returns **403** (Forbidden) as **text/plain**
         '500':
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success: false
-                  error: Active configuration fetch failed
-                  details: Unknown error
-              example:
-                success: false
-                error: Active configuration fetch failed
-                details: Unknown error
-          description: Returns **500** (Internal Server Error) as **application/json**
+            text/plain:
+              example: '{'
+          description: Returns **500** (Internal Server Error) as **text/plain**
       security: []
   /v3/pawapay/deposits/request:
     post:
-      summary: PawaPay request deposit (requestDeposit)
+      summary: Request deposit (requestDeposit)
       description: |-
         Request a deposit using PawaPay v2 payload
 
@@ -765,56 +743,33 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success: true
-                  data:
-                    type: object
-                    properties:
-                      depositId: uuid
-                      amount: '15'
-                      currency: XAF
-                      payer:
-                        type: object
-                        properties:
-                          type: MMO
-                          accountDetails:
-                            type: object
-                            properties:
-                              provider: MTN_MOMO_COG
-                              phoneNumber: 24206XXXXXX
-              example:
-                success: true
-                data:
-                  depositId: uuid
-                  amount: '15'
-                  currency: XAF
-                  payer:
-                    type: MMO
-                    accountDetails:
-                      provider: MTN_MOMO_COG
-                      phoneNumber: 24206XXXXXX
-          description: Returns **200** (OK) as **application/json**
+            text/plain:
+              example: '{'
+          description: Returns **200** (OK) as **text/plain**
+        '400':
+          content:
+            text/plain:
+              example: '{'
+          description: Returns **400** (Bad Request) as **text/plain**
+        '401':
+          content:
+            text/plain:
+              example: '{'
+          description: Returns **401** (Unauthorized) as **text/plain**
+        '403':
+          content:
+            text/plain:
+              example: '{'
+          description: Returns **403** (Forbidden) as **text/plain**
         '500':
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success: false
-                  error: Deposit request failed
-                  details: Unknown error
-              example:
-                success: false
-                error: Deposit request failed
-                details: Unknown error
-          description: Returns **500** (Internal Server Error) as **application/json**
+            text/plain:
+              example: '{'
+          description: Returns **500** (Internal Server Error) as **text/plain**
       security: []
   /v3/pawapay/deposits/{depositId}/status:
     get:
-      summary: PawaPay check deposit status (checkDepositStatus)
+      summary: Check deposit status (checkDepositStatus)
       description: |-
         Returns **200** (OK) as **application/json**
 
@@ -879,7 +834,7 @@ paths:
       security: []
   /v3/pawapay/payouts/request:
     post:
-      summary: PawaPay request payout (requestPayout)
+      summary: Request payout (requestPayout)
       description: |-
         Request a payout using PawaPay v2 payload
 
@@ -939,7 +894,7 @@ paths:
       security: []
   /v3/pawapay/payouts/{payoutId}/status:
     get:
-      summary: PawaPay check payout status (checkPayoutStatus)
+      summary: Check payout status (checkPayoutStatus)
       description: |-
         Returns **200** (OK) as **application/json**
 
@@ -1004,7 +959,7 @@ paths:
       security: []
   /v3/pawapay/refunds/request:
     post:
-      summary: PawaPay request refund (requestRefund)
+      summary: Request refund (requestRefund)
       description: |-
         Request a refund using PawaPay v2 payload
 
@@ -1064,7 +1019,7 @@ paths:
       security: []
   /v3/pawapay/refunds/{refundId}/status:
     get:
-      summary: PawaPay check refund status (checkRefundStatus)
+      summary: Check refund status (checkRefundStatus)
       description: |-
         Returns **200** (OK) as **application/json**
 
@@ -1129,7 +1084,7 @@ paths:
       security: []
   /v3/pawapay/callbacks/deposits:
     post:
-      summary: PawaPay deposit callback (depositCallback)
+      summary: Deposit callback (depositCallback)
       description: |-
         Handle deposit callback from PawaPay
 
@@ -1162,7 +1117,7 @@ paths:
     post:
       summary: ' (payoutCallback)'
       description: |-
-        Handle payout callback from PawaPay
+        Payout callback from PawaPay
 
          _app/controllers/pawapay_controller.ts_ - **payoutCallback**
       parameters: []
@@ -1196,7 +1151,7 @@ paths:
       security: []
   /v3/pawapay/callbacks/refunds:
     post:
-      summary: PawaPay refund callback (refundCallback)
+      summary: Refund callback (refundCallback)
       description: |-
         Handle refund callback from PawaPay
 
@@ -1298,4 +1253,4 @@ x-scalar:
     showLastModified: true
     showGeneratedBy: true
     generatedBy: API Fournisseur CG - AutoSwagger + Scalar
-    generatedAt: '2025-10-04T13:50:22.754Z'
+    generatedAt: '2025-10-04T23:54:22.617Z'

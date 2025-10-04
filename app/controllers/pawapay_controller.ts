@@ -16,7 +16,7 @@ export default class PawaPayController {
 
   /**
    * @availability
-   * @summary PawaPay availability
+   * @summary Availability
    * @description Get PawaPay availability for a specific country
    * @tag PawaPay
    * @responseBody 200 - {"success": true, "data": {"country": "COG", "available": true}}
@@ -41,7 +41,7 @@ export default class PawaPayController {
 
   /**
    * @listProviders
-   * @summary PawaPay providers per country
+   * @summary Providers per country
    * @description Get PawaPay providers per country (using active configuration)
    * @tag PawaPay
    * @responseBody 200 - {"success": true, "data": {"country": "COG", "available": true}}
@@ -85,43 +85,121 @@ export default class PawaPayController {
 
   /**
    * @getActiveConfiguration
-   * @summary PawaPay active configuration
+   * @summary Active configuration
    * @description Get PawaPay active configuration for a specific country
+   * @queryParam country ISO3 country code (ex: COG)
+   * @queryParam operationType DEPOSIT or PAYOUT
    * @tag PawaPay
-   * @responseBody 200 - {"success": true, "data": {"country": "COG", "available": true}}
-   * @responseBody 500 - {"success": false, "error": "Active configuration fetch failed", "details": "Unknown error"}
+   * @responseBody 200 - {
+   *   "companyName":"CONFORT 7 INC",
+   * }
+   * @responseBody 401 - {
+   *   "failureReason": {
+   *     "failureCode": "AUTHENTICATION_ERROR",
+   *     "failureMessage": "The API token in the request is invalid."
+   *   }
+   * }
+   * @responseBody 403 - {
+   *   "failureReason": {
+   *     "failureCode": "AUTHORISATION_ERROR",
+   *     "failureMessage": "The API token in the request is not authorised for this endpoint."
+   *   }
+   * }
+   * @responseBody 500 - {
+   *   "failureReason": {
+   *     "failureCode": "UNKNOWN_ERROR",
+   *     "failureMessage": "Unable to process request due to an unknown problem."
+   *   }
+   * }
    */
   async getActiveConfiguration({ request, response }: HttpContext) {
     try {
       const { country, operationType } = request.qs()
       if (!country) {
         return response.badRequest({
-          success: false,
-          error: 'Paramètre country requis (ISO3, ex: COG)',
+          failureReason: {
+            failureCode: 'VALIDATION_ERROR',
+            failureMessage: 'Paramètre country requis (ISO3, ex: COG)',
+          },
         })
       }
+
       const data = await this.pawapay.activeConfiguration(
         String(country).toUpperCase(),
         operationType ? (String(operationType).toUpperCase() as 'DEPOSIT' | 'PAYOUT') : undefined
       )
-      return response.ok({ success: true, data })
+
+      // Return the raw PawaPay payload (no success wrapper) to match docs
+      return response.ok(data)
     } catch (error: any) {
-      const details = error?.response?.data || error?.message || 'Unknown error'
-      return response.internalServerError({
-        success: false,
-        error: 'Active configuration fetch failed',
-        details,
+      const status = error?.response?.status ?? 500
+      const body = error?.response?.data
+
+      if (status === 401 || status === 403) {
+        // Forward upstream auth/authorisation errors as-is if present
+        return response.status(status).send(
+          body ?? {
+            failureReason: {
+              failureCode: status === 401 ? 'AUTHENTICATION_ERROR' : 'AUTHORISATION_ERROR',
+              failureMessage:
+                status === 401
+                  ? 'The API token in the request is invalid.'
+                  : 'The API token in the request is not authorised for this endpoint.',
+            },
+          }
+        )
+      }
+
+      return response.status(500).send({
+        failureReason: {
+          failureCode: 'UNKNOWN_ERROR',
+          failureMessage: 'Unable to process request due to an unknown problem.',
+        },
       })
     }
   }
 
   /**
    * @requestDeposit
-   * @summary PawaPay request deposit
+   * @summary Request deposit
    * @description Request a deposit using PawaPay v2 payload
    * @tag PawaPay
-   * @responseBody 200 - {"success": true, "data": {"depositId": "uuid", "amount": "15", "currency": "XAF", "payer": {"type": "MMO", "accountDetails": {"provider": "MTN_MOMO_COG", "phoneNumber": "24206XXXXXX"}}}}
-   * @responseBody 500 - {"success": false, "error": "Deposit request failed", "details": "Unknown error"}
+   * @responseBody 200 - {
+   *   "depositId": "f4401bd2-1568-4140-bf2d-eb77d2b2b639",
+   *   "status": "ACCEPTED",
+   *   "created": "2020-10-19T11:17:01Z"
+   * }
+   * @responseBody 400 - {
+   *   "depositId": "f4401bd2-1568-4140-bf2d-eb77d2b2b639",
+   *   "status": "REJECTED",
+   *   "failureReason": {
+   *     "failureCode": "INVALID_INPUT",
+   *     "failureMessage": "We are unable to parse the body of the request. Please consult API documentation for valid request payload."
+   *   }
+   * }
+   * @responseBody 401 - {
+   *   "depositId": "f4401bd2-1568-4140-bf2d-eb77d2b2b639",
+   *   "status": "REJECTED",
+   *   "failureReason": {
+   *     "failureCode": "AUTHENTICATION_ERROR",
+   *     "failureMessage": "The API token in the request is invalid."
+   *   }
+   * }
+   * @responseBody 403 - {
+   *   "depositId": "f4401bd2-1568-4140-bf2d-eb77d2b2b639",
+   *   "status": "REJECTED",
+   *   "failureReason": {
+   *     "failureCode": "AUTHORISATION_ERROR",
+   *     "failureMessage": "The API token in the request is not authorised for this endpoint."
+   *   }
+   * }
+   * @responseBody 500 - {
+   *   "depositId": "f4401bd2-1568-4140-bf2d-eb77d2b2b639",
+   *   "failureReason": {
+   *     "failureCode": "UNKNOWN_ERROR",
+   *     "failureMessage": "Unable to process request due to an unknown problem."
+   *   }
+   * }
    */
   async requestDeposit({ request, response }: HttpContext) {
     try {
@@ -158,19 +236,49 @@ export default class PawaPayController {
       }
 
       const result = await this.pawapay.requestDeposit(body)
-      return response.ok({ success: true, data: result })
+      // Forward upstream success body as-is (PawaPay returns 200 with status ACCEPTED)
+      return response.ok(result)
     } catch (error: any) {
-      return response.internalServerError({
-        success: false,
-        error: error.message,
-        details: error?.response?.data,
+      const status = error?.response?.status ?? 500
+      const body = error?.response?.data
+
+      if (status === 400 || status === 401 || status === 403) {
+        // Forward upstream error as-is if present
+        return response.status(status).send(
+          body ?? {
+            depositId: request.body()?.depositId ?? null,
+            status: 'REJECTED',
+            failureReason: {
+              failureCode:
+                status === 400
+                  ? 'INVALID_INPUT'
+                  : status === 401
+                    ? 'AUTHENTICATION_ERROR'
+                    : 'AUTHORISATION_ERROR',
+              failureMessage:
+                status === 400
+                  ? 'We are unable to parse the body of the request. Please consult API documentation for valid request payload.'
+                  : status === 401
+                    ? 'The API token in the request is invalid.'
+                    : 'The API token in the request is not authorised for this endpoint.',
+            },
+          }
+        )
+      }
+
+      return response.status(500).send({
+        depositId: request.body()?.depositId ?? null,
+        failureReason: {
+          failureCode: 'UNKNOWN_ERROR',
+          failureMessage: 'Unable to process request due to an unknown problem.',
+        },
       })
     }
   }
 
   /**
    * @checkDepositStatus
-   * @summary PawaPay check deposit status
+   * @summary Check deposit status
    * @description Check the status of a deposit using PawaPay v2 payload
    * @tag PawaPay
    * @responseBody 200 - {"success": true, "data": {"depositId": "uuid", "amount": "15", "currency": "XAF", "payer": {"type": "MMO", "accountDetails": {"provider": "MTN_MOMO_COG", "phoneNumber": "24206XXXXXX"}}}}
@@ -189,7 +297,7 @@ export default class PawaPayController {
 
   /**
    * @requestPayout
-   * @summary PawaPay request payout
+   * @summary Request payout
    * @description Request a payout using PawaPay v2 payload
    * @tag PawaPay
    * @responseBody 200 - {"success": true, "data": {"payoutId": "uuid", "amount": "15", "currency": "XAF", "recipient": {"type": "MMO", "accountDetails": {"provider": "MTN_MOMO_COG", "phoneNumber": "24206XXXXXX"}}}}
@@ -237,7 +345,7 @@ export default class PawaPayController {
 
   /**
    * @checkPayoutStatus
-   * @summary PawaPay check payout status
+   * @summary Check payout status
    * @description Check the status of a payout using PawaPay v2 payload
    * @tag PawaPay
    * @responseBody 200 - {"success": true, "data": {"payoutId": "uuid", "amount": "15", "currency": "XAF", "recipient": {"type": "MMO", "accountDetails": {"provider": "MTN_MOMO_COG", "phoneNumber": "24206XXXXXX"}}}}
@@ -256,7 +364,7 @@ export default class PawaPayController {
 
   /**
    * @requestRefund
-   * @summary PawaPay request refund
+   * @summary Request refund
    * @description Request a refund using PawaPay v2 payload
    * @tag PawaPay
    * @responseBody 200 - {"success": true, "data": {"refundId": "uuid", "amount": "15", "currency": "XAF", "recipient": {"type": "MMO", "accountDetails": {"provider": "MTN_MOMO_COG", "phoneNumber": "24206XXXXXX"}}}}
@@ -286,7 +394,7 @@ export default class PawaPayController {
 
   /**
    * @checkRefundStatus
-   * @summary PawaPay check refund status
+   * @summary Check refund status
    * @description Check the status of a refund using PawaPay v2 payload
    * @tag PawaPay
    * @responseBody 200 - {"success": true, "data": {"refundId": "uuid", "amount": "15", "currency": "XAF", "recipient": {"type": "MMO", "accountDetails": {"provider": "MTN_MOMO_COG", "phoneNumber": "24206XXXXXX"}}}}
@@ -305,7 +413,7 @@ export default class PawaPayController {
 
   /**
    * @depositCallback
-   * @summary PawaPay deposit callback
+   * @summary Deposit callback
    * @description Handle deposit callback from PawaPay
    * @tag PawaPay
    * @responseBody 200 - {"received": true, "id": docId, "depositId": depositId, "status": "COMPLETED" | "FAILED" | "PROCESSING"}
@@ -390,7 +498,7 @@ export default class PawaPayController {
 
   /**
    * @payoutCallback
-   * @description Handle payout callback from PawaPay
+   * @description Payout callback from PawaPay
    * @tag PawaPay
    * @responseBody 200 - {"received": true}
    * @responseBody 500 - {"success": false, "error": "Payout callback failed", "details": "Unknown error"}
@@ -476,7 +584,7 @@ export default class PawaPayController {
 
   /**
    * @refundCallback
-   * @summary PawaPay refund callback
+   * @summary Refund callback
    * @description Handle refund callback from PawaPay
    * @tag PawaPay
    * @responseBody 200 - {"received": true}

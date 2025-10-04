@@ -2,249 +2,7 @@ openapi: 3.0.0
 info:
   title: API Fournisseur CG - Orchestrateur Logistique
   version: 3.0.0
-  description: >-
-    # API Fournisseur CG - Orchestrateur Logistique
-
-
-    L'API Fournisseur CG est la **plateforme centrale** qui orchestre l'écosystème logistique du Congo. Elle sert de
-    pont intelligent entre les applications clientes et les services backend, offrant une expérience unifiée pour la
-    gestion des fournisseurs, commandes, paiements et livraisons.
-
-
-    ## 🎯 Mission
-
-
-    Connecter les **fournisseurs locaux** aux **clients internationaux** en simplifiant la logistique, les paiements et
-    la communication dans l'écosystème e-commerce congolais.
-
-
-    ## 🏗️ Architecture
-
-
-    ### **Services Intégrés**
-
-
-    | Service | Rôle | Statut |
-
-    |---------|------|--------|
-
-    | **Appwrite** | Backend principal (DB, Auth, Storage) | ✅ Intégré |
-
-    | **Spaark Pay** | Paiements mobiles (MTN Money, Airtel) | ✅ Intégré |
-
-    | **SMS API** | Notifications et codes OTP | ✅ Intégré |
-
-    | **MailerSend** | Emails marketing | 🔄 En cours |
-
-    | **SMTP** | Notifications système | 🔄 En cours |
-
-
-    ### **Collections Principales**
-
-
-    - **📋 QUOTES** - Demandes de devis (FC-QMM-XXXX-YYYY)
-
-    - **📞 CONTACTS** - Messages de contact clients
-
-    - **🛍️ PRODUCTS** - Catalogue multi-plateformes
-
-    - **📦 ORDERS** - Commandes (FC-ORD-XXXX-YYYY)
-
-    - **💳 PAYMENTS** - Transactions de paiement
-
-
-    ## 🚀 Fonctionnalités Clés
-
-
-    ### **Paiements Mobiles Intelligents**
-
-    - Support natif **MTN Money** et **Airtel Money**
-
-    - Vérification automatique des transactions
-
-    - Gestion des webhooks en temps réel
-
-    - Retry automatique pour les erreurs temporaires
-
-
-    ### **Gestion SMS Avancée**
-
-    - Envoi de codes OTP sécurisés
-
-    - Notifications personnalisées
-
-    - Calcul automatique des coûts
-
-    - Historique et statistiques détaillées
-
-
-    ### **Collections Auto-Configurées**
-
-    - Définition déclarative des structures
-
-    - Création automatique d'attributs et d'index
-
-    - Permissions granulaires par collection
-
-    - Migration et mise à jour automatiques
-
-
-    ## 🔐 Authentification
-
-
-    L'API supporte **3 méthodes d'authentification** :
-
-
-    1. **Bearer Token** - JWT pour les utilisateurs connectés
-
-    2. **API Key** - Pour l'authentification service-à-service
-
-    3. **Basic Auth** - Pour les endpoints administrateur
-
-
-    <details>
-      <summary>Exemples d'utilisation</summary>
-
-      **Authentification Bearer**
-      ```bash
-      curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-           https://api.arkelys.cloud/v3/auth/profile
-      ```
-
-      **Authentification API Key**
-      ```bash
-      curl -H "X-API-Key: YOUR_API_KEY" \
-           https://api.arkelys.cloud/v3/appwrite/health
-      ```
-
-      **Paiement Mobile**
-      ```bash
-      curl -X POST https://api.arkelys.cloud/v3/spaark-pay/initiate \
-           -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-           -H "Content-Type: application/json" \
-           -d '{"phone":"053518256","amount":150,"mode":"airtel"}'
-      ```
-    </details>
-
-
-    ## 🌍 Spécificités Congo
-
-
-    ### **Validation Locale**
-
-    - Numéros de téléphone congolais (0XXXXXXXX)
-
-    - Devise XAF (Franc CFA)
-
-    - Adresses et codes postaux locaux
-
-    - Gestion géographique spécifique
-
-
-    ### **Paiements Locaux**
-
-    - **Airtel Money** : 04/05XXXXXXXX
-
-    - **MTN Mobile Money** : 06XXXXXXXX
-
-    - Intégration native avec les opérateurs locaux
-
-
-    ## 📊 Monitoring et Logs
-
-
-    ### **Health Checks**
-
-    - `/v3` - État général de l'API
-
-    - `/v3/spaark-pay/health` - Connexion Spaark Pay
-
-    - `/v3/sms/health` - Connexion SMS API
-
-    - `/v3/appwrite/health` - Connexion Appwrite
-
-
-    ### **Logs Détaillés**
-
-    - Logs structurés pour chaque service
-
-    - Suivi des tentatives de retry
-
-    - Métriques de performance
-
-    - Alertes automatiques
-
-
-    ## 🔗 Ressources
-
-
-    * [Documentation complète](https://fournisseur.cg/docs)
-
-    * [Interface d'administration](https://admin.fournisseur.cg)
-
-    * [Support technique](mailto:support@fournisseur.cg)
-
-    * [Statut des services](https://status.fournisseur.cg)
-
-
-    ## 📝 Support Markdown
-
-
-    Cette documentation supporte le **Markdown complet** :
-
-
-    > [!tip]
-
-    > **Conseil** : Utilisez les endpoints de test pour vérifier la connectivité avant les appels de production.
-
-
-    > [!warning]
-
-    > **Attention** : Les paiements mobiles peuvent avoir des délais de traitement variables selon l'opérateur.
-
-
-    | Fonctionnalité | Disponibilité | Documentation |
-
-    |----------------|---------------|---------------|
-
-    | Paiements mobiles | ✅ Production | [Guide complet](#tag/Payment-Processing) |
-
-    | SMS notifications | ✅ Production | [API SMS](#tag/SMS-Notifications) |
-
-    | Gestion collections | ✅ Production | [Appwrite](#tag/Database-Management) |
-
-    | Authentification | ✅ Production | [Auth](#tag/Authentication) |
-
-
-    <details>
-      <summary>Exemples de réponses</summary>
-
-      **Paiement réussi**
-      ```json
-      {
-        "success": true,
-        "data": {
-          "paymentId": 28,
-          "token": "28257ddbaf7a11ef86feac1f6be4442c",
-          "composition": "*128*128*1159*PIN#",
-          "transID": "JKUCJDFLIKDGDGD-328"
-        }
-      }
-      ```
-
-      **SMS envoyé**
-      ```json
-      {
-        "success": true,
-        "data": {
-          "messageId": "msg_123",
-          "status": "sent",
-          "to": "053518256",
-          "cost": 25
-        }
-      }
-      ```
-    </details>
+  description: '# API Fournisseur CG - Orchestrateur Logistique'
   contact:
     name: Équipe Technique Fournisseur CG
     email: dev@fournisseur.cg
@@ -267,22 +25,12 @@ security:
 tags:
   - name: Authentication
     description: Authentification utilisateurs et gestion des tokens JWT
-  - name: Database Management
-    description: Wrapper pour les opérations Appwrite (collections, documents, utilisateurs)
-  - name: Collection Management
-    description: Gestion des collections et initialisation des structures de données
   - name: Payment Processing
     description: Intégration Spaark Pay - Paiements mobiles (MTN Money, Airtel Money)
   - name: SMS Notifications
     description: Envoi de SMS et notifications via API SMS
   - name: Email Services
     description: MailerSend (marketing) et SMTP (notifications système)
-  - name: User Management
-    description: Gestion des utilisateurs (visiteurs, clients, professionnels, admins)
-  - name: Webhooks
-    description: Endpoints pour webhooks entrants (Spark Pay, partenaires transport)
-  - name: Analytics
-    description: Métriques, rapports et données analytiques de la plateforme
 paths:
   /v3/health:
     get:
@@ -763,7 +511,7 @@ paths:
               message: Votre code de vérification est 123456
   /v3/pawapay/availability:
     get:
-      summary: PawaPay availability (availability)
+      summary: Availability (availability)
       description: |-
         Returns **200** (OK) as **application/json**
 
@@ -807,7 +555,7 @@ paths:
       security: []
   /v3/pawapay/providers:
     get:
-      summary: PawaPay providers per country (listProviders)
+      summary: Providers per country (listProviders)
       description: |-
         Returns **200** (OK) as **application/json**
 
@@ -851,9 +599,9 @@ paths:
       security: []
   /v3/pawapay/active-conf:
     get:
-      summary: PawaPay active configuration (getActiveConfiguration)
+      summary: Active configuration (getActiveConfiguration)
       description: |-
-        Returns **200** (OK) as **application/json**
+        Returns **200** (OK) as **text/plain**
 
          _app/controllers/pawapay_controller.ts_ - **getActiveConfiguration**
       parameters: []
@@ -862,40 +610,28 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success: true
-                  data:
-                    type: object
-                    properties:
-                      country: COG
-                      available: true
-              example:
-                success: true
-                data:
-                  country: COG
-                  available: true
-          description: Returns **200** (OK) as **application/json**
+            text/plain:
+              example: '{'
+          description: Returns **200** (OK) as **text/plain**
+        '401':
+          content:
+            text/plain:
+              example: '{'
+          description: Returns **401** (Unauthorized) as **text/plain**
+        '403':
+          content:
+            text/plain:
+              example: '{'
+          description: Returns **403** (Forbidden) as **text/plain**
         '500':
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success: false
-                  error: Active configuration fetch failed
-                  details: Unknown error
-              example:
-                success: false
-                error: Active configuration fetch failed
-                details: Unknown error
-          description: Returns **500** (Internal Server Error) as **application/json**
+            text/plain:
+              example: '{'
+          description: Returns **500** (Internal Server Error) as **text/plain**
       security: []
   /v3/pawapay/deposits/request:
     post:
-      summary: PawaPay request deposit (requestDeposit)
+      summary: Request deposit (requestDeposit)
       description: |-
         Request a deposit using PawaPay v2 payload
 
@@ -906,56 +642,33 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success: true
-                  data:
-                    type: object
-                    properties:
-                      depositId: uuid
-                      amount: '15'
-                      currency: XAF
-                      payer:
-                        type: object
-                        properties:
-                          type: MMO
-                          accountDetails:
-                            type: object
-                            properties:
-                              provider: MTN_MOMO_COG
-                              phoneNumber: 24206XXXXXX
-              example:
-                success: true
-                data:
-                  depositId: uuid
-                  amount: '15'
-                  currency: XAF
-                  payer:
-                    type: MMO
-                    accountDetails:
-                      provider: MTN_MOMO_COG
-                      phoneNumber: 24206XXXXXX
-          description: Returns **200** (OK) as **application/json**
+            text/plain:
+              example: '{'
+          description: Returns **200** (OK) as **text/plain**
+        '400':
+          content:
+            text/plain:
+              example: '{'
+          description: Returns **400** (Bad Request) as **text/plain**
+        '401':
+          content:
+            text/plain:
+              example: '{'
+          description: Returns **401** (Unauthorized) as **text/plain**
+        '403':
+          content:
+            text/plain:
+              example: '{'
+          description: Returns **403** (Forbidden) as **text/plain**
         '500':
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success: false
-                  error: Deposit request failed
-                  details: Unknown error
-              example:
-                success: false
-                error: Deposit request failed
-                details: Unknown error
-          description: Returns **500** (Internal Server Error) as **application/json**
+            text/plain:
+              example: '{'
+          description: Returns **500** (Internal Server Error) as **text/plain**
       security: []
   /v3/pawapay/deposits/{depositId}/status:
     get:
-      summary: PawaPay check deposit status (checkDepositStatus)
+      summary: Check deposit status (checkDepositStatus)
       description: |-
         Returns **200** (OK) as **application/json**
 
@@ -1020,7 +733,7 @@ paths:
       security: []
   /v3/pawapay/payouts/request:
     post:
-      summary: PawaPay request payout (requestPayout)
+      summary: Request payout (requestPayout)
       description: |-
         Request a payout using PawaPay v2 payload
 
@@ -1080,7 +793,7 @@ paths:
       security: []
   /v3/pawapay/payouts/{payoutId}/status:
     get:
-      summary: PawaPay check payout status (checkPayoutStatus)
+      summary: Check payout status (checkPayoutStatus)
       description: |-
         Returns **200** (OK) as **application/json**
 
@@ -1145,7 +858,7 @@ paths:
       security: []
   /v3/pawapay/refunds/request:
     post:
-      summary: PawaPay request refund (requestRefund)
+      summary: Request refund (requestRefund)
       description: |-
         Request a refund using PawaPay v2 payload
 
@@ -1205,7 +918,7 @@ paths:
       security: []
   /v3/pawapay/refunds/{refundId}/status:
     get:
-      summary: PawaPay check refund status (checkRefundStatus)
+      summary: Check refund status (checkRefundStatus)
       description: |-
         Returns **200** (OK) as **application/json**
 
@@ -1270,7 +983,7 @@ paths:
       security: []
   /v3/pawapay/callbacks/deposits:
     post:
-      summary: PawaPay deposit callback (depositCallback)
+      summary: Deposit callback (depositCallback)
       description: |-
         Handle deposit callback from PawaPay
 
@@ -1303,7 +1016,7 @@ paths:
     post:
       summary: ' (payoutCallback)'
       description: |-
-        Handle payout callback from PawaPay
+        Payout callback from PawaPay
 
          _app/controllers/pawapay_controller.ts_ - **payoutCallback**
       parameters: []
@@ -1337,7 +1050,7 @@ paths:
       security: []
   /v3/pawapay/callbacks/refunds:
     post:
-      summary: PawaPay refund callback (refundCallback)
+      summary: Refund callback (refundCallback)
       description: |-
         Handle refund callback from PawaPay
 

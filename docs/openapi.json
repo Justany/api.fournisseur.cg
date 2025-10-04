@@ -3,7 +3,7 @@
   "info": {
     "title": "API Fournisseur CG - Orchestrateur Logistique",
     "version": "3.0.0",
-    "description": "# API Fournisseur CG - Orchestrateur Logistique\n\nL'API Fournisseur CG est la **plateforme centrale** qui orchestre l'écosystème logistique du Congo. Elle sert de pont intelligent entre les applications clientes et les services backend, offrant une expérience unifiée pour la gestion des fournisseurs, commandes, paiements et livraisons.\n\n## 🎯 Mission\n\nConnecter les **fournisseurs locaux** aux **clients internationaux** en simplifiant la logistique, les paiements et la communication dans l'écosystème e-commerce congolais.\n\n## 🏗️ Architecture\n\n### **Services Intégrés**\n\n| Service | Rôle | Statut |\n|---------|------|--------|\n| **Appwrite** | Backend principal (DB, Auth, Storage) | ✅ Intégré |\n| **Spaark Pay** | Paiements mobiles (MTN Money, Airtel) | ✅ Intégré |\n| **SMS API** | Notifications et codes OTP | ✅ Intégré |\n| **MailerSend** | Emails marketing | 🔄 En cours |\n| **SMTP** | Notifications système | 🔄 En cours |\n\n### **Collections Principales**\n\n- **📋 QUOTES** - Demandes de devis (FC-QMM-XXXX-YYYY)\n- **📞 CONTACTS** - Messages de contact clients\n- **🛍️ PRODUCTS** - Catalogue multi-plateformes\n- **📦 ORDERS** - Commandes (FC-ORD-XXXX-YYYY)\n- **💳 PAYMENTS** - Transactions de paiement\n\n## 🚀 Fonctionnalités Clés\n\n### **Paiements Mobiles Intelligents**\n- Support natif **MTN Money** et **Airtel Money**\n- Vérification automatique des transactions\n- Gestion des webhooks en temps réel\n- Retry automatique pour les erreurs temporaires\n\n### **Gestion SMS Avancée**\n- Envoi de codes OTP sécurisés\n- Notifications personnalisées\n- Calcul automatique des coûts\n- Historique et statistiques détaillées\n\n### **Collections Auto-Configurées**\n- Définition déclarative des structures\n- Création automatique d'attributs et d'index\n- Permissions granulaires par collection\n- Migration et mise à jour automatiques\n\n## 🔐 Authentification\n\nL'API supporte **3 méthodes d'authentification** :\n\n1. **Bearer Token** - JWT pour les utilisateurs connectés\n2. **API Key** - Pour l'authentification service-à-service\n3. **Basic Auth** - Pour les endpoints administrateur\n\n<details>\n  <summary>Exemples d'utilisation</summary>\n\n  **Authentification Bearer**\n  ```bash\n  curl -H \"Authorization: Bearer YOUR_JWT_TOKEN\" \\\n       https://api.arkelys.cloud/v3/auth/profile\n  ```\n\n  **Authentification API Key**\n  ```bash\n  curl -H \"X-API-Key: YOUR_API_KEY\" \\\n       https://api.arkelys.cloud/v3/appwrite/health\n  ```\n\n  **Paiement Mobile**\n  ```bash\n  curl -X POST https://api.arkelys.cloud/v3/spaark-pay/initiate \\\n       -H \"Authorization: Bearer YOUR_JWT_TOKEN\" \\\n       -H \"Content-Type: application/json\" \\\n       -d '{\"phone\":\"053518256\",\"amount\":150,\"mode\":\"airtel\"}'\n  ```\n</details>\n\n## 🌍 Spécificités Congo\n\n### **Validation Locale**\n- Numéros de téléphone congolais (0XXXXXXXX)\n- Devise XAF (Franc CFA)\n- Adresses et codes postaux locaux\n- Gestion géographique spécifique\n\n### **Paiements Locaux**\n- **Airtel Money** : 04/05XXXXXXXX\n- **MTN Mobile Money** : 06XXXXXXXX\n- Intégration native avec les opérateurs locaux\n\n## 📊 Monitoring et Logs\n\n### **Health Checks**\n- `/v3` - État général de l'API\n- `/v3/spaark-pay/health` - Connexion Spaark Pay\n- `/v3/sms/health` - Connexion SMS API\n- `/v3/appwrite/health` - Connexion Appwrite\n\n### **Logs Détaillés**\n- Logs structurés pour chaque service\n- Suivi des tentatives de retry\n- Métriques de performance\n- Alertes automatiques\n\n## 🔗 Ressources\n\n* [Documentation complète](https://fournisseur.cg/docs)\n* [Interface d'administration](https://admin.fournisseur.cg)\n* [Support technique](mailto:support@fournisseur.cg)\n* [Statut des services](https://status.fournisseur.cg)\n\n## 📝 Support Markdown\n\nCette documentation supporte le **Markdown complet** :\n\n> [!tip]\n> **Conseil** : Utilisez les endpoints de test pour vérifier la connectivité avant les appels de production.\n\n> [!warning]\n> **Attention** : Les paiements mobiles peuvent avoir des délais de traitement variables selon l'opérateur.\n\n| Fonctionnalité | Disponibilité | Documentation |\n|----------------|---------------|---------------|\n| Paiements mobiles | ✅ Production | [Guide complet](#tag/Payment-Processing) |\n| SMS notifications | ✅ Production | [API SMS](#tag/SMS-Notifications) |\n| Gestion collections | ✅ Production | [Appwrite](#tag/Database-Management) |\n| Authentification | ✅ Production | [Auth](#tag/Authentication) |\n\n<details>\n  <summary>Exemples de réponses</summary>\n\n  **Paiement réussi**\n  ```json\n  {\n    \"success\": true,\n    \"data\": {\n      \"paymentId\": 28,\n      \"token\": \"28257ddbaf7a11ef86feac1f6be4442c\",\n      \"composition\": \"*128*128*1159*PIN#\",\n      \"transID\": \"JKUCJDFLIKDGDGD-328\"\n    }\n  }\n  ```\n\n  **SMS envoyé**\n  ```json\n  {\n    \"success\": true,\n    \"data\": {\n      \"messageId\": \"msg_123\",\n      \"status\": \"sent\",\n      \"to\": \"053518256\",\n      \"cost\": 25\n    }\n  }\n  ```\n</details>",
+    "description": "# API Fournisseur CG - Orchestrateur Logistique",
     "contact": {
       "name": "Équipe Technique Fournisseur CG",
       "email": "dev@fournisseur.cg",
@@ -46,14 +46,6 @@
       "description": "Authentification utilisateurs et gestion des tokens JWT"
     },
     {
-      "name": "Database Management",
-      "description": "Wrapper pour les opérations Appwrite (collections, documents, utilisateurs)"
-    },
-    {
-      "name": "Collection Management",
-      "description": "Gestion des collections et initialisation des structures de données"
-    },
-    {
       "name": "Payment Processing",
       "description": "Intégration Spaark Pay - Paiements mobiles (MTN Money, Airtel Money)"
     },
@@ -64,18 +56,6 @@
     {
       "name": "Email Services",
       "description": "MailerSend (marketing) et SMTP (notifications système)"
-    },
-    {
-      "name": "User Management",
-      "description": "Gestion des utilisateurs (visiteurs, clients, professionnels, admins)"
-    },
-    {
-      "name": "Webhooks",
-      "description": "Endpoints pour webhooks entrants (Spark Pay, partenaires transport)"
-    },
-    {
-      "name": "Analytics",
-      "description": "Métriques, rapports et données analytiques de la plateforme"
     }
   ],
   "paths": {
@@ -743,7 +723,7 @@
     },
     "/v3/pawapay/availability": {
       "get": {
-        "summary": "PawaPay availability (availability)",
+        "summary": "Availability (availability)",
         "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **availability**",
         "parameters": [],
         "tags": [
@@ -803,7 +783,7 @@
     },
     "/v3/pawapay/providers": {
       "get": {
-        "summary": "PawaPay providers per country (listProviders)",
+        "summary": "Providers per country (listProviders)",
         "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **listProviders**",
         "parameters": [],
         "tags": [
@@ -863,8 +843,8 @@
     },
     "/v3/pawapay/active-conf": {
       "get": {
-        "summary": "PawaPay active configuration (getActiveConfiguration)",
-        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **getActiveConfiguration**",
+        "summary": "Active configuration (getActiveConfiguration)",
+        "description": "Returns **200** (OK) as **text/plain**\n\n _app/controllers/pawapay_controller.ts_ - **getActiveConfiguration**",
         "parameters": [],
         "tags": [
           "PAWAPAY"
@@ -872,50 +852,35 @@
         "responses": {
           "200": {
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": true,
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "country": "COG",
-                        "available": true
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "success": true,
-                  "data": {
-                    "country": "COG",
-                    "available": true
-                  }
-                }
+              "text/plain": {
+                "example": "{"
               }
             },
-            "description": "Returns **200** (OK) as **application/json**"
+            "description": "Returns **200** (OK) as **text/plain**"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "example": "{"
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
+          },
+          "403": {
+            "content": {
+              "text/plain": {
+                "example": "{"
+              }
+            },
+            "description": "Returns **403** (Forbidden) as **text/plain**"
           },
           "500": {
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": false,
-                    "error": "Active configuration fetch failed",
-                    "details": "Unknown error"
-                  }
-                },
-                "example": {
-                  "success": false,
-                  "error": "Active configuration fetch failed",
-                  "details": "Unknown error"
-                }
+              "text/plain": {
+                "example": "{"
               }
             },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
+            "description": "Returns **500** (Internal Server Error) as **text/plain**"
           }
         },
         "security": []
@@ -923,7 +888,7 @@
     },
     "/v3/pawapay/deposits/request": {
       "post": {
-        "summary": "PawaPay request deposit (requestDeposit)",
+        "summary": "Request deposit (requestDeposit)",
         "description": "Request a deposit using PawaPay v2 payload\n\n _app/controllers/pawapay_controller.ts_ - **requestDeposit**",
         "parameters": [],
         "tags": [
@@ -932,72 +897,43 @@
         "responses": {
           "200": {
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": true,
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "depositId": "uuid",
-                        "amount": "15",
-                        "currency": "XAF",
-                        "payer": {
-                          "type": "object",
-                          "properties": {
-                            "type": "MMO",
-                            "accountDetails": {
-                              "type": "object",
-                              "properties": {
-                                "provider": "MTN_MOMO_COG",
-                                "phoneNumber": "24206XXXXXX"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "success": true,
-                  "data": {
-                    "depositId": "uuid",
-                    "amount": "15",
-                    "currency": "XAF",
-                    "payer": {
-                      "type": "MMO",
-                      "accountDetails": {
-                        "provider": "MTN_MOMO_COG",
-                        "phoneNumber": "24206XXXXXX"
-                      }
-                    }
-                  }
-                }
+              "text/plain": {
+                "example": "{"
               }
             },
-            "description": "Returns **200** (OK) as **application/json**"
+            "description": "Returns **200** (OK) as **text/plain**"
+          },
+          "400": {
+            "content": {
+              "text/plain": {
+                "example": "{"
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **text/plain**"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "example": "{"
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
+          },
+          "403": {
+            "content": {
+              "text/plain": {
+                "example": "{"
+              }
+            },
+            "description": "Returns **403** (Forbidden) as **text/plain**"
           },
           "500": {
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": false,
-                    "error": "Deposit request failed",
-                    "details": "Unknown error"
-                  }
-                },
-                "example": {
-                  "success": false,
-                  "error": "Deposit request failed",
-                  "details": "Unknown error"
-                }
+              "text/plain": {
+                "example": "{"
               }
             },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
+            "description": "Returns **500** (Internal Server Error) as **text/plain**"
           }
         },
         "security": []
@@ -1005,7 +941,7 @@
     },
     "/v3/pawapay/deposits/{depositId}/status": {
       "get": {
-        "summary": "PawaPay check deposit status (checkDepositStatus)",
+        "summary": "Check deposit status (checkDepositStatus)",
         "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **checkDepositStatus**",
         "parameters": [
           {
@@ -1096,7 +1032,7 @@
     },
     "/v3/pawapay/payouts/request": {
       "post": {
-        "summary": "PawaPay request payout (requestPayout)",
+        "summary": "Request payout (requestPayout)",
         "description": "Request a payout using PawaPay v2 payload\n\n _app/controllers/pawapay_controller.ts_ - **requestPayout**",
         "parameters": [],
         "tags": [
@@ -1178,7 +1114,7 @@
     },
     "/v3/pawapay/payouts/{payoutId}/status": {
       "get": {
-        "summary": "PawaPay check payout status (checkPayoutStatus)",
+        "summary": "Check payout status (checkPayoutStatus)",
         "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **checkPayoutStatus**",
         "parameters": [
           {
@@ -1269,7 +1205,7 @@
     },
     "/v3/pawapay/refunds/request": {
       "post": {
-        "summary": "PawaPay request refund (requestRefund)",
+        "summary": "Request refund (requestRefund)",
         "description": "Request a refund using PawaPay v2 payload\n\n _app/controllers/pawapay_controller.ts_ - **requestRefund**",
         "parameters": [],
         "tags": [
@@ -1351,7 +1287,7 @@
     },
     "/v3/pawapay/refunds/{refundId}/status": {
       "get": {
-        "summary": "PawaPay check refund status (checkRefundStatus)",
+        "summary": "Check refund status (checkRefundStatus)",
         "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **checkRefundStatus**",
         "parameters": [
           {
@@ -1442,7 +1378,7 @@
     },
     "/v3/pawapay/callbacks/deposits": {
       "post": {
-        "summary": "PawaPay deposit callback (depositCallback)",
+        "summary": "Deposit callback (depositCallback)",
         "description": "Handle deposit callback from PawaPay\n\n _app/controllers/pawapay_controller.ts_ - **depositCallback**",
         "parameters": [],
         "tags": [
@@ -1484,7 +1420,7 @@
     "/v3/pawapay/callbacks/payouts": {
       "post": {
         "summary": " (payoutCallback)",
-        "description": "Handle payout callback from PawaPay\n\n _app/controllers/pawapay_controller.ts_ - **payoutCallback**",
+        "description": "Payout callback from PawaPay\n\n _app/controllers/pawapay_controller.ts_ - **payoutCallback**",
         "parameters": [],
         "tags": [
           "PAWAPAY"
@@ -1532,7 +1468,7 @@
     },
     "/v3/pawapay/callbacks/refunds": {
       "post": {
-        "summary": "PawaPay refund callback (refundCallback)",
+        "summary": "Refund callback (refundCallback)",
         "description": "Handle refund callback from PawaPay\n\n _app/controllers/pawapay_controller.ts_ - **refundCallback**",
         "parameters": [],
         "tags": [

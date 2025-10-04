@@ -67,7 +67,11 @@ export default class GenerateDocs extends BaseCommand {
 
       try {
         // Essayer d'utiliser AutoSwagger directement (sans middlewares)
-        autoSwaggerDoc = await AutoSwagger.default.docs(router.toJSON(), swagger)
+        const docsFn = (AutoSwagger as any)?.docs || (AutoSwagger as any)?.default?.docs
+        if (typeof docsFn !== 'function') {
+          throw new Error('AutoSwagger docs function not available')
+        }
+        autoSwaggerDoc = await docsFn(router.toJSON(), swagger)
         if (this.verbose) {
           this.logger.info('✅ AutoSwagger a généré la documentation avec succès')
         }
@@ -371,21 +375,9 @@ ${yamlContent}`
         }
       }
 
-      // Utiliser AutoSwagger directement
-      const openApiDoc = await AutoSwagger.default.docs(router.toJSON(), swagger)
-      const paths = openApiDoc.paths || {}
-
-      if (this.verbose) {
-        this.logger.info(`📊 Routes trouvées avec AutoSwagger: ${Object.keys(paths).length}`)
-        if (Object.keys(paths).length > 0) {
-          Object.keys(paths).forEach((routePath) => {
-            const methods = Object.keys(paths[routePath])
-            this.logger.info(`  ${methods.join(', ').toUpperCase()} ${routePath}`)
-          })
-        }
-      }
-
-      return paths
+      // Éviter un second appel à AutoSwagger ici pour ne pas reproduire l'erreur
+      // et générer les chemins manuellement à partir du routeur.
+      return await this.generatePathsManually()
     } catch (error) {
       this.logger.warning(`⚠️  Erreur avec AutoSwagger: ${error.message}`)
       this.logger.info('🔄 Utilisation de la méthode alternative...')
