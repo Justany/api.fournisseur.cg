@@ -565,6 +565,79 @@ export default class PawaPayController {
   }
 
   /**
+   * @resendDepositCallback
+   * @summary Resend deposit callback
+   * @description Resend the callback for a deposit to your configured callback URL. Deposit must be in a final state.
+   * @tag PawaPay
+   * @responseBody 200 - {
+   *   "depositId": "f4401bd2-1568-4140-bf2d-eb77d2b2b639",
+   *   "status": "ACCEPTED"
+   * }
+   * @responseBody 401 - {
+   *   "status": "REJECTED",
+   *   "failureReason": {
+   *     "failureCode": "AUTHENTICATION_ERROR",
+   *     "failureMessage": "The API token in the request is invalid."
+   *   }
+   * }
+   * @responseBody 403 - {
+   *   "status": "REJECTED",
+   *   "failureReason": {
+   *     "failureCode": "AUTHORISATION_ERROR",
+   *     "failureMessage": "The API token in the request is not authorised for this endpoint."
+   *   }
+   * }
+   * @responseBody 500 - {
+   *   "failureReason": {
+   *     "failureCode": "UNKNOWN_ERROR",
+   *     "failureMessage": "Unable to process request due to an unknown problem."
+   *   }
+   * }
+   */
+  async resendDepositCallback({ params, response }: HttpContext) {
+    try {
+      const { depositId } = params
+      if (!depositId) {
+        return response.badRequest({
+          failureReason: {
+            failureCode: 'VALIDATION_ERROR',
+            failureMessage: 'depositId requis',
+          },
+        })
+      }
+
+      const result = await this.pawapay.resendDepositCallback(depositId)
+      // Forward upstream body as-is (e.g., { depositId, status: 'ACCEPTED' | 'REJECTED', failureReason? })
+      return response.ok(result)
+    } catch (error: any) {
+      const status = error?.response?.status ?? 500
+      const body = error?.response?.data
+
+      if (status === 401 || status === 403) {
+        return response.status(status).send(
+          body ?? {
+            status: 'REJECTED',
+            failureReason: {
+              failureCode: status === 401 ? 'AUTHENTICATION_ERROR' : 'AUTHORISATION_ERROR',
+              failureMessage:
+                status === 401
+                  ? 'The API token in the request is invalid.'
+                  : 'The API token in the request is not authorised for this endpoint.',
+            },
+          }
+        )
+      }
+
+      return response.status(500).send({
+        failureReason: {
+          failureCode: 'UNKNOWN_ERROR',
+          failureMessage: 'Unable to process request due to an unknown problem.',
+        },
+      })
+    }
+  }
+
+  /**
    * @payoutCallback
    * @description Payout callback from PawaPay
    * @tag PawaPay

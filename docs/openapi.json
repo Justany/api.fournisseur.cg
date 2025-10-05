@@ -942,7 +942,7 @@
     "/v3/pawapay/deposits/{depositId}/status": {
       "get": {
         "summary": "Check deposit status (checkDepositStatus)",
-        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/pawapay_controller.ts_ - **checkDepositStatus**",
+        "description": "Returns **200** (OK) as **text/plain**\n\n _app/controllers/pawapay_controller.ts_ - **checkDepositStatus**",
         "parameters": [
           {
             "in": "path",
@@ -959,72 +959,35 @@
         "responses": {
           "200": {
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": true,
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "depositId": "uuid",
-                        "amount": "15",
-                        "currency": "XAF",
-                        "payer": {
-                          "type": "object",
-                          "properties": {
-                            "type": "MMO",
-                            "accountDetails": {
-                              "type": "object",
-                              "properties": {
-                                "provider": "MTN_MOMO_COG",
-                                "phoneNumber": "24206XXXXXX"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "success": true,
-                  "data": {
-                    "depositId": "uuid",
-                    "amount": "15",
-                    "currency": "XAF",
-                    "payer": {
-                      "type": "MMO",
-                      "accountDetails": {
-                        "provider": "MTN_MOMO_COG",
-                        "phoneNumber": "24206XXXXXX"
-                      }
-                    }
-                  }
-                }
+              "text/plain": {
+                "example": "{"
               }
             },
-            "description": "Returns **200** (OK) as **application/json**"
+            "description": "Returns **200** (OK) as **text/plain**"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "example": "{"
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
+          },
+          "403": {
+            "content": {
+              "text/plain": {
+                "example": "{"
+              }
+            },
+            "description": "Returns **403** (Forbidden) as **text/plain**"
           },
           "500": {
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": false,
-                    "error": "Deposit request failed",
-                    "details": "Unknown error"
-                  }
-                },
-                "example": {
-                  "success": false,
-                  "error": "Deposit request failed",
-                  "details": "Unknown error"
-                }
+              "text/plain": {
+                "example": "{"
               }
             },
-            "description": "Returns **500** (Internal Server Error) as **application/json**"
+            "description": "Returns **500** (Internal Server Error) as **text/plain**"
           }
         },
         "security": []

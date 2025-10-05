@@ -157,6 +157,10 @@ router
 
         // Callbacks
         router.post('/callbacks/deposits', [PawaPayController, 'depositCallback'])
+        router.post('/callbacks/resend/deposit/:depositId', [
+          PawaPayController,
+          'resendDepositCallback',
+        ])
         router.post('/callbacks/payouts', [PawaPayController, 'payoutCallback'])
         router.post('/callbacks/refunds', [PawaPayController, 'refundCallback'])
       })
