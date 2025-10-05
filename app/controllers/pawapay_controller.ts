@@ -15,6 +15,92 @@ export default class PawaPayController {
   }
 
   /**
+   * @createPaymentPage
+   * @summary Deposit via Payment Page
+   * @description Create a PawaPay Payment Page session and get the redirectUrl
+   * @tag PawaPay
+   * @responseBody 201 - { "redirectUrl": "https://sandbox.paywith.pawapay.io/v2?..." }
+   * @responseBody 400 - {
+   *   "depositId": "f4401bd2-1568-4140-bf2d-eb77d2b2b639",
+   *   "status": "REJECTED",
+   *   "failureReason": { "failureCode": "INVALID_INPUT", "failureMessage": "We are unable to parse the body of the request. Please consult API documentation for valid request payload." }
+   * }
+   * @responseBody 401 - {
+   *   "depositId": "f4401bd2-1568-4140-bf2d-eb77d2b2b639",
+   *   "status": "REJECTED",
+   *   "failureReason": { "failureCode": "AUTHENTICATION_ERROR", "failureMessage": "The API token in the request is invalid." }
+   * }
+   * @responseBody 403 - {
+   *   "depositId": "f4401bd2-1568-4140-bf2d-eb77d2b2b639",
+   *   "status": "REJECTED",
+   *   "failureReason": { "failureCode": "AUTHORISATION_ERROR", "failureMessage": "The API token in the request is not authorised for this endpoint." }
+   * }
+   * @responseBody 500 - {
+   *   "failureReason": { "failureCode": "UNKNOWN_ERROR", "failureMessage": "Unable to process request due to an unknown problem." }
+   * }
+   */
+  async createPaymentPage({ request, response }: HttpContext) {
+    try {
+      const body = request.body()
+      // Minimal validation following pawaPay payment page requirements
+      const hasBasics =
+        body?.depositId &&
+        body?.returnUrl &&
+        body?.amountDetails?.amount &&
+        body?.amountDetails?.currency
+      const hasContact = body?.phoneNumber && body?.country && body?.language
+      if (!hasBasics || !hasContact) {
+        return response.badRequest({
+          depositId: body?.depositId ?? null,
+          status: 'REJECTED',
+          failureReason: {
+            failureCode: 'INVALID_INPUT',
+            failureMessage:
+              'Requis: depositId, returnUrl, amountDetails.amount, amountDetails.currency, phoneNumber, country, language',
+          },
+        })
+      }
+
+      const result = await this.pawapay.createPaymentPage(body)
+      // Upstream returns 201 Created with { redirectUrl }
+      return response.created(result)
+    } catch (error: any) {
+      const status = error?.response?.status ?? 500
+      const body = error?.response?.data
+
+      if (status === 400 || status === 401 || status === 403) {
+        return response.status(status).send(
+          body ?? {
+            depositId: request.body()?.depositId ?? null,
+            status: 'REJECTED',
+            failureReason: {
+              failureCode:
+                status === 400
+                  ? 'INVALID_INPUT'
+                  : status === 401
+                    ? 'AUTHENTICATION_ERROR'
+                    : 'AUTHORISATION_ERROR',
+              failureMessage:
+                status === 400
+                  ? 'We are unable to parse the body of the request. Please consult API documentation for valid request payload.'
+                  : status === 401
+                    ? 'The API token in the request is invalid.'
+                    : 'The API token in the request is not authorised for this endpoint.',
+            },
+          }
+        )
+      }
+
+      return response.status(500).send({
+        failureReason: {
+          failureCode: 'UNKNOWN_ERROR',
+          failureMessage: 'Unable to process request due to an unknown problem.',
+        },
+      })
+    }
+  }
+
+  /**
    * @availability
    * @summary Availability
    * @description Get PawaPay availability for a specific country
@@ -205,32 +291,33 @@ export default class PawaPayController {
     try {
       const body = request.body()
 
-      // Minimal required fields for v2
+      // Required fields aligned with Fournisseur Docs (PawaPay deposits request)
       const hasBasic = body?.depositId && body?.amount && body?.currency
       const hasPayerMMO =
         body?.payer?.type === 'MMO' &&
         !!body?.payer?.accountDetails?.provider &&
         !!body?.payer?.accountDetails?.phoneNumber
+      const hasPreAuth = !!body?.preAuthorisationCode
+      const hasClientRef = !!body?.clientReferenceId
+      const hasCustomerMsg = !!body?.customerMessage
+      const hasMetadataArray = Array.isArray(body?.metadata)
 
-      if (!hasBasic || !hasPayerMMO) {
+      if (
+        !hasBasic ||
+        !hasPayerMMO ||
+        !hasPreAuth ||
+        !hasClientRef ||
+        !hasCustomerMsg ||
+        !hasMetadataArray
+      ) {
+        // Return standardized 400 envelope per spec
         return response.badRequest({
-          success: false,
-          error:
-            'Champs requis manquants. Requis: depositId, amount, currency, payer.type="MMO", payer.accountDetails.provider, payer.accountDetails.phoneNumber',
-          example: {
-            depositId: 'uuid',
-            amount: '15',
-            currency: 'XAF',
-            payer: {
-              type: 'MMO',
-              accountDetails: { provider: 'MTN_MOMO_COG', phoneNumber: '24206XXXXXX' },
-            },
-            clientReferenceId: 'INV-123456',
-            customerMessage: 'Note of 4 to 22 chars',
-            metadata: [
-              { orderId: 'ORD-123456789' },
-              { customerId: 'customer@email.com', isPII: true },
-            ],
+          depositId: body?.depositId ?? null,
+          status: 'REJECTED',
+          failureReason: {
+            failureCode: 'INVALID_INPUT',
+            failureMessage:
+              'Requis: depositId, amount, currency, payer{ type="MMO", accountDetails{ provider, phoneNumber } }, preAuthorisationCode, clientReferenceId, customerMessage, metadata[]',
           },
         })
       }
@@ -502,16 +589,33 @@ export default class PawaPayController {
       const country: string | undefined = payload?.country
       const payer: any = payload?.payer
       const customerMessage: string | undefined = payload?.customerMessage
+      const clientReferenceId: string | undefined = payload?.clientReferenceId
       const created: string | undefined = payload?.created
       const providerTransactionId: string | undefined = payload?.providerTransactionId
       const failureReason: any = payload?.failureReason
       const metadata: any = payload?.metadata
 
-      if (!depositId || !status) {
+      // Conformité stricte aux champs requis de la spec callback
+      const missing: string[] = []
+      if (!depositId) missing.push('depositId')
+      if (!status) missing.push('status')
+      if (!amount) missing.push('amount')
+      if (!currency) missing.push('currency')
+      if (!country) missing.push('country')
+      if (!payer?.type) missing.push('payer.type')
+      if (!payer?.accountDetails?.provider) missing.push('payer.accountDetails.provider')
+      if (!payer?.accountDetails?.phoneNumber) missing.push('payer.accountDetails.phoneNumber')
+      if (!customerMessage) missing.push('customerMessage')
+      if (!clientReferenceId) missing.push('clientReferenceId')
+      if (!created) missing.push('created')
+      if (!providerTransactionId) missing.push('providerTransactionId')
+      if (!metadata) missing.push('metadata')
+
+      if (missing.length) {
         return response.badRequest({
           success: false,
           error: 'Champs requis manquants dans le callback PawaPay',
-          details: { required: ['depositId', 'status'] },
+          details: { required: missing },
         })
       }
 
@@ -541,6 +645,7 @@ export default class PawaPayController {
             currency: currency ?? null,
             country: country ?? null,
             customer_message: customerMessage ?? null,
+            client_reference_id: clientReferenceId ?? null,
             provider_transaction_id: providerTransactionId ?? null,
             created_at: created ?? null,
             payer_type: payer?.type ?? null,

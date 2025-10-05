@@ -146,6 +146,7 @@ router
         // Deposits
         router.post('/deposits/request', [PawaPayController, 'requestDeposit'])
         router.get('/deposits/:depositId/status', [PawaPayController, 'checkDepositStatus'])
+        router.post('/deposits/paymentpage', [PawaPayController, 'createPaymentPage'])
 
         // Payouts
         router.post('/payouts/request', [PawaPayController, 'requestPayout'])
