@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
-import env from '#start/env'
+// import env from '#start/env'
 
 /**
  * Middleware pour logger toutes les requêtes réseau en mode développement
@@ -12,12 +12,14 @@ export default class NetworkLoggingMiddleware {
     const startTime = Date.now()
 
     // Vérifier si on est en mode développement
-    const isDevelopment = env.get('NODE_ENV') === 'development'
+    // const isDevelopment = env.get('NODE_ENV') === 'development'
 
-    if (!isDevelopment) {
-      await next()
-      return
-    }
+    // if (!isDevelopment) {
+    //   await next()
+    //   return
+    // }
+
+    await next()
 
     // Logger la requête entrante
     console.log('\n🌐 === REQUÊTE RÉSEAU ENTRANTE ===')
