@@ -589,7 +589,7 @@ export default class PawaPayController {
       const country: string | undefined = payload?.country
       const payer: any = payload?.payer
       const customerMessage: string | undefined = payload?.customerMessage
-      const clientReferenceId: string | undefined = payload?.clientReferenceId
+      // const clientReferenceId: string | undefined = payload?.clientReferenceId
       const created: string | undefined = payload?.created
       const providerTransactionId: string | undefined = payload?.providerTransactionId
       const failureReason: any = payload?.failureReason
@@ -632,34 +632,30 @@ export default class PawaPayController {
       // }
 
       // Enregistrer également dans la collection dédiée aux callbacks de dépôts
-      try {
-        await this.appwrite.createDocument(
-          process.env.APPWRITE_DATABASE_ID!,
-          COLLECTIONS.PAWA_PAY_DEPOSIT_CALLBACKS,
-          randomUUID(),
-          {
-            deposit_id: depositId,
-            status: normalizedStatus,
-            amount: amount ?? null,
-            currency: currency ?? null,
-            country: country ?? null,
-            customer_message: customerMessage ?? null,
-            client_reference_id: clientReferenceId ?? null,
-            provider_transaction_id: providerTransactionId ?? null,
-            created_at: created ?? null,
-            payer_type: payer?.type ?? null,
-            payer_provider: payer?.accountDetails?.provider ?? null,
-            payer_phone: payer?.accountDetails?.phoneNumber ?? null,
-            failure_reason: failureReason ? JSON.stringify(failureReason) : null,
-            metadata_json: metadata ? JSON.stringify(metadata) : null,
-            raw_payload: JSON.stringify(payload),
-            received_at: now,
-            source: 'pawapay',
-          }
-        )
-      } catch (persistErr: unknown) {
-        // Ne pas bloquer l'ACK si la collection dédiée échoue
-      }
+      await this.appwrite.createDocument(
+        process.env.APPWRITE_DATABASE_ID!,
+        COLLECTIONS.PAWA_PAY_DEPOSIT_CALLBACKS,
+        randomUUID(),
+        {
+          deposit_id: depositId,
+          status: normalizedStatus,
+          amount: amount ?? null,
+          currency: currency ?? null,
+          country: country ?? null,
+          customer_message: customerMessage ?? null,
+          // client_reference_id: clientReferenceId ?? null,
+          provider_transaction_id: providerTransactionId ?? null,
+          created_at: created ?? null,
+          payer_type: payer?.type ?? null,
+          payer_provider: payer?.accountDetails?.provider ?? null,
+          payer_phone: payer?.accountDetails?.phoneNumber ?? null,
+          failure_reason: failureReason ? JSON.stringify(failureReason) : null,
+          metadata_json: metadata ? JSON.stringify(metadata) : null,
+          raw_payload: JSON.stringify(payload),
+          received_at: now,
+          source: 'pawapay',
+        }
+      )
 
       // Réponse d'accusé de réception minimaliste
       return response.ok({ received: true, id: docId, depositId, status: normalizedStatus })
