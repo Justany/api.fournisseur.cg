@@ -606,7 +606,6 @@ export default class PawaPayController {
       if (!payer?.accountDetails?.provider) missing.push('payer.accountDetails.provider')
       if (!payer?.accountDetails?.phoneNumber) missing.push('payer.accountDetails.phoneNumber')
       if (!customerMessage) missing.push('customerMessage')
-      if (!clientReferenceId) missing.push('clientReferenceId')
       if (!created) missing.push('created')
       if (!providerTransactionId) missing.push('providerTransactionId')
       if (!metadata) missing.push('metadata')
